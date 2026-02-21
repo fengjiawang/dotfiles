@@ -1,0 +1,51 @@
+{
+    "id": "tool-monitor",
+    "name": "Tool Monitor",
+    "version": "1.2.3",
+    "description": "Monitor and track all tool executions with statistics and performance metrics. Persists data across sessions and loads historical data from messages.",
+    "author": {
+        "name": "Alma Team"
+    },
+    "main": "main.js",
+    "engines": {
+        "alma": "^0.1.0"
+    },
+    "type": "ui",
+    "activationEvents": ["onStartup"],
+    "permissions": ["chat:read", "notifications"],
+    "contributes": {
+        "commands": [
+            {
+                "id": "toolMonitor.showStats",
+                "title": "Show Tool Statistics"
+            },
+            {
+                "id": "toolMonitor.reset",
+                "title": "Reset Current Thread Statistics"
+            },
+            {
+                "id": "toolMonitor.resetAll",
+                "title": "Reset All Statistics"
+            },
+            {
+                "id": "toolMonitor.reloadHistorical",
+                "title": "Reload Historical Data"
+            }
+        ],
+        "configuration": {
+            "title": "Tool Monitor",
+            "properties": {
+                "toolMonitor.showInStatusBar": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show tool statistics in status bar"
+                },
+                "toolMonitor.logToConsole": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Log tool executions to console"
+                }
+            }
+        }
+    }
+}

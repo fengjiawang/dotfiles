@@ -1,0 +1,44 @@
+%YAML 1.2
+---
+# http://www.sublimetext.com/docs/syntax.html
+name: NCL
+file_extensions:
+  - ncl
+scope: source.ncl
+contexts:
+  main:
+    - match: ;.*$
+      comment: NCL comment
+      scope: comment.line.source.ncl
+    - match: \b(integer|float|double|string|graphic)\b
+      comment: NCL types
+      scope: support.type.source.ncl
+    - match: \b(\+|-)?\d+(\.\d+((d|D|e|E)(\+|-)?\d+)?)?\b
+      comment: NCL numerics
+      scope: constant.numeric.source.ncl
+    - match: \.(eq|ne|gt|ge|lt|le|not|and|or)\.
+      comment: NCL operators
+      scope: keyword.operator.source.ncl
+    - match: \b(do|end|if|then|else|while|break|continue|return|load|begin|end|procedure|function|local)\b
+      comment: NCL control keywords
+      scope: keyword.control.source.ncl
+    - match: \b(True|False)\b
+      comment: NCL boolean
+      scope: constant.language.source.ncl
+    - match: '"'
+      comment: NCL string
+      push:
+        - meta_scope: string.quoted.double.source.ncl
+        - match: '"'
+          pop: true
+        - match: \.
+          scope: constant.character.escape.source.ncl
+        - match: \$\w+
+          comment: Environment variable
+          scope: storage.type.source.ncl
+    - match: \b()\b
+      comment: NCL intrinsic functions
+      scope: support.function.source.ncl
+    - match: \b()\b
+      comment: Resources
+      scope: support.other.source.ncl

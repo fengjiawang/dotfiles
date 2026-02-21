@@ -1,0 +1,137 @@
+{
+  "signature": {
+    "prefix": "signature",
+    "body": [
+      "; ******************************************************",
+      "; Author       : jwfeng",
+      "; Email        : jw525000@mail.ustc.edu.cn",
+      "; Description  : ${1}",
+      "; ******************************************************"
+    ],
+    "description": "Load customized NCL scripts."
+  },
+  "loadCustom": {
+    "prefix": "loadCustom",
+    "body": [
+      "load \"\\$HOME/my_NCL/my_NCL_plot.ncl\"",
+      "load \"\\$HOME/my_NCL/my_NCL_functions.ncl\""
+    ],
+    "description": "Load customized NCL scripts."
+  },
+  "initplot": {
+    "prefix": "initplot",
+    "body": [
+      "png = \"png\"",
+      "png@wkWidth  = 3084",
+      "png@wkHeight = 3084",
+      "wks = gsn_open_wks(png, \"${1:picture name}\")",
+      "panel_dims = (/${2:panel_dims}/)",
+      "plots = new(sum(panel_dims), \"graphic\")",
+      "res = True",
+      "; plot details",
+      "${3:; details}",
+      "panel_res = True",
+      "panel_res@gsnPanelRowSpec = True",
+      "gsn_panel(wks, plots, panel_dims, panel_res)",
+      "system(\"convert -trim -bordercolor white -border 10x10 \" + wks@name + \".png \" + wks@name + \".png\")",
+      "system(\"tsz -y \" + wks@name + \".png\")",
+      "system(\"imgcat \" + wks@name + \".png \")"
+    ],
+    "description": "Load customized NCL scripts."
+  },
+  "parallel_generator": {
+    "prefix": "parallel_generator",
+    "body": [
+      "if (do_generate) then",
+      "  system(\"rm -f ncl_commands.sh\")",
+      "  system(\"rm -f ncl.log\")",
+      "  do dumpIter = ${1:iStart}, ${2:iEnd}",
+      "    system(\"echo 'ncl -Q do_generate=False \" +get_script_name()+ \" ${3:Iterator name for parallel}=\" +tostring(dumpIter)+ \"' >> ncl_commands.sh\")",
+      "  end do",
+      "  system(\"cat ./ncl_commands.sh | parallel --bar '{1} >> ncl.log'\")",
+      "  exit",
+      "end if"
+    ],
+    "description": "Generate parallel codes for NCL."
+  },
+  "get_cnLevels": {
+    "prefix": "get_cnLevels",
+	  "body": "get_cnLevels( ${1:var:numeric}, ${2:nLevels:numeric})",
+    "description": "Get the cnLevels array using percentile."
+  },
+  "get_WRFchem_clearsky_forcing": {
+    "prefix": "get_WRFchem_clearsky_forcing",
+	  "body": "get_WRFchem_clearsky_forcing(${1:fileName:string}, ${2:aerName:string}, ${3:waveType:string})",
+    "description": "Get clear-sky radiative forcing. Return: value(0,:,:) = toa; value(1,:,:) = bot; value(2,:,:) = atm"
+  },
+  "get_WRFchem_forcing": {
+    "prefix": "get_WRFchem_forcing",
+	  "body": "get_WRFchem_forcing(${1:fileName:string}, ${2:aerName:string}, ${3:waveType:string})",
+    "description": "Get radiative forcing. Return: value(0,:,:) = toa; value(1,:,:) = bot; value(2,:,:) = atm"
+  },
+  "get_forcing": {
+    "prefix": "get_forcing",
+	  "body": "get_forcing(${1:fileName:string},${2:waveType:string})",
+    "description": "Get radiative forcing. Return: value(0,:,:) = toa; value(1,:,:) = bot; value(2,:,:) = atm"
+  },
+  "draw_refined_circles": {
+    "prefix": "draw_refined_circles",
+	  "body": "draw_refined_circles(${1:wks:graphic}, ${2:plot:graphic}, ${3:cenLat:numeric}, ${4:cenLon:numeric}, ${5:rad01:numeric}, ${6:rad02:numeric})",
+    "description": "Draw two circles."
+  },
+  "draw_China_shapefile": {
+    "prefix": "draw_China_shapefile",
+	  "body": "draw_China_shapefile(${1:wks:graphic}, ${2:plot:graphic}, ${3:res:logical})",
+    "description": "Draw the real Chinese national lines."
+  },
+  "plot_legends_jwfeng": {
+    "prefix": "plot_legends_jwfeng",
+    "body": "plot_legends_jwfeng(${1:wks:graphic}, ${2:labels:string}, ${3:x_ndc:numeric}, ${4:y_ndc:numeric}, ${5:lgres:logical}, ${6:res:logical})",
+    "description": "Plots xy legends."
+  },
+  "plot_MPAS_mesh_jwfeng": {
+    "prefix": "plot_MPAS_mesh_jwfeng",
+	  "body": "plot_MPAS_mesh_jwfeng(${1:wks:graphic}, ${2:plot:graphic}, ${3:fileName:string}, ${4:res:logical})",
+    "description": "Plots MPAS meshes over an existing plot."
+  },
+  "plot_vector_jwfeng": {
+    "prefix": "plot_vector_jwfeng",
+	  "body": "plot_vector_jwfeng(${1:wks:graphic}, ${2:u:numeric}, ${3:v:numeric}, ${4:res:logical})",
+    "description": "Plots vectors over a global map."
+  },
+  "plot_contour_jwfeng": {
+    "prefix": "plot_contour_jwfeng",
+	  "body": "plot_contour_jwfeng(${1:wks:graphic}, ${2:var:numeric}, ${4:res:logical})",
+    "description": "Plots contour over a global map."
+  },
+  "plot_vector_scalar_jwfeng": {
+    "prefix": "plot_vector_scalar_jwfeng",
+	  "body": "plot_vector_scalar_jwfeng( ${1:wks:graphic}, ${2:u:numeric}, ${3:v:numeric}, ${4:var:numeric}, ${5:res:logical})",
+    "description": "Plots contour&vector over a global map."
+  },
+  "collect_files_vars": {
+    "prefix": "collect_files_vars",
+	  "body": "collect_files_vars(${1:filesList:string}, ${2:varsList:string}, ${3:fileOutName:string}, ${4:opt:avg/join})",
+    "description": "Collect all files in filesList and output avg values of all vars to a single file. varsList can be \"all\", opt: \"avg\" or \"join\"."
+  },
+  "str_strip_right_slash": {
+    "prefix": "str_strip_right_slash",
+	  "body": "str_strip_right_slash(${1:inputString:string})",
+    "description": "Strip \"/\" if the input string is ended with \"/\"."
+  },
+  "addfile_create": {
+    "prefix": "addfile_create",
+	  "body": "addfile_create(${1:fileOutName:string})",
+    "description": "Create a brand new out file."
+  },
+  "get_month_ind_of_year": {
+    "prefix": "get_month_ind_of_year",
+	  "body": "get_month_ind_of_year(${1:year:integer})",
+    "description": "calculates the start&end ind(start from zero) of each month in the given year."
+  },
+  "get_yyyymmdd_string": {
+    "prefix": "get_yyyymmdd_string",
+	  "body": "get_yyyymmdd_string(${1:dateInt:integer})",
+    "description": "get (/\"yyyy\", \"mm\", \"dd\"/) from a integer like 19960710"
+  }
+}

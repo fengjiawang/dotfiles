@@ -1,0 +1,53 @@
+#Jwfeng's alias
+# alias cd='z'
+# alias cat='bat'
+alias rm='zsh $HOME/.rm_replace.sh'
+alias ssh='tssh'
+alias l="eza --icons=always"
+alias ls="eza --icons=always"
+alias ll="eza -l --icons=always"
+alias la="eza -la --icons=always"
+alias cp='cp -i'
+alias mv='mv -i'
+alias TAR='gtar zcvf'
+alias UNTAR='gtar zxvf'
+alias UNTAR_tar='gtar xvf'
+alias vim='nvim'
+alias yz='yazi'
+alias vimdiff='nvim -d'
+alias mpascd='cd ~/iAMAS/codes'
+alias mpascs='cd ~/iAMAS/cases'
+alias wtcd='cd ~/work/AI/AI_FOR_SCIENCE/wentian'
+alias tm='tmux attach'
+alias sf='cd $HOME/sz_files'
+proxy_on() {
+        export http_proxy=http://127.0.0.1:17890
+        export https_proxy=http://127.0.0.1:17890
+        export no_proxy=127.0.0.1,localhost
+        export HTTP_PROXY=http://127.0.0.1:17890
+        export HTTPS_PROXY=http://127.0.0.1:17890
+        export NO_PROXY=127.0.0.1,localhost
+        echo -e "\033[32m[√] 已开启代理\033[0m"
+}
+proxy_off() {
+        unset http_proxy
+        unset https_proxy
+        unset no_proxy
+        unset HTTP_PROXY
+        unset HTTPS_PROXY
+        unset NO_PROXY
+        echo -e "\033[31m[x] 已关闭代理\033[0m"
+}
+# OSC 7 远程目录同步 - zsh
+export HOSTNAME=$(hostname)
+if [[ -n "$SSH_CONNECTION" && -n "$TERM" && "$TERM" != "dumb" ]]; then
+  osc7_path() {
+    local pwd_escaped=${PWD//\\/\\\\}
+    pwd_escaped=${pwd_escaped//\"/\\\"}
+    printf "\x1b]7;file://%s%s\x1b\\" "${HOSTNAME%.*}" "$pwd_escaped"
+  }
+  # 切换目录时触发（chpwd是zsh的内置钩子，切换目录自动执行）
+  chpwd_functions+=(osc7_path)
+  # 首次登录时执行一次，初始化路径
+  osc7_path
+fi

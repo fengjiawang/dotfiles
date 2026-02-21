@@ -1,0 +1,3 @@
+[[language]]
+name = "fortran"
+file-types = ["F", "f90", "F90", "f03", "F03", "f08", "F08"]

@@ -1,0 +1,99 @@
+{
+  "skill": {
+    "id": "academic-writing-assistant",
+    "name": "Academic Writing Assistant",
+    "version": "1.1.0",
+    "author": "Alma AI Assistant",
+    "description": "English academic paper writing assistant specialized for atmospheric science and ACP journal",
+    "category": "academic-writing",
+    "tags": ["academic", "writing", "atmospheric-science", "acp", "research", "phd"],
+    "license": "MIT",
+    "created": "2025-12-19",
+    "updated": "2025-12-19"
+  },
+  
+  "activation": {
+    "phrases": [
+      "使用学术写作助手",
+      "开启论文写作模式",
+      "我需要ACP论文帮助",
+      "academic writing assistant",
+      "论文助手",
+      "use academic writing assistant",
+      "start paper writing mode"
+    ],
+    "patterns": [
+      ".*(academic|writing|paper).*(assistant|help|aid).*",
+      ".*(ACP|journal|format).*(help|check|review).*",
+      ".*(大气科学|沙尘气溶胶|印度夏季风).*(写作|论文|润色).*"
+    ]
+  },
+  
+  "capabilities": {
+    "paper_structure": {
+      "enabled": true,
+      "templates": ["acp", "nature", "science", "custom"],
+      "description": "Generate and optimize paper outlines and structure"
+    },
+    "language_polishing": {
+      "enabled": true,
+      "academic_level": "phd",
+      "field_specific": true,
+      "description": "Improve academic expression and terminology"
+    },
+    "format_checking": {
+      "enabled": true,
+      "journal": "acp",
+      "check_citations": true,
+      "description": "Verify formatting against journal requirements"
+    },
+    "reference_management": {
+      "enabled": true,
+      "formats": ["acp", "apa", "mla", "ieee", "chicago"],
+      "description": "Format and manage references"
+    },
+    "domain_support": {
+      "enabled": true,
+      "domains": ["atmospheric-science", "climate-science", "environmental-science"],
+      "specializations": ["dust-aerosol", "indian-summer-monsoon", "wrchem", "cam"],
+      "description": "Provide domain-specific terminology and templates"
+    }
+  },
+  
+  "user_profile": {
+    "default": {
+      "academic_level": "phd",
+      "research_field": "atmospheric science",
+      "specialization": "dust aerosol effects on Indian summer monsoon",
+      "target_journal": "ACP",
+      "preferred_citation": "acp",
+      "language": ["english", "chinese"]
+    }
+  },
+  
+  "paths": {
+    "templates": "./templates",
+    "resources": "./resources",
+    "examples": "./examples",
+    "scripts": "./scripts",
+    "references": "./references",
+    "assets": "./assets"
+  },
+  
+  "settings": {
+    "auto_suggest": true,
+    "detailed_explanations": true,
+    "show_examples": true,
+    "suggest_alternatives": true,
+    "check_plagiarism_risk": true,
+    "progressive_disclosure": true,
+    "bilingual_support": true
+  },
+  
+  "compatibility": {
+    "agent": "Alma",
+    "minimum_version": "1.0.0",
+    "required_tools": ["WebSearch", "WebFetch", "Bash", "Read", "Write", "Edit"],
+    "system_requirements": ["latex", "pandoc"]
+  }
+}

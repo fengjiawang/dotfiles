@@ -1,0 +1,196 @@
+{
+  "introduction_phrases": {
+    "establishing_importance": [
+      "The [phenomenon] plays a crucial role in...",
+      "Understanding [process] is essential for...",
+      "[Variable] represents a key component of...",
+      "Accurate prediction of [phenomenon] is vital for...",
+      "The impacts of [factor] on [system] have significant implications for..."
+    ],
+    "identifying_gaps": [
+      "However, the mechanisms underlying [phenomenon] remain poorly understood.",
+      "Despite considerable research, uncertainties persist regarding...",
+      "Previous studies have reported conflicting results about...",
+      "Few studies have systematically examined the role of...",
+      "The relative importance of [factor A] versus [factor B] remains unclear."
+    ],
+    "stating_objectives": [
+      "In this study, we investigate the effects of...",
+      "The primary objective of this research is to quantify...",
+      "We aim to address these uncertainties by examining...",
+      "This study seeks to elucidate the mechanisms linking...",
+      "Our specific goals are threefold: first, to...; second, to...; third, to..."
+    ]
+  },
+  
+  "methods_phrases": {
+    "model_description": [
+      "We employed the [Model Name] version [version number]...",
+      "The model domain covers [region] with [resolution] horizontal resolution...",
+      "[Number] vertical levels extend from the surface to [pressure] hPa...",
+      "Key physical parameterizations include...",
+      "The model was configured with the following options..."
+    ],
+    "experimental_design": [
+      "Two sets of simulations were conducted...",
+      "Sensitivity experiments were designed to isolate...",
+      "We performed [number] ensemble members to account for...",
+      "The control simulation (CTRL) includes...",
+      "The sensitivity experiment (EXP) differs from CTRL by..."
+    ],
+    "data_analysis": [
+      "Model output was analyzed using...",
+      "Statistical significance was assessed using...",
+      "We computed [metric] following the method of [Author, Year]...",
+      "Uncertainty estimates represent ±1 standard deviation...",
+      "The analysis period covers [years] to capture..."
+    ]
+  },
+  
+  "results_phrases": {
+    "presenting_findings": [
+      "Figure [number] shows the spatial distribution of...",
+      "Our results reveal significant changes in...",
+      "The most pronounced effects occur in...",
+      "Statistical analysis indicates that...",
+      "We find a strong correlation between... and..."
+    ],
+    "quantifying_results": [
+      "The magnitude of change is approximately...",
+      "Values range from [min] to [max] with a mean of...",
+      "The difference between experiments is statistically significant (p < 0.05)...",
+      "The correlation coefficient is [value] with a p-value of...",
+      "Uncertainty estimates are shown as shaded regions/error bars..."
+    ],
+    "comparing_with_previous": [
+      "These findings are consistent with previous studies reporting...",
+      "In contrast to [Author, Year], we observe...",
+      "Our results align with the hypothesis that...",
+      "The magnitude of response is comparable to that found by...",
+      "Unlike earlier work, our analysis reveals..."
+    ]
+  },
+  
+  "discussion_phrases": {
+    "interpreting_results": [
+      "These results can be explained by several mechanisms...",
+      "The observed pattern suggests that...",
+      "One possible explanation for this finding is...",
+      "The correlation between [A] and [B] indicates that...",
+      "These changes are likely driven by..."
+    ],
+    "addressing_limitations": [
+      "Several limitations of this study should be acknowledged...",
+      "Our analysis does not account for...",
+      "The model simulations may underestimate/overestimate...",
+      "Uncertainties in [parameter] could affect the results...",
+      "Future studies should address these limitations by..."
+    ],
+    "broader_implications": [
+      "These findings have important implications for...",
+      "The results suggest that [process] may play a larger role than previously thought...",
+      "Our study highlights the need to consider... in future research...",
+      "These insights could improve predictions of...",
+      "The methodological approach developed here could be applied to..."
+    ]
+  },
+  
+  "conclusion_phrases": {
+    "summarizing_findings": [
+      "In summary, this study demonstrates that...",
+      "The main findings of this research are threefold...",
+      "Our analysis reveals several key insights...",
+      "We have shown that [factor] significantly influences...",
+      "The primary conclusion from this work is that..."
+    ],
+    "stating_contributions": [
+      "This research advances our understanding of...",
+      "We provide new evidence for the role of...",
+      "Our study contributes to the growing body of literature on...",
+      "These results offer a more comprehensive view of...",
+      "This work establishes a framework for future investigations of..."
+    ],
+    "suggesting_future_work": [
+      "Future research should focus on...",
+      "Additional studies are needed to confirm...",
+      "Longer simulations would help to...",
+      "Incorporating [process] could improve...",
+      "Further investigation of [aspect] would be valuable..."
+    ]
+  },
+  
+  "transition_phrases": {
+    "between_sections": [
+      "The remainder of this paper is organized as follows...",
+      "Having described the methods, we now present the results...",
+      "Following the presentation of results, we discuss their implications...",
+      "Building on these findings, we now turn to...",
+      "In the next section, we examine..."
+    ],
+    "within_sections": [
+      "Furthermore, we also consider...",
+      "In addition to [aspect A], we analyze...",
+      "Similarly, [process B] shows...",
+      "By contrast, [region C] exhibits...",
+      "It is also important to note that..."
+    ]
+  },
+  
+  "cautionary_phrases": {
+    "hedging": [
+      "These results suggest that...",
+      "Our findings indicate a potential role for...",
+      "The data are consistent with the hypothesis that...",
+      "This pattern may reflect...",
+      "One interpretation of these results is that..."
+    ],
+    "acknowledging_uncertainty": [
+      "However, these conclusions should be viewed with caution because...",
+      "The limitations of our approach include...",
+      "Alternative explanations cannot be ruled out...",
+      "Further validation is needed to confirm...",
+      "These estimates are subject to considerable uncertainty..."
+    ]
+  },
+  
+  "acp_specific_phrases": {
+    "data_availability": [
+      "The model code and configuration files are available from...",
+      "All data used in this study are publicly available from...",
+      "Scripts for data analysis are provided in the supplementary material...",
+      "A DOI has been assigned to the dataset at...",
+      "The code repository can be accessed at..."
+    ],
+    "author_contributions": [
+      "[Author] conceived the study and designed the experiments.",
+      "[Author] performed the simulations and analyzed the data.",
+      "[Author] wrote the manuscript with input from all authors.",
+      "All authors contributed to the interpretation of results.",
+      "[Author] supervised the research and secured funding."
+    ]
+  },
+  
+  "atmospheric_science_specific": {
+    "dust_aerosols": [
+      "Dust aerosols modify the regional energy budget through...",
+      "The radiative effects of dust depend critically on...",
+      "Dust-induced changes in atmospheric heating alter...",
+      "The vertical distribution of dust plays a key role in...",
+      "Dust interactions with monsoon clouds may enhance or suppress..."
+    ],
+    "monsoon_dynamics": [
+      "The land-sea thermal contrast drives monsoon circulation...",
+      "Moisture convergence patterns determine precipitation distribution...",
+      "Atmospheric stability modulates convective activity...",
+      "Large-scale circulation features such as the monsoon trough...",
+      "Intraseasonal oscillations contribute to rainfall variability..."
+    ],
+    "modeling_studies": [
+      "Model simulations capture the observed spatial patterns of...",
+      "The model reproduces key features of monsoon evolution...",
+      "Systematic biases in simulated precipitation include...",
+      "Ensemble spread provides a measure of uncertainty...",
+      "Model sensitivity to parameterizations highlights the importance of..."
+    ]
+  }
+}

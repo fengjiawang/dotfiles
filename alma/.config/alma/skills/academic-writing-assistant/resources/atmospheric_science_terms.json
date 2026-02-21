@@ -1,0 +1,267 @@
+{
+  "dust_aerosol_terms": {
+    "general": [
+      "mineral dust",
+      "dust aerosols",
+      "aeolian dust",
+      "soil-derived particles",
+      "wind-blown dust",
+      "desert dust",
+      "dust plumes",
+      "dust storms",
+      "dust outbreaks",
+      "dust loading",
+      "dust concentration",
+      "dust deposition",
+      "dust transport",
+      "dust lifetime"
+    ],
+    "properties": [
+      "dust optical depth (DOD)",
+      "aerosol optical depth (AOD)",
+      "single scattering albedo (SSA)",
+      "asymmetry parameter (g)",
+      "extinction coefficient",
+      "scattering coefficient",
+      "absorption coefficient",
+      "size distribution",
+      "effective radius",
+      "mass concentration",
+      "number concentration",
+      "hygroscopicity",
+      "refractive index"
+    ],
+    "processes": [
+      "dust emission",
+      "saltation",
+      "suspension",
+      "dry deposition",
+      "wet deposition",
+      "gravitational settling",
+      "coagulation",
+      "aging processes",
+      "chemical transformation",
+      "mixing state",
+      "vertical mixing",
+      "long-range transport"
+    ],
+    "effects": [
+      "direct radiative effect",
+      "semi-direct effect",
+      "indirect effect",
+      "dust-radiation interactions",
+      "dust-cloud interactions",
+      "surface dimming",
+      "atmospheric heating",
+      "radiative forcing",
+      "climate forcing",
+      "snow albedo effect"
+    ]
+  },
+  
+  "indian_summer_monsoon_terms": {
+    "circulation": [
+      "Indian summer monsoon (ISM)",
+      "South Asian monsoon",
+      "monsoon trough",
+      "monsoon onset",
+      "monsoon withdrawal",
+      "monsoon break",
+      "active phase",
+      "break phase",
+      "monsoon depression",
+      "low-level jet",
+      "Findlater jet",
+      "tropical easterly jet",
+      "monsoon Hadley cell",
+      "Walker circulation",
+      "Mascarene High",
+      "Tibetan High"
+    ],
+    "precipitation": [
+      "monsoon rainfall",
+      "orographic precipitation",
+      "convective precipitation",
+      "stratiform precipitation",
+      "rainfall variability",
+      "rainfall anomaly",
+      "drought conditions",
+      "flood conditions",
+      "rainfall intensity",
+      "rainfall frequency",
+      "wet spells",
+      "dry spells"
+    ],
+    "dynamics": [
+      "land-sea thermal contrast",
+      "meridional temperature gradient",
+      "moist static energy",
+      "convective available potential energy (CAPE)",
+      "convective inhibition (CIN)",
+      "vertical wind shear",
+      "moisture convergence",
+      "moisture transport",
+      "atmospheric stability",
+      "boundary layer processes",
+      "diurnal cycle",
+      "intraseasonal oscillations"
+    ],
+    "indices": [
+      "All-India Summer Monsoon Rainfall Index",
+      "Monsoon Hadley Circulation Index",
+      "Webster-Yang Index",
+      "Indian Monsoon Index",
+      "Dynamic Normalized Monsoon Index",
+      "Extended Indian Monsoon Rainfall Index"
+    ]
+  },
+  
+  "modeling_terms": {
+    "models": [
+      "WRF-Chem",
+      "CAM",
+      "CESM",
+      "ECHAM",
+      "MIROC",
+      "RegCM",
+      "GEOS-Chem",
+      "GISS ModelE",
+      "HadGEM",
+      "IPSL-CM"
+    ],
+    "experiments": [
+      "control simulation",
+      "sensitivity experiment",
+      "ensemble simulation",
+      "historical simulation",
+      "future projection",
+      "scenario analysis",
+      "idealized experiment",
+      "numerical experiment"
+    ],
+    "analysis": [
+      "model validation",
+      "model evaluation",
+      "model intercomparison",
+      "bias correction",
+      "statistical downscaling",
+      "uncertainty quantification",
+      "sensitivity analysis",
+      "attribution analysis"
+    ],
+    "metrics": [
+      "root mean square error (RMSE)",
+      "mean absolute error (MAE)",
+      "correlation coefficient",
+      "bias",
+      "skill score",
+      "Taylor diagram",
+      "probability density function",
+      "cumulative distribution function"
+    ]
+  },
+  
+  "acp_specific_terms": {
+    "journal_format": [
+      "Copernicus format",
+      "author-year citation",
+      "interactive discussion",
+      "supplementary material",
+      "data availability statement",
+      "code availability statement",
+      "interactive comment"
+    ],
+    "sections": [
+      "Abstract",
+      "Keywords",
+      "Introduction",
+      "Methods",
+      "Results",
+      "Discussion",
+      "Conclusions",
+      "Code and data availability",
+      "Author contributions",
+      "Competing interests",
+      "Acknowledgements",
+      "References"
+    ]
+  },
+  
+  "common_abbreviations": {
+    "AOD": "aerosol optical depth",
+    "DOD": "dust optical depth",
+    "SSA": "single scattering albedo",
+    "TOA": "top of the atmosphere",
+    "SFC": "surface",
+    "ATM": "atmosphere",
+    "ISM": "Indian summer monsoon",
+    "SAM": "South Asian monsoon",
+    "ENSO": "El Niño-Southern Oscillation",
+    "IOD": "Indian Ocean Dipole",
+    "MJO": "Madden-Julian Oscillation",
+    "BSISO": "Boreal Summer Intraseasonal Oscillation",
+    "WRF": "Weather Research and Forecasting",
+    "CAM": "Community Atmosphere Model",
+    "CESM": "Community Earth System Model",
+    "CMIP": "Coupled Model Intercomparison Project",
+    "AEROCOM": "Aerosol Comparisons between Observations and Models",
+    "AERONET": "Aerosol Robotic Network",
+    "MODIS": "Moderate Resolution Imaging Spectroradiometer",
+    "CALIPSO": "Cloud-Aerosol Lidar and Infrared Pathfinder Satellite Observations",
+    "CERES": "Clouds and the Earth's Radiant Energy System",
+    "TRMM": "Tropical Rainfall Measuring Mission",
+    "GPM": "Global Precipitation Measurement",
+    "ERA5": "ECMWF Reanalysis 5th Generation",
+    "NCEP": "National Centers for Environmental Prediction",
+    "NOAA": "National Oceanic and Atmospheric Administration",
+    "NASA": "National Aeronautics and Space Administration",
+    "IPCC": "Intergovernmental Panel on Climate Change",
+    "WMO": "World Meteorological Organization"
+  },
+  
+  "academic_phrases": {
+    "introduction": [
+      "Despite considerable research, uncertainties remain...",
+      "A growing body of evidence suggests...",
+      "Previous studies have reported conflicting results...",
+      "The mechanisms underlying this phenomenon are not fully understood...",
+      "Few studies have systematically examined...",
+      "This knowledge gap motivates the present study...",
+      "To address these uncertainties, we investigate..."
+    ],
+    "methods": [
+      "We employed the [model name] version [version]...",
+      "The model domain covers [region] with [resolution] horizontal resolution...",
+      "Sensitivity experiments were conducted to isolate...",
+      "Model performance was evaluated against multiple observational datasets...",
+      "Statistical significance was assessed using [test name]...",
+      "Uncertainty estimates represent [definition]..."
+    ],
+    "results": [
+      "Our analysis reveals significant...",
+      "Figure [number] shows the spatial distribution of...",
+      "The most pronounced changes occur in...",
+      "Statistical analysis indicates that...",
+      "These findings are consistent with...",
+      "In contrast to previous studies, we find...",
+      "The correlation between [variable A] and [variable B] is..."
+    ],
+    "discussion": [
+      "These results can be explained by...",
+      "Several mechanisms may contribute to...",
+      "Our findings align with the hypothesis that...",
+      "The discrepancies between studies may arise from...",
+      "Limitations of this study include...",
+      "Future research should address...",
+      "These results have implications for..."
+    ],
+    "conclusions": [
+      "In summary, this study demonstrates...",
+      "The main findings are threefold...",
+      "Our results advance understanding of...",
+      "This research provides new insights into...",
+      "The implications for [field] are significant...",
+      "Further investigation is needed to..."
+    ]
+  }
+}

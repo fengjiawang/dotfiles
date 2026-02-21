@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "next-ai-draw-io": {
+      "command": "npx",
+      "args": [
+        "@next-ai-drawio/mcp-server@latest"
+      ]
+    },
+    "Context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "env": {
+        "DEFAULT_MINIMUM_TOKENS": "${DEFAULT_MINIMUM_TOKENS}"
+      }
+    },
+    "File System": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/jwfeng/"
+      ]
+    }
+  }
+}
