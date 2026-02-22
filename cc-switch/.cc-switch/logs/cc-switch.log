@@ -1,0 +1,111 @@
+[2026-01-30][16:18:35][INFO][cc_switch_lib::database::schema] 检测到 user_version=0，迁移到 1（补齐缺失列并设置版本）
+[2026-01-30][16:18:35][INFO][cc_switch_lib::database::schema] 迁移数据库从 v1 到 v2（添加使用统计表和完整字段，重构 skills 表）
+[2026-01-30][16:18:35][INFO][cc_switch_lib::database::schema] 已为表 providers 添加缺失列 cost_multiplier
+[2026-01-30][16:18:35][INFO][cc_switch_lib::database::schema] 已为表 providers 添加缺失列 limit_daily_usd
+[2026-01-30][16:18:35][INFO][cc_switch_lib::database::schema] 已为表 providers 添加缺失列 limit_monthly_usd
+[2026-01-30][16:18:35][INFO][cc_switch_lib::database::schema] 已为表 providers 添加缺失列 provider_type
+[2026-01-30][16:18:35][INFO][cc_switch_lib::database::schema] 已插入 57 条默认模型定价数据
+[2026-01-30][16:18:35][INFO][cc_switch_lib::database::schema] skills 表已经是 v3 结构，跳过 v1 -> v2 迁移
+[2026-01-30][16:18:35][INFO][cc_switch_lib::database::schema] proxy_config 已经是三行结构，跳过迁移
+[2026-01-30][16:18:35][INFO][cc_switch_lib::database::schema] 迁移数据库从 v2 到 v3（Skills 统一管理架构）
+[2026-01-30][16:18:35][INFO][cc_switch_lib::database::schema] skills 表已经是 v3 结构，跳过迁移
+[2026-01-30][16:18:35][INFO][cc_switch_lib::database::schema] 迁移数据库从 v3 到 v4（OpenCode 支持）
+[2026-01-30][16:18:35][INFO][cc_switch_lib::database::schema] v3 -> v4 迁移完成：已添加 OpenCode 支持
+[2026-01-30][16:18:35][INFO][cc_switch_lib::database::dao::skills] 补充默认 Skill 仓库: anthropics/skills
+[2026-01-30][16:18:35][INFO][cc_switch_lib::database::dao::skills] 补充默认 Skill 仓库: ComposioHQ/awesome-claude-skills
+[2026-01-30][16:18:35][INFO][cc_switch_lib::database::dao::skills] 补充默认 Skill 仓库: cexll/myclaude
+[2026-01-30][16:18:35][INFO][cc_switch_lib::database::dao::skills] 补充默认 Skill 仓库: JimLiu/baoyu-skills
+[2026-01-30][16:18:35][INFO][cc_switch_lib::database::dao::skills] 补充默认 Skill 仓库完成，新增 4 个
+[2026-01-30][16:18:35][INFO][cc_switch_lib] ✓ Initialized 4 default skill repositories
+[2026-01-30][16:18:35][INFO][cc_switch_lib] ✓ Imported default provider for claude
+[2026-01-30][16:18:35][INFO][cc_switch_lib] ✓ Extracted common config snippet for claude
+[2026-01-30][16:18:35][DEBUG][cc_switch_lib] ○ No default provider to import for codex: Codex 配置文件不存在 (Codex configuration file is missing)
+[2026-01-30][16:18:35][DEBUG][cc_switch_lib] ○ No default provider to import for gemini: Gemini 配置文件不存在 (Gemini configuration file is missing)
+[2026-01-30][16:18:35][DEBUG][cc_switch_lib] ○ No OpenCode providers found to import
+[2026-01-30][16:18:35][INFO][cc_switch_lib] MCP table empty, importing from live configurations...
+[2026-01-30][16:18:35][DEBUG][cc_switch_lib] ○ No Claude MCP servers found to import
+[2026-01-30][16:18:35][DEBUG][cc_switch_lib] ○ No Codex MCP servers found to import
+[2026-01-30][16:18:35][DEBUG][cc_switch_lib] ○ No Gemini MCP servers found to import
+[2026-01-30][16:18:35][DEBUG][cc_switch_lib] ○ No OpenCode MCP servers found to import
+[2026-01-30][16:18:35][INFO][cc_switch_lib] Prompts table empty, importing from live configurations...
+[2026-01-30][16:18:35][DEBUG][cc_switch_lib] ○ No prompt file found for claude
+[2026-01-30][16:18:35][DEBUG][cc_switch_lib] ○ No prompt file found for codex
+[2026-01-30][16:18:35][DEBUG][cc_switch_lib] ○ No prompt file found for gemini
+[2026-01-30][16:18:35][INFO][cc_switch_lib::app_store] app_config_dir 迁移功能已移除，请在设置中重新配置
+[2026-01-30][16:18:35][INFO][cc_switch_lib] === Registering deep-link URL handler ===
+[2026-01-30][16:18:35][INFO][cc_switch_lib] ✓ Deep-link URL handler registered
+[2026-01-30][16:18:35][INFO][cc_switch_lib] 已加载日志配置: enabled=true, level=info
+[2026-01-30][16:18:35][INFO][cc_switch_lib::proxy::http_client] [GlobalProxy] Initialized: direct connection
+[2026-01-30][16:22:01][INFO][cc_switch_lib::proxy::server] [SRV-001] 代理服务器启动于 127.0.0.1:15721
+[2026-01-30][16:22:01][INFO][cc_switch_lib::services::proxy] 代理服务器已启动: 127.0.0.1:15721
+[2026-01-30][16:22:01][INFO][cc_switch_lib::database::dao::proxy] 已备份 claude Live 配置
+[2026-01-30][16:22:01][INFO][cc_switch_lib::services::proxy] Claude Live 配置已接管，代理地址: http://127.0.0.1:15721
+[2026-01-30][16:22:04][INFO][cc_switch_lib::services::proxy] Claude Live 配置已恢复
+[2026-01-30][16:22:04][INFO][cc_switch_lib::database::dao::proxy] 已删除 claude Live 配置备份
+[2026-01-30][16:22:04][INFO][cc_switch_lib::proxy::server] [SRV-002] 代理服务器已完全停止
+[2026-01-30][16:22:04][INFO][cc_switch_lib::services::proxy] 代理服务器已停止
+[2026-01-30][16:25:11][INFO][cc_switch_lib::tray] 处理托盘菜单事件: show_main
+[2026-01-30][16:25:58][INFO][cc_switch_lib::commands::usage] 获取模型定价列表
+[2026-01-30][16:25:58][INFO][cc_switch_lib::commands::usage] 成功获取 57 条模型定价数据
+[2026-01-30][16:35:10][INFO][cc_switch_lib::tray] 处理托盘菜单事件: show_main
+[2026-01-30][16:44:45][INFO][cc_switch_lib::tray] 处理托盘菜单事件: show_main
+[2026-02-02][11:54:42][INFO][cc_switch_lib::tray] 处理托盘菜单事件: show_main
+[2026-02-02][12:16:48][INFO][cc_switch_lib::tray] 处理托盘菜单事件: show_main
+[2026-02-02][12:16:58][INFO][cc_switch_lib::services::skill] 成功导入 15 个 Skills
+[2026-02-02][12:17:14][INFO][cc_switch_lib::services::skill] Skill writing-plans 的 Claude 状态已更新为 false
+[2026-02-02][12:17:15][INFO][cc_switch_lib::services::skill] Skill writing-plans 的 Claude 状态已更新为 true
+[2026-02-02][12:17:22][INFO][cc_switch_lib::services::skill] Skill brainstorming 的 Claude 状态已更新为 false
+[2026-02-02][12:17:23][INFO][cc_switch_lib::services::skill] Skill brainstorming 的 Claude 状态已更新为 true
+[2026-02-02][12:17:24][INFO][cc_switch_lib::services::skill] Skill dispatching-parallel-agents 的 Claude 状态已更新为 false
+[2026-02-02][12:17:24][INFO][cc_switch_lib::services::skill] Skill dispatching-parallel-agents 的 Claude 状态已更新为 true
+[2026-02-02][12:17:25][INFO][cc_switch_lib::services::skill] Skill executing-plans 的 Claude 状态已更新为 false
+[2026-02-02][12:17:25][INFO][cc_switch_lib::services::skill] Skill executing-plans 的 Claude 状态已更新为 true
+[2026-02-02][12:17:27][INFO][cc_switch_lib::services::skill] Skill finishing-a-development-branch 的 Claude 状态已更新为 false
+[2026-02-02][12:17:27][INFO][cc_switch_lib::services::skill] Skill finishing-a-development-branch 的 Claude 状态已更新为 true
+[2026-02-02][12:17:29][INFO][cc_switch_lib::services::skill] Skill frontend-design 的 Claude 状态已更新为 false
+[2026-02-02][12:17:29][INFO][cc_switch_lib::services::skill] Skill frontend-design 的 Claude 状态已更新为 true
+[2026-02-02][12:17:30][INFO][cc_switch_lib::services::skill] Skill receiving-code-review 的 Claude 状态已更新为 false
+[2026-02-02][12:17:30][INFO][cc_switch_lib::services::skill] Skill receiving-code-review 的 Claude 状态已更新为 true
+[2026-02-02][12:17:32][INFO][cc_switch_lib::services::skill] Skill requesting-code-review 的 Claude 状态已更新为 false
+[2026-02-02][12:17:32][INFO][cc_switch_lib::services::skill] Skill requesting-code-review 的 Claude 状态已更新为 true
+[2026-02-02][12:17:34][INFO][cc_switch_lib::services::skill] Skill subagent-driven-development 的 Claude 状态已更新为 false
+[2026-02-02][12:17:34][INFO][cc_switch_lib::services::skill] Skill subagent-driven-development 的 Claude 状态已更新为 true
+[2026-02-02][12:17:35][INFO][cc_switch_lib::services::skill] Skill systematic-debugging 的 Claude 状态已更新为 false
+[2026-02-02][12:17:36][INFO][cc_switch_lib::services::skill] Skill systematic-debugging 的 Claude 状态已更新为 true
+[2026-02-02][12:17:38][INFO][cc_switch_lib::services::skill] Skill test-driven-development 的 Codex 状态已更新为 true
+[2026-02-02][12:17:38][INFO][cc_switch_lib::services::skill] Skill test-driven-development 的 Codex 状态已更新为 false
+[2026-02-02][12:17:39][INFO][cc_switch_lib::services::skill] Skill test-driven-development 的 Claude 状态已更新为 false
+[2026-02-02][12:17:39][INFO][cc_switch_lib::services::skill] Skill test-driven-development 的 Claude 状态已更新为 true
+[2026-02-02][12:17:41][INFO][cc_switch_lib::services::skill] Skill using-git-worktrees 的 Claude 状态已更新为 false
+[2026-02-02][12:17:41][INFO][cc_switch_lib::services::skill] Skill using-git-worktrees 的 Claude 状态已更新为 true
+[2026-02-02][12:17:42][INFO][cc_switch_lib::services::skill] Skill using-superpowers 的 Claude 状态已更新为 false
+[2026-02-02][12:17:42][INFO][cc_switch_lib::services::skill] Skill using-superpowers 的 Claude 状态已更新为 true
+[2026-02-02][12:17:44][INFO][cc_switch_lib::services::skill] Skill verification-before-completion 的 Claude 状态已更新为 false
+[2026-02-02][12:17:44][INFO][cc_switch_lib::services::skill] Skill verification-before-completion 的 Claude 状态已更新为 true
+[2026-02-02][12:17:46][INFO][cc_switch_lib::services::skill] Skill writing-plans 的 Claude 状态已更新为 false
+[2026-02-02][12:17:46][INFO][cc_switch_lib::services::skill] Skill writing-plans 的 Claude 状态已更新为 true
+[2026-02-02][12:17:48][INFO][cc_switch_lib::services::skill] Skill writing-skills 的 Claude 状态已更新为 false
+[2026-02-02][12:17:48][INFO][cc_switch_lib::services::skill] Skill writing-skills 的 Claude 状态已更新为 true
+[2026-02-02][12:19:08][INFO][cc_switch_lib::tray] 处理托盘菜单事件: show_main
+[2026-02-02][12:19:47][INFO][cc_switch_lib::services::skill] Skill brainstorming 卸载成功
+[2026-02-02][12:19:49][INFO][cc_switch_lib::services::skill] Skill dispatching-parallel-agents 卸载成功
+[2026-02-02][12:19:51][INFO][cc_switch_lib::services::skill] Skill executing-plans 卸载成功
+[2026-02-02][12:19:52][INFO][cc_switch_lib::services::skill] Skill finishing-a-development-branch 卸载成功
+[2026-02-02][12:19:54][INFO][cc_switch_lib::services::skill] Skill frontend-design 卸载成功
+[2026-02-02][12:19:55][INFO][cc_switch_lib::services::skill] Skill receiving-code-review 卸载成功
+[2026-02-02][12:19:56][INFO][cc_switch_lib::services::skill] Skill requesting-code-review 卸载成功
+[2026-02-02][12:19:57][INFO][cc_switch_lib::services::skill] Skill subagent-driven-development 卸载成功
+[2026-02-02][12:19:59][INFO][cc_switch_lib::services::skill] Skill systematic-debugging 卸载成功
+[2026-02-02][12:20:00][INFO][cc_switch_lib::services::skill] Skill test-driven-development 卸载成功
+[2026-02-02][12:20:02][INFO][cc_switch_lib::services::skill] Skill using-git-worktrees 卸载成功
+[2026-02-02][12:20:03][INFO][cc_switch_lib::services::skill] Skill using-superpowers 卸载成功
+[2026-02-02][12:20:05][INFO][cc_switch_lib::services::skill] Skill verification-before-completion 卸载成功
+[2026-02-02][12:20:06][INFO][cc_switch_lib::services::skill] Skill writing-plans 卸载成功
+[2026-02-02][12:20:07][INFO][cc_switch_lib::services::skill] Skill writing-skills 卸载成功
+[2026-02-03][12:53:27][INFO][cc_switch_lib::tray] 处理托盘菜单事件: show_main
+[2026-02-03][16:27:51][INFO][cc_switch_lib::tray] 处理托盘菜单事件: show_main
+[2026-02-03][18:19:56][INFO][cc_switch_lib::tray] 处理托盘菜单事件: show_main
+[2026-02-03][18:33:28][INFO][cc_switch_lib::tray] 处理托盘菜单事件: quit
+[2026-02-03][18:33:28][INFO][cc_switch_lib::tray] 退出应用
+[2026-02-03][18:33:28][INFO][cc_switch_lib] 收到退出请求，开始清理...
+[2026-02-03][18:33:28][INFO][cc_switch_lib] 清理完成，退出应用

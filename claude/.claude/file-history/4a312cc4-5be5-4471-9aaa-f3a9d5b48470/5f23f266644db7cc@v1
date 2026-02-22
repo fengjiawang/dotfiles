@@ -1,0 +1,55 @@
+import Cocoa
+
+@main
+class AppDelegate: NSObject, NSApplicationDelegate {
+
+    var statusBarManager: StatusBarManager?
+    var settingsWindowController: NSWindowController?
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        // Initialize managers
+        SettingsManager.shared.load()
+        HotKeyManager.shared.startListening()
+        WindowManager.shared.setupAccessibilityPermission()
+
+        // Setup menu bar
+        statusBarManager = StatusBarManager()
+
+        // Open settings window on launch
+        showSettingsWindow()
+
+        // Hide dock icon behavior
+        NSApp.setActivationPolicy(.accessory)
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        HotKeyManager.shared.stopListening()
+    }
+
+    func showSettingsWindow() {
+        let settingsVC = SettingsViewController()
+        let window = NSWindow(contentViewController: settingsVC)
+        window.title = "WindowSnap Settings"
+        window.styleMask = [.titled, .closable, .miniaturizable]
+        window.center()
+
+        settingsWindowController = NSWindowController(window: window)
+        settingsWindowController?.showWindow(nil)
+
+        // When settings window closes, ensure dock stays hidden
+        window.orderOut(nil)
+        NSApp.setActivationPolicy(.accessory)
+
+        // Show the window temporarily for user interaction
+        settingsWindowController?.window?.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    func hideDock() {
+        NSApp.setActivationPolicy(.accessory)
+    }
+
+    func showDock() {
+        NSApp.setActivationPolicy(.regular)
+    }
+}

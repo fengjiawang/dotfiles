@@ -1,0 +1,63 @@
+import Foundation
+
+struct AppSettings: Codable {
+    var keyCode: UInt16
+    var modifierFlags: UInt64
+    var scaleX: Double
+    var scaleY: Double
+
+    static let `default` = AppSettings(
+        keyCode: 6, // Z key
+        modifierFlags: 0x00080000, // option key = 0x00080000
+        scaleX: 0.8,
+        scaleY: 0.8
+    )
+}
+
+class SettingsManager {
+    static let shared = SettingsManager()
+
+    private let defaults = UserDefaults.standard
+    private let settingsKey = "com.windowsnap.settings"
+
+    var settings: AppSettings = .default {
+        didSet {
+            _ = save(settings)
+        }
+    }
+
+    private init() {}
+
+    func load() {
+        do {
+            if let data = defaults.data(forKey: settingsKey) {
+                settings = try JSONDecoder().decode(AppSettings.self, from: data)
+                print("Info: Settings loaded successfully")
+            }
+        } catch {
+            print("Warning: Failed to load settings, using defaults: \(error)")
+            settings = .default
+        }
+    }
+
+    @discardableResult
+    func save(_ newSettings: AppSettings) -> Bool {
+        do {
+            let data = try JSONEncoder().encode(newSettings)
+            defaults.set(data, forKey: settingsKey)
+            settings = newSettings
+
+            // Update hotkey
+            HotKeyManager.shared.updateHotKey()
+            return true
+        } catch {
+            print("Error: Failed to save settings: \(error)")
+            return false
+        }
+    }
+
+    func reset() {
+        _ = save(.default)
+        print("Info: Settings reset to defaults")
+    }
+}

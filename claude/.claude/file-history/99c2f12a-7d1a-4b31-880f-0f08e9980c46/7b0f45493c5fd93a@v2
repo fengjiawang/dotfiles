@@ -1,0 +1,1265 @@
+import Foundation
+import AppKit
+import Carbon
+import CoreGraphics
+import os.log
+
+// MARK: - 日志系统
+private let logger = OSLog(subsystem: "com.windowsnap.app", category: "general")
+
+// MARK: - 常量枚举
+
+enum ModifierKey: UInt64 {
+    case shift = 0x20000
+    case control = 0x40000
+    case option = 0x80000
+    case command = 0x100000
+
+    var cgEventMask: CGEventFlags {
+        switch self {
+        case .shift: return .maskShift
+        case .control: return .maskControl
+        case .option: return .maskAlternate
+        case .command: return .maskCommand
+        }
+    }
+
+    static func from(cgFlags: CGEventFlags) -> UInt64 {
+        var modifiers: UInt64 = 0
+        if cgFlags.contains(.maskShift) { modifiers |= Self.shift.rawValue }
+        if cgFlags.contains(.maskControl) { modifiers |= Self.control.rawValue }
+        if cgFlags.contains(.maskAlternate) { modifiers |= Self.option.rawValue }
+        if cgFlags.contains(.maskCommand) { modifiers |= Self.command.rawValue }
+        return modifiers
+    }
+}
+
+enum KeyCode: UInt16 {
+    case a = 0x00, s = 0x01, d = 0x02, f = 0x03
+    case q = 0x0C, w = 0x0D, e = 0x0E, r = 0x0F
+    case z = 0x06, x = 0x07, c = 0x08, v = 0x09
+    case one = 0x12, two = 0x13, three = 0x14, four = 0x15
+    case space = 0x31, enter = 0x24, escape = 0x35
+
+    var displayName: String {
+        switch self {
+        case .a: return "A"
+        case .s: return "S"
+        case .d: return "D"
+        case .f: return "F"
+        case .q: return "Q"
+        case .w: return "W"
+        case .e: return "E"
+        case .r: return "R"
+        case .z: return "Z"
+        case .x: return "X"
+        case .c: return "C"
+        case .v: return "V"
+        case .one: return "1"
+        case .two: return "2"
+        case .three: return "3"
+        case .four: return "4"
+        case .space: return "Space"
+        case .enter: return "Enter"
+        case .escape: return "Escape"
+        }
+    }
+
+    static func from(tag: Int) -> UInt16 {
+        return UInt16(tag)
+    }
+}
+
+// MARK: - 错误定义
+
+enum WindowSnapError: Error, LocalizedError {
+    case noAccessibilityPermission
+    case noActiveWindow
+    case noScreenFound
+    case cannotGetWindowPosition
+    case cannotSetWindowPosition
+    case cannotGetWindowSize
+    case cannotSetWindowSize
+    case cannotCreateAXValue
+    case invalidWindowElement
+
+    var errorDescription: String? {
+        switch self {
+        case .noAccessibilityPermission:
+            return "需要辅助功能权限来控制窗口。请在系统偏好设置中授予权限。"
+        case .noActiveWindow:
+            return "无法获取当前活动窗口。"
+        case .noScreenFound:
+            return "无法确定窗口所在的显示器。"
+        case .cannotGetWindowPosition:
+            return "无法获取窗口位置。"
+        case .cannotSetWindowPosition:
+            return "无法设置窗口位置。"
+        case .cannotGetWindowSize:
+            return "无法获取窗口大小。"
+        case .cannotSetWindowSize:
+            return "无法设置窗口大小。"
+        case .cannotCreateAXValue:
+            return "无法创建辅助功能属性值。"
+        case .invalidWindowElement:
+            return "窗口元素无效。"
+        }
+    }
+}
+
+// MARK: - 应用配置
+
+struct AppConfig: Codable {
+    var xPercent: Double
+    var yPercent: Double
+    var widthPercent: Double
+    var heightPercent: Double
+    var showMenuBarIcon: Bool
+    var hotkeyKeyCode: Int
+    var hotkeyModifiers: UInt64
+
+    init(xPercent: Double = 0.25, yPercent: Double = 0.25,
+         widthPercent: Double = 0.5, heightPercent: Double = 0.5,
+         showMenuBarIcon: Bool = true,
+         hotkeyKeyCode: Int = Int(KeyCode.z.rawValue),
+         hotkeyModifiers: UInt64 = ModifierKey.control.rawValue | ModifierKey.option.rawValue) {
+        self.xPercent = max(0.0, min(1.0, xPercent))
+        self.yPercent = max(0.0, min(1.0, yPercent))
+        self.widthPercent = max(0.1, min(1.0, widthPercent))
+        self.heightPercent = max(0.1, min(1.0, heightPercent))
+        self.showMenuBarIcon = showMenuBarIcon
+        self.hotkeyKeyCode = hotkeyKeyCode
+        self.hotkeyModifiers = hotkeyModifiers
+    }
+
+    static var `default`: AppConfig {
+        return AppConfig()
+    }
+}
+
+// MARK: - 配置管理器 (线程安全，使用 GCD)
+
+final class ConfigManager {
+    static let shared = ConfigManager()
+
+    private let configURL: URL?
+    private let queue = DispatchQueue(label: "com.windowsnap.config", attributes: .concurrent)
+    private var cachedConfig: AppConfig?
+    private var configLoading: DispatchGroup?
+
+    private init() {
+        if let appSupportURL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+            let appFolderURL = appSupportURL.appendingPathComponent("WindowSnap")
+            try? FileManager.default.createDirectory(at: appFolderURL, withIntermediateDirectories: true)
+            configURL = appFolderURL.appendingPathComponent("config.json")
+        } else {
+            os_log("无法获取应用支持目录，将使用默认配置", log: logger, type: .error)
+            configURL = nil
+        }
+    }
+
+    func load() -> AppConfig {
+        // 同步获取缓存
+        let hasCache = queue.sync { cachedConfig != nil }
+        if hasCache {
+            return queue.sync { cachedConfig! }
+        }
+
+        // 如果没有缓存，重新加载
+        if configURL == nil {
+            return .default
+        }
+
+        return queue.sync {
+            // 双重检查缓存
+            if let cached = cachedConfig {
+                return cached
+            }
+
+            guard FileManager.default.fileExists(atPath: configURL!.path) else {
+                return .default
+            }
+
+            do {
+                let data = try Data(contentsOf: configURL!)
+                let config = try JSONDecoder().decode(AppConfig.self, from: data)
+                cachedConfig = config
+                return config
+            } catch {
+                os_log("无法加载配置文件: %{public}@，使用默认配置", log: logger, type: .error, error.localizedDescription)
+                return .default
+            }
+        }
+    }
+
+    func save(_ config: AppConfig, completion: (() -> Void)? = nil) {
+        guard let configURL = configURL else {
+            os_log("配置URL为空，无法保存配置", log: logger, type: .error)
+            completion?()
+            return
+        }
+
+        queue.async(flags: .barrier) { [configURL] in
+            do {
+                let data = try JSONEncoder().encode(config)
+                try data.write(to: configURL)
+                self.cachedConfig = config
+            } catch {
+                os_log("无法保存配置文件: %{public}@", log: logger, type: .error, error.localizedDescription)
+            }
+            completion?()
+        }
+    }
+}
+
+// MARK: - 窗口调整功能
+
+class WindowSnap {
+
+    private var config: AppConfig
+    private var cachedPermissionStatus: Bool?
+    private var lastPermissionCheck: Date?
+    private let permissionCacheDuration: TimeInterval = 60
+
+    init(config: AppConfig) {
+        self.config = config
+    }
+
+    func updateConfig(_ newConfig: AppConfig) {
+        self.config = newConfig
+    }
+
+    // 检查辅助功能权限 (带缓存)
+    func checkAccessibilityPermission() -> Bool {
+        if let lastCheck = lastPermissionCheck,
+           Date().timeIntervalSince(lastCheck) < permissionCacheDuration,
+           let cached = cachedPermissionStatus {
+            return cached
+        }
+
+        let options: NSDictionary = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString: false]
+        let trusted = AXIsProcessTrustedWithOptions(options)
+
+        cachedPermissionStatus = trusted
+        lastPermissionCheck = Date()
+
+        return trusted
+    }
+
+    // 强制重新检查权限
+    func forceCheckPermission() -> Bool {
+        cachedPermissionStatus = nil
+        return checkAccessibilityPermission()
+    }
+
+    // 获取当前活动窗口
+    func getActiveWindow() throws -> AXUIElement {
+        guard let frontmostApp = NSWorkspace.shared.frontmostApplication else {
+            throw WindowSnapError.noActiveWindow
+        }
+
+        os_log("获取应用窗口: %{public}@ (PID: %d)", log: logger, type: .debug,
+               frontmostApp.localizedName ?? "未知应用", frontmostApp.processIdentifier)
+
+        let app = AXUIElementCreateApplication(frontmostApp.processIdentifier)
+
+        var value: AnyObject?
+        var result = AXUIElementCopyAttributeValue(app, kAXFocusedWindowAttribute as CFString, &value)
+
+        if result == .success, let window = value {
+            let axElement = try validateAndConvertAXElement(window)
+            os_log("成功获取聚焦窗口", log: logger, type: .debug)
+            return axElement
+        }
+
+        // 尝试获取主窗口
+        result = AXUIElementCopyAttributeValue(app, kAXMainWindowAttribute as CFString, &value)
+        if result == .success, let window = value {
+            let axElement = try validateAndConvertAXElement(window)
+            os_log("成功获取主窗口", log: logger, type: .debug)
+            return axElement
+        }
+
+        os_log("未能获取到任何窗口", log: logger, type: .error)
+        throw WindowSnapError.noActiveWindow
+    }
+
+    private func validateAndConvertAXElement(_ value: AnyObject) throws -> AXUIElement {
+        let typeID = CFGetTypeID(value)
+        guard typeID == AXUIElementGetTypeID() else {
+            throw WindowSnapError.invalidWindowElement
+        }
+        return value as! AXUIElement
+    }
+
+    // 获取包含窗口的屏幕（使用中心点检测，支持多屏幕）
+    func getScreenForWindow(_ window: AXUIElement) throws -> NSScreen {
+        let position = try getAXPosition(window)
+        let size = try getAXSize(window)
+
+        // 使用窗口中心点进行检测
+        let centerX = position.x + size.width / 2
+        let centerY = position.y + size.height / 2
+        let centerPoint = CGPoint(x: centerX, y: centerY)
+
+        os_log("窗口中心点: (%.1f, %.1f)", log: logger, type: .debug, centerX, centerY)
+
+        // 首先检查中心点是否在某个屏幕的 visibleFrame 内
+        for screen in NSScreen.screens {
+            if screen.visibleFrame.contains(centerPoint) {
+                os_log("通过中心点找到屏幕", log: logger, type: .debug)
+                return screen
+            }
+        }
+
+        // 如果中心点不在任何屏幕，检查重叠面积最大的屏幕
+        let windowFrame = CGRect(origin: position, size: size)
+        var bestScreen: NSScreen?
+        var maxOverlapArea: CGFloat = 0
+
+        for screen in NSScreen.screens {
+            let overlap = windowFrame.intersection(screen.frame)
+            let overlapArea = overlap.width * overlap.height
+
+            if overlapArea > maxOverlapArea {
+                maxOverlapArea = overlapArea
+                bestScreen = screen
+            }
+        }
+
+        if let screen = bestScreen {
+            os_log("通过重叠面积找到屏幕", log: logger, type: .debug)
+            return screen
+        }
+
+        // 如果仍然找不到，返回主屏幕
+        if let mainScreen = NSScreen.main {
+            os_log("未找到窗口所在屏幕，使用主屏幕", log: logger, type: .debug)
+            return mainScreen
+        }
+
+        throw WindowSnapError.noScreenFound
+    }
+
+    private func getAXPosition(_ window: AXUIElement) throws -> CGPoint {
+        var positionValue: AnyObject?
+        let result = AXUIElementCopyAttributeValue(window, kAXPositionAttribute as CFString, &positionValue)
+
+        guard result == .success, let value = positionValue else {
+            throw WindowSnapError.cannotGetWindowPosition
+        }
+
+        var point = CGPoint.zero
+        guard AXValueGetValue(value as! AXValue, .cgPoint, &point) else {
+            throw WindowSnapError.cannotGetWindowPosition
+        }
+
+        return point
+    }
+
+    private func getAXSize(_ window: AXUIElement) throws -> CGSize {
+        var sizeValue: AnyObject?
+        let result = AXUIElementCopyAttributeValue(window, kAXSizeAttribute as CFString, &sizeValue)
+
+        guard result == .success, let value = sizeValue else {
+            throw WindowSnapError.cannotGetWindowSize
+        }
+
+        var size = CGSize.zero
+        guard AXValueGetValue(value as! AXValue, .cgSize, &size) else {
+            throw WindowSnapError.cannotGetWindowSize
+        }
+
+        return size
+    }
+
+    // 调整窗口位置和大小
+    func resizeAndMoveWindow(_ window: AXUIElement) throws {
+        let screen = try getScreenForWindow(window)
+        let screenFrame = screen.visibleFrame
+        let screenSize = screenFrame.size
+
+        guard screenSize.width > 0 && screenSize.height > 0 else {
+            throw WindowSnapError.noScreenFound
+        }
+
+        let targetWidth = screenSize.width * CGFloat(config.widthPercent)
+        let targetHeight = screenSize.height * CGFloat(config.heightPercent)
+        let targetX = screenFrame.origin.x + screenSize.width * CGFloat(config.xPercent)
+        let targetY = screenFrame.origin.y + screenSize.height * CGFloat(config.yPercent)
+
+        os_log("调整窗口到位置: (%.1f, %.1f)，大小: (%.1f, %.1f)",
+               log: logger, type: .debug, targetX, targetY, targetWidth, targetHeight)
+
+        // 创建位置值
+        var point = CGPoint(x: targetX, y: targetY)
+        guard let positionValue = AXValueCreate(.cgPoint, &point) else {
+            throw WindowSnapError.cannotCreateAXValue
+        }
+
+        // 创建大小值
+        var size = CGSize(width: targetWidth, height: targetHeight)
+        guard let sizeValue = AXValueCreate(.cgSize, &size) else {
+            throw WindowSnapError.cannotCreateAXValue
+        }
+
+        // 设置窗口位置
+        let positionResult = AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, positionValue)
+        if positionResult != .success {
+            os_log("错误：无法设置窗口位置 (错误代码: %d)", log: logger, type: .error, positionResult.rawValue)
+            throw WindowSnapError.cannotSetWindowPosition
+        }
+
+        // 设置窗口大小
+        let sizeResult = AXUIElementSetAttributeValue(window, kAXSizeAttribute as CFString, sizeValue)
+        if sizeResult != .success {
+            os_log("错误：无法设置窗口大小 (错误代码: %d)", log: logger, type: .error, sizeResult.rawValue)
+            throw WindowSnapError.cannotSetWindowSize
+        }
+    }
+
+    // 执行调整
+    func snapActiveWindow() throws {
+        guard checkAccessibilityPermission() else {
+            throw WindowSnapError.noAccessibilityPermission
+        }
+
+        let window = try getActiveWindow()
+        try resizeAndMoveWindow(window)
+    }
+}
+
+// MARK: - 全局快捷键监听器
+
+class HotkeyListener {
+
+    private var windowSnap: WindowSnap
+    private var eventTap: CFMachPort?
+    private var runLoopSource: CFRunLoopSource?
+    private var config: AppConfig
+
+    // 使用静态回调，通过 userInfo 传递 self 的不透明指针
+    private static let eventCallback: CGEventTapCallBack = { (proxy, type, event, refcon) -> Unmanaged<CGEvent>? in
+        guard let refcon = refcon else {
+            return Unmanaged.passUnretained(event)
+        }
+        // 从不透明指针获取 HotkeyListener 实例
+        let listener = Unmanaged<HotkeyListener>.fromOpaque(refcon).takeUnretainedValue()
+        return listener.handleEvent(proxy: proxy, type: type, event: event)
+    }
+
+    init(windowSnap: WindowSnap, config: AppConfig) {
+        self.windowSnap = windowSnap
+        self.config = config
+    }
+
+    deinit {
+        stop()
+    }
+
+    // 处理事件的方法
+    private func handleEvent(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
+        // 检查是否为键盘按下事件
+        guard type == .keyDown else {
+            return Unmanaged.passUnretained(event)
+        }
+
+        // 获取键码
+        let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
+        guard keyCode == config.hotkeyKeyCode else {
+            return Unmanaged.passUnretained(event)
+        }
+
+        // 获取当前按下的修饰键
+        let pressedModifiers = ModifierKey.from(cgFlags: event.flags)
+
+        // 检查是否所有配置的修饰键都被按下
+        let requiredModifiers = config.hotkeyModifiers
+        let allRequiredPressed = (pressedModifiers & requiredModifiers) == requiredModifiers
+
+        if allRequiredPressed {
+            // 使用 weak self 避免循环引用
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                do {
+                    try self.windowSnap.snapActiveWindow()
+                } catch {
+                    os_log("窗口调整失败: %{public}@", log: logger, type: .error, error.localizedDescription)
+                }
+            }
+            return nil  // 消费事件
+        }
+
+        return Unmanaged.passUnretained(event)
+    }
+
+    func updateConfig(_ newConfig: AppConfig) {
+        self.config = newConfig
+    }
+
+    func stop() {
+        if let source = runLoopSource {
+            CFRunLoopRemoveSource(CFRunLoopGetCurrent(), source, .commonModes)
+            runLoopSource = nil
+        }
+        if let tap = eventTap {
+            CGEvent.tapEnable(tap: tap, enable: false)
+            CFMachPortInvalidate(tap)
+            eventTap = nil
+        }
+        os_log("快捷键监听已停止", log: logger, type: .info)
+    }
+
+    func start() {
+        // 检查辅助功能权限
+        guard windowSnap.checkAccessibilityPermission() else {
+            os_log("请授予辅助功能权限以监听全局快捷键", log: logger, type: .error)
+            return
+        }
+
+        // 创建事件监听
+        let eventMask = (1 << CGEventType.keyDown.rawValue)
+        guard let tap = CGEvent.tapCreate(
+            tap: .cghidEventTap,
+            place: .headInsertEventTap,
+            options: .defaultTap,
+            eventsOfInterest: CGEventMask(eventMask),
+            callback: HotkeyListener.eventCallback,
+            userInfo: Unmanaged.passUnretained(self).toOpaque()
+        ) else {
+            os_log("无法创建事件监听。请检查权限", log: logger, type: .error)
+            return
+        }
+
+        eventTap = tap
+
+        // 创建并保存运行循环源
+        if let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0) {
+            runLoopSource = source
+            CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes)
+        }
+
+        // 启用事件监听
+        CGEvent.tapEnable(tap: tap, enable: true)
+
+        os_log("快捷键监听已启动 (键码: %d, 修饰键: %llu)", log: logger, type: .info, config.hotkeyKeyCode, config.hotkeyModifiers)
+    }
+
+    func isRunning() -> Bool {
+        return eventTap != nil && runLoopSource != nil
+    }
+}
+
+// MARK: - 应用委托
+
+@available(macOS 10.13, *)
+class AppDelegate: NSObject, NSApplicationDelegate {
+    private var hotkeyListener: HotkeyListener?
+    private var statusItem: NSStatusItem?
+    private var settingsWindow: NSWindow?
+    private var windowSnap: WindowSnap?
+
+    // 设置窗口UI元素实例变量
+    private var xLabel: NSTextField?
+    private var xSlider: NSSlider?
+    private var xTextField: NSTextField?
+    private var yLabel: NSTextField?
+    private var ySlider: NSSlider?
+    private var yTextField: NSTextField?
+    private var widthLabel: NSTextField?
+    private var widthSlider: NSSlider?
+    private var widthTextField: NSTextField?
+    private var heightLabel: NSTextField?
+    private var heightSlider: NSSlider?
+    private var heightTextField: NSTextField?
+    private var menuBarCheckbox: NSButton?
+
+    // 快捷键配置UI元素
+    private var hotkeyLabel: NSTextField?
+    private var hotkeyPopup: NSPopUpButton?
+    private var modifierCheckboxes: [NSButton] = []
+
+    private var config: AppConfig {
+        didSet {
+            updateMenuBarIcon()
+            windowSnap?.updateConfig(config)
+            updateMenuTitle()
+        }
+    }
+
+    // 从快捷键UI获取当前的修饰键值
+    private var currentHotkeyModifiers: UInt64 {
+        var modifiers: UInt64 = 0
+        if modifierCheckboxes.count > 0 && modifierCheckboxes[0].state == .on {
+            modifiers |= ModifierKey.shift.rawValue
+        }
+        if modifierCheckboxes.count > 1 && modifierCheckboxes[1].state == .on {
+            modifiers |= ModifierKey.control.rawValue
+        }
+        if modifierCheckboxes.count > 2 && modifierCheckboxes[2].state == .on {
+            modifiers |= ModifierKey.option.rawValue
+        }
+        if modifierCheckboxes.count > 3 && modifierCheckboxes[3].state == .on {
+            modifiers |= ModifierKey.command.rawValue
+        }
+        return modifiers
+    }
+
+    // 从快捷键UI获取当前的键码
+    private var currentHotkeyKeyCode: Int {
+        guard let popup = hotkeyPopup else { return config.hotkeyKeyCode }
+        let selectedTag = popup.selectedTag()
+        return selectedTag >= 0 ? selectedTag : config.hotkeyKeyCode
+    }
+
+    // 获取当前快捷键描述文本
+    private func getHotkeyDescription() -> String {
+        var parts: [String] = []
+
+        if modifierCheckboxes.count > 0 && modifierCheckboxes[0].state == .on {
+            parts.append("Shift")
+        }
+        if modifierCheckboxes.count > 1 && modifierCheckboxes[1].state == .on {
+            parts.append("Ctrl")
+        }
+        if modifierCheckboxes.count > 2 && modifierCheckboxes[2].state == .on {
+            parts.append("Option")
+        }
+        if modifierCheckboxes.count > 3 && modifierCheckboxes[3].state == .on {
+            parts.append("Cmd")
+        }
+
+        if let popup = hotkeyPopup, let keyName = popup.titleOfSelectedItem {
+            parts.append(keyName)
+        }
+
+        return parts.joined(separator: "+")
+    }
+
+    // 更新菜单栏标题
+    private func updateMenuTitle() {
+        if let menu = statusItem?.menu, let firstItem = menu.items.first {
+            let hotkeyText = getHotkeyDescription()
+            firstItem.title = "调整当前窗口 (\(hotkeyText))"
+        }
+    }
+
+    override init() {
+        self.config = .default
+        super.init()
+        // 同步加载配置（macOS 10.13 兼容）
+        config = ConfigManager.shared.load()
+        setupAfterConfigLoaded()
+    }
+
+    private func setupAfterConfigLoaded() {
+        // 初始化窗口调整器
+        windowSnap = WindowSnap(config: config)
+
+        // 初始化快捷键监听器
+        guard let windowSnapInstance = windowSnap else {
+            os_log("windowSnap 实例未初始化，应用将在没有快捷键的情况下运行", log: logger, type: .error)
+            setupApplicationMenu()
+            updateMenuBarIcon()
+            return
+        }
+
+        hotkeyListener = HotkeyListener(windowSnap: windowSnapInstance, config: config)
+        hotkeyListener?.start()
+
+        // 设置应用菜单
+        setupApplicationMenu()
+
+        // 更新菜单栏图标
+        updateMenuBarIcon()
+
+        // 设置显示器变化监听
+        setupDisplayLink()
+
+        os_log("WindowSnap 已启动", log: logger, type: .info)
+    }
+
+    // 监听显示器参数变化
+    private func setupDisplayLink() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(screenParametersDidChange(_:)),
+            name: NSApplication.didChangeScreenParametersNotification,
+            object: nil
+        )
+    }
+
+    @objc private func screenParametersDidChange(_ notification: Notification) {
+        os_log("显示器配置已更改", log: logger, type: .info)
+        // 重新计算窗口位置逻辑会自动适应新的屏幕配置
+    }
+
+    private func setupApplicationMenu() {
+        let mainMenu = NSMenu()
+
+        // 应用菜单
+        let appMenuItem = NSMenuItem()
+        appMenuItem.submenu = NSMenu()
+
+        // 关于
+        let aboutItem = NSMenuItem(title: "关于 WindowSnap", action: #selector(showAbout), keyEquivalent: "")
+        appMenuItem.submenu?.addItem(aboutItem)
+        appMenuItem.submenu?.addItem(NSMenuItem.separator())
+
+        // 设置
+        let preferencesItem = NSMenuItem(title: "设置...", action: #selector(showSettings), keyEquivalent: ",")
+        preferencesItem.keyEquivalentModifierMask = [.command]
+        appMenuItem.submenu?.addItem(preferencesItem)
+        appMenuItem.submenu?.addItem(NSMenuItem.separator())
+
+        // 服务
+        let servicesItem = NSMenuItem(title: "服务", action: nil, keyEquivalent: "")
+        let servicesMenu = NSMenu()
+        servicesItem.submenu = servicesMenu
+        appMenuItem.submenu?.addItem(servicesItem)
+        NSApp.servicesMenu = servicesMenu
+
+        appMenuItem.submenu?.addItem(NSMenuItem.separator())
+
+        // 隐藏
+        let hideItem = NSMenuItem(title: "隐藏 WindowSnap", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")
+        hideItem.keyEquivalentModifierMask = [.command]
+        appMenuItem.submenu?.addItem(hideItem)
+
+        let hideOthersItem = NSMenuItem(title: "隐藏其他", action: #selector(NSApplication.hideOtherApplications(_:)), keyEquivalent: "h")
+        hideOthersItem.keyEquivalentModifierMask = [.command, .option]
+        appMenuItem.submenu?.addItem(hideOthersItem)
+
+        let showAllItem = NSMenuItem(title: "显示全部", action: #selector(NSApplication.unhideAllApplications(_:)), keyEquivalent: "")
+        appMenuItem.submenu?.addItem(showAllItem)
+        appMenuItem.submenu?.addItem(NSMenuItem.separator())
+
+        // 退出
+        let quitItem = NSMenuItem(title: "退出 WindowSnap", action: #selector(quitApp), keyEquivalent: "q")
+        quitItem.keyEquivalentModifierMask = [.command]
+        appMenuItem.submenu?.addItem(quitItem)
+
+        mainMenu.addItem(appMenuItem)
+
+        // 编辑菜单
+        let editMenuItem = NSMenuItem()
+        editMenuItem.submenu = NSMenu(title: "编辑")
+
+        let undoItem = NSMenuItem(title: "撤销", action: #selector(UndoManager.undo), keyEquivalent: "z")
+        undoItem.keyEquivalentModifierMask = [.command]
+        editMenuItem.submenu?.addItem(undoItem)
+
+        let redoItem = NSMenuItem(title: "重做", action: #selector(UndoManager.redo), keyEquivalent: "Z")
+        redoItem.keyEquivalentModifierMask = [.command, .shift]
+        editMenuItem.submenu?.addItem(redoItem)
+
+        editMenuItem.submenu?.addItem(NSMenuItem.separator())
+
+        let cutItem = NSMenuItem(title: "剪切", action: #selector(NSText.cut(_:)), keyEquivalent: "x")
+        cutItem.keyEquivalentModifierMask = [.command]
+        editMenuItem.submenu?.addItem(cutItem)
+
+        let copyItem = NSMenuItem(title: "复制", action: #selector(NSText.copy(_:)), keyEquivalent: "c")
+        copyItem.keyEquivalentModifierMask = [.command]
+        editMenuItem.submenu?.addItem(copyItem)
+
+        let pasteItem = NSMenuItem(title: "粘贴", action: #selector(NSText.paste(_:)), keyEquivalent: "v")
+        pasteItem.keyEquivalentModifierMask = [.command]
+        editMenuItem.submenu?.addItem(pasteItem)
+
+        let selectAllItem = NSMenuItem(title: "全选", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
+        selectAllItem.keyEquivalentModifierMask = [.command]
+        editMenuItem.submenu?.addItem(selectAllItem)
+
+        mainMenu.addItem(editMenuItem)
+
+        // 窗口菜单
+        let windowMenuItem = NSMenuItem()
+        windowMenuItem.submenu = NSMenu(title: "窗口")
+
+        let minimizeItem = NSMenuItem(title: "最小化", action: #selector(NSWindow.miniaturize(_:)), keyEquivalent: "m")
+        minimizeItem.keyEquivalentModifierMask = [.command]
+        windowMenuItem.submenu?.addItem(minimizeItem)
+
+        let zoomItem = NSMenuItem(title: "缩放", action: #selector(NSWindow.performZoom(_:)), keyEquivalent: "")
+        windowMenuItem.submenu?.addItem(zoomItem)
+
+        windowMenuItem.submenu?.addItem(NSMenuItem.separator())
+
+        let bringAllToFrontItem = NSMenuItem(title: "全部前置", action: #selector(NSApplication.arrangeInFront(_:)), keyEquivalent: "")
+        windowMenuItem.submenu?.addItem(bringAllToFrontItem)
+
+        NSApp.windowsMenu = windowMenuItem.submenu
+
+        mainMenu.addItem(windowMenuItem)
+
+        NSApp.mainMenu = mainMenu
+    }
+
+    private func updateMenuBarIcon() {
+        os_log("更新菜单栏图标，显示图标: %{public}@", log: logger, type: .debug, config.showMenuBarIcon ? "是" : "否")
+
+        if config.showMenuBarIcon {
+            setupMenuBarIcon()
+        } else {
+            removeMenuBarIcon()
+        }
+    }
+
+    private func setupMenuBarIcon() {
+        if statusItem == nil {
+            statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+
+            guard let statusItem = statusItem else {
+                os_log("错误：无法创建状态项", log: logger, type: .error)
+                return
+            }
+
+            if let button = statusItem.button {
+                if #available(macOS 11.0, *) {
+                    button.image = NSImage(systemSymbolName: "rectangle.inset.filled", accessibilityDescription: "WindowSnap")
+                } else {
+                    let image = NSImage(size: NSSize(width: 20, height: 20))
+                    image.lockFocus()
+
+                    NSColor.white.set()
+                    let outerRect = NSRect(x: 2, y: 2, width: 16, height: 16)
+                    let outerPath = NSBezierPath(roundedRect: outerRect, xRadius: 4, yRadius: 4)
+                    outerPath.lineWidth = 1.5
+                    outerPath.stroke()
+
+                    NSColor.systemGray.set()
+                    let innerRect = NSRect(x: 5, y: 5, width: 10, height: 10)
+                    let innerPath = NSBezierPath(roundedRect: innerRect, xRadius: 2, yRadius: 2)
+                    innerPath.fill()
+
+                    image.unlockFocus()
+                    image.isTemplate = true
+                    button.image = image
+                }
+                button.image?.isTemplate = true
+            }
+
+            let menu = NSMenu()
+
+            let hotkeyText = getHotkeyDescription()
+            menu.addItem(NSMenuItem(title: "调整当前窗口 (\(hotkeyText))", action: #selector(snapCurrentWindow), keyEquivalent: ""))
+            menu.addItem(NSMenuItem.separator())
+
+            let settingsItem = NSMenuItem(title: "设置", action: #selector(showSettings), keyEquivalent: ",")
+            settingsItem.keyEquivalentModifierMask = [.command]
+            menu.addItem(settingsItem)
+
+            menu.addItem(NSMenuItem(title: "关于", action: #selector(showAbout), keyEquivalent: ""))
+            menu.addItem(NSMenuItem.separator())
+
+            let quitItem = NSMenuItem(title: "退出", action: #selector(quitApp), keyEquivalent: "q")
+            quitItem.keyEquivalentModifierMask = [.command]
+            menu.addItem(quitItem)
+
+            statusItem.menu = menu
+        }
+    }
+
+    private func removeMenuBarIcon() {
+        if let statusItem = statusItem {
+            NSStatusBar.system.removeStatusItem(statusItem)
+            self.statusItem = nil
+        }
+    }
+
+    @objc private func snapCurrentWindow() {
+        do {
+            try windowSnap?.snapActiveWindow()
+        } catch {
+            showErrorAlert(error)
+        }
+    }
+
+    @objc private func showSettings() {
+        if settingsWindow == nil {
+            createSettingsWindow()
+        }
+        settingsWindow?.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    private func showErrorAlert(_ error: Error) {
+        let alert = NSAlert()
+        alert.messageText = "操作失败"
+        alert.informativeText = error.localizedDescription
+        alert.alertStyle = .critical
+        alert.addButton(withTitle: "确定")
+        alert.runModal()
+    }
+
+    @objc private func showAbout() {
+        let alert = NSAlert()
+        alert.messageText = "WindowSnap"
+        alert.informativeText = "一个 macOS 窗口管理工具\n快捷键: \(getHotkeyDescription())\n版本: 1.1"
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: "确定")
+        alert.runModal()
+    }
+
+    @objc private func quitApp() {
+        NSApp.terminate(nil)
+    }
+
+    private func updateLabels() {
+        xLabel?.stringValue = "横坐标 (%):"
+        xTextField?.stringValue = String(format: "%.0f", config.xPercent * 100)
+        xSlider?.doubleValue = config.xPercent * 100
+
+        yLabel?.stringValue = "纵坐标 (%):"
+        yTextField?.stringValue = String(format: "%.0f", config.yPercent * 100)
+        ySlider?.doubleValue = config.yPercent * 100
+
+        widthLabel?.stringValue = "宽度 (%):"
+        widthTextField?.stringValue = String(format: "%.0f", config.widthPercent * 100)
+        widthSlider?.doubleValue = config.widthPercent * 100
+
+        heightLabel?.stringValue = "高度 (%):"
+        heightTextField?.stringValue = String(format: "%.0f", config.heightPercent * 100)
+        heightSlider?.doubleValue = config.heightPercent * 100
+    }
+
+    private func cleanupSettingUIElements() {
+        xSlider?.target = nil
+        ySlider?.target = nil
+        widthSlider?.target = nil
+        heightSlider?.target = nil
+        menuBarCheckbox?.target = nil
+        hotkeyPopup?.target = nil
+        for checkbox in modifierCheckboxes {
+            checkbox.target = nil
+        }
+
+        xLabel = nil
+        xSlider = nil
+        xTextField = nil
+        yLabel = nil
+        ySlider = nil
+        yTextField = nil
+        widthLabel = nil
+        widthSlider = nil
+        widthTextField = nil
+        heightLabel = nil
+        heightSlider = nil
+        heightTextField = nil
+        menuBarCheckbox = nil
+        hotkeyLabel = nil
+        hotkeyPopup = nil
+        modifierCheckboxes = []
+    }
+
+    private func createSettingsWindow() {
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 420, height: 420),
+            styleMask: [.titled, .closable],
+            backing: .buffered,
+            defer: false
+        )
+
+        window.title = "WindowSnap 设置"
+        window.center()
+
+        let contentView = NSView(frame: NSRect(x: 0, y: 0, width: 420, height: 420))
+
+        var yPosition: CGFloat = 370
+
+        // 快捷键配置标题
+        let hotkeyTitle = NSTextField(labelWithString: "快捷键设置:")
+        hotkeyTitle.font = NSFont.boldSystemFont(ofSize: 13)
+        hotkeyTitle.frame = NSRect(x: 20, y: yPosition, width: 150, height: 20)
+        contentView.addSubview(hotkeyTitle)
+        yPosition -= 30
+
+        // 修饰键复选框
+        let modifierLabels = ["Shift", "Control", "Option", "Command"]
+        var xCheckbox: CGFloat = 30
+        for (index, label) in modifierLabels.enumerated() {
+            let checkbox = NSButton(checkboxWithTitle: label, target: self, action: #selector(hotkeyModifierChanged(_:)))
+            checkbox.frame = NSRect(x: xCheckbox, y: yPosition, width: 90, height: 20)
+            checkbox.tag = index
+
+            let modifierMask = config.hotkeyModifiers
+            let isOn: Bool
+            switch index {
+            case 0: isOn = (modifierMask & ModifierKey.shift.rawValue) != 0
+            case 1: isOn = (modifierMask & ModifierKey.control.rawValue) != 0
+            case 2: isOn = (modifierMask & ModifierKey.option.rawValue) != 0
+            case 3: isOn = (modifierMask & ModifierKey.command.rawValue) != 0
+            default: isOn = false
+            }
+            checkbox.state = isOn ? .on : .off
+            contentView.addSubview(checkbox)
+            modifierCheckboxes.append(checkbox)
+            xCheckbox += 85
+        }
+        yPosition -= 30
+
+        // 键位选择下拉框
+        hotkeyLabel = NSTextField(labelWithString: "按键:")
+        hotkeyLabel?.frame = NSRect(x: 20, y: yPosition, width: 60, height: 20)
+        contentView.addSubview(hotkeyLabel!)
+
+        hotkeyPopup = NSPopUpButton(frame: NSRect(x: 80, y: yPosition, width: 100, height: 24), pullsDown: false)
+        let keyItems: [(String, Int)] = [
+            ("Z", Int(KeyCode.z.rawValue)), ("X", Int(KeyCode.x.rawValue)), ("C", Int(KeyCode.c.rawValue)), ("V", Int(KeyCode.v.rawValue)),
+            ("A", Int(KeyCode.a.rawValue)), ("S", Int(KeyCode.s.rawValue)), ("D", Int(KeyCode.d.rawValue)), ("F", Int(KeyCode.f.rawValue)),
+            ("Q", Int(KeyCode.q.rawValue)), ("W", Int(KeyCode.w.rawValue)), ("E", Int(KeyCode.e.rawValue)), ("R", Int(KeyCode.r.rawValue)),
+            ("1", Int(KeyCode.one.rawValue)), ("2", Int(KeyCode.two.rawValue)), ("3", Int(KeyCode.three.rawValue)), ("4", Int(KeyCode.four.rawValue)),
+            ("Space", Int(KeyCode.space.rawValue)), ("Enter", Int(KeyCode.enter.rawValue)), ("Escape", Int(KeyCode.escape.rawValue))
+        ]
+        for (name, code) in keyItems {
+            hotkeyPopup?.addItem(withTitle: name)
+            hotkeyPopup?.lastItem?.tag = code
+        }
+        hotkeyPopup?.target = self
+        hotkeyPopup?.action = #selector(hotkeyKeyChanged(_:))
+        contentView.addSubview(hotkeyPopup!)
+
+        // 设置当前选中的键
+        if let popup = hotkeyPopup, let menu = popup.menu {
+            for (index, item) in menu.items.enumerated() {
+                if item.tag == config.hotkeyKeyCode {
+                    popup.selectItem(at: index)
+                    break
+                }
+            }
+        }
+
+        // 显示当前快捷键
+        let currentHotkeyLabel = NSTextField(labelWithString: "当前: \(getHotkeyDescription())")
+        currentHotkeyLabel.font = NSFont.systemFont(ofSize: 11)
+        currentHotkeyLabel.textColor = .secondaryLabelColor
+        currentHotkeyLabel.frame = NSRect(x: 200, y: yPosition, width: 180, height: 20)
+        currentHotkeyLabel.tag = 1001
+        contentView.addSubview(currentHotkeyLabel)
+        yPosition -= 50
+
+        // 位置和大小配置标题
+        let positionTitle = NSTextField(labelWithString: "窗口位置和大小:")
+        positionTitle.font = NSFont.boldSystemFont(ofSize: 13)
+        positionTitle.frame = NSRect(x: 20, y: yPosition, width: 200, height: 20)
+        contentView.addSubview(positionTitle)
+        yPosition -= 30
+
+        // X坐标
+        xLabel = NSTextField(labelWithString: "横坐标 (%):")
+        xLabel?.frame = NSRect(x: 20, y: yPosition, width: 90, height: 20)
+        contentView.addSubview(xLabel!)
+
+        xTextField = NSTextField(frame: NSRect(x: 115, y: yPosition, width: 50, height: 22))
+        xTextField?.delegate = self
+        xTextField?.tag = 1
+        xTextField?.toolTip = "输入 0-100 的数值"
+        contentView.addSubview(xTextField!)
+
+        xSlider = NSSlider(value: config.xPercent * 100, minValue: 0, maxValue: 100, target: self, action: #selector(xSliderChanged(_:)))
+        xSlider?.frame = NSRect(x: 175, y: yPosition, width: 220, height: 20)
+        contentView.addSubview(xSlider!)
+        yPosition -= 35
+
+        // Y坐标
+        yLabel = NSTextField(labelWithString: "纵坐标 (%):")
+        yLabel?.frame = NSRect(x: 20, y: yPosition, width: 90, height: 20)
+        contentView.addSubview(yLabel!)
+
+        yTextField = NSTextField(frame: NSRect(x: 115, y: yPosition, width: 50, height: 22))
+        yTextField?.delegate = self
+        yTextField?.tag = 2
+        yTextField?.toolTip = "输入 0-100 的数值"
+        contentView.addSubview(yTextField!)
+
+        ySlider = NSSlider(value: config.yPercent * 100, minValue: 0, maxValue: 100, target: self, action: #selector(ySliderChanged(_:)))
+        ySlider?.frame = NSRect(x: 175, y: yPosition, width: 220, height: 20)
+        contentView.addSubview(ySlider!)
+        yPosition -= 35
+
+        // 宽度
+        widthLabel = NSTextField(labelWithString: "宽度 (%):")
+        widthLabel?.frame = NSRect(x: 20, y: yPosition, width: 90, height: 20)
+        contentView.addSubview(widthLabel!)
+
+        widthTextField = NSTextField(frame: NSRect(x: 115, y: yPosition, width: 50, height: 22))
+        widthTextField?.delegate = self
+        widthTextField?.tag = 3
+        widthTextField?.toolTip = "输入 10-100 的数值"
+        contentView.addSubview(widthTextField!)
+
+        widthSlider = NSSlider(value: config.widthPercent * 100, minValue: 10, maxValue: 100, target: self, action: #selector(widthSliderChanged(_:)))
+        widthSlider?.frame = NSRect(x: 175, y: yPosition, width: 220, height: 20)
+        contentView.addSubview(widthSlider!)
+        yPosition -= 35
+
+        // 高度
+        heightLabel = NSTextField(labelWithString: "高度 (%):")
+        heightLabel?.frame = NSRect(x: 20, y: yPosition, width: 90, height: 20)
+        contentView.addSubview(heightLabel!)
+
+        heightTextField = NSTextField(frame: NSRect(x: 115, y: yPosition, width: 50, height: 22))
+        heightTextField?.delegate = self
+        heightTextField?.tag = 4
+        heightTextField?.toolTip = "输入 10-100 的数值"
+        contentView.addSubview(heightTextField!)
+
+        heightSlider = NSSlider(value: config.heightPercent * 100, minValue: 10, maxValue: 100, target: self, action: #selector(heightSliderChanged(_:)))
+        heightSlider?.frame = NSRect(x: 175, y: yPosition, width: 220, height: 20)
+        contentView.addSubview(heightSlider!)
+        yPosition -= 50
+
+        // 菜单栏图标选项
+        menuBarCheckbox = NSButton(checkboxWithTitle: "显示菜单栏图标", target: self, action: #selector(menuBarCheckboxChanged(_:)))
+        menuBarCheckbox?.frame = NSRect(x: 20, y: yPosition, width: 200, height: 20)
+        menuBarCheckbox?.state = config.showMenuBarIcon ? .on : .off
+        contentView.addSubview(menuBarCheckbox!)
+
+        // 保存按钮
+        let saveButton = NSButton(title: "保存", target: self, action: #selector(saveSettings))
+        saveButton.frame = NSRect(x: 300, y: yPosition - 5, width: 100, height: 30)
+        contentView.addSubview(saveButton)
+
+        window.contentView = contentView
+        settingsWindow = window
+        window.delegate = self
+
+        updateLabels()
+    }
+
+    @objc private func xSliderChanged(_ sender: NSSlider) {
+        config.xPercent = max(0, min(1, sender.doubleValue / 100.0))
+        updateLabels()
+    }
+
+    @objc private func ySliderChanged(_ sender: NSSlider) {
+        config.yPercent = max(0, min(1, sender.doubleValue / 100.0))
+        updateLabels()
+    }
+
+    @objc private func widthSliderChanged(_ sender: NSSlider) {
+        config.widthPercent = max(0.1, min(1, sender.doubleValue / 100.0))
+        updateLabels()
+    }
+
+    @objc private func heightSliderChanged(_ sender: NSSlider) {
+        config.heightPercent = max(0.1, min(1, sender.doubleValue / 100.0))
+        updateLabels()
+    }
+
+    @objc private func menuBarCheckboxChanged(_ sender: NSButton) {
+        config.showMenuBarIcon = sender.state == .on
+    }
+
+    @objc private func hotkeyModifierChanged(_ sender: NSButton) {
+        config.hotkeyKeyCode = currentHotkeyKeyCode
+        config.hotkeyModifiers = currentHotkeyModifiers
+        updateMenuTitle()
+        updateCurrentHotkeyLabel()
+    }
+
+    @objc private func hotkeyKeyChanged(_ sender: NSPopUpButton) {
+        config.hotkeyKeyCode = currentHotkeyKeyCode
+        config.hotkeyModifiers = currentHotkeyModifiers
+        updateMenuTitle()
+        updateCurrentHotkeyLabel()
+    }
+
+    private func updateCurrentHotkeyLabel() {
+        if let window = settingsWindow,
+           let contentView = window.contentView {
+            for subview in contentView.subviews {
+                if subview.tag == 1001, let label = subview as? NSTextField {
+                    label.stringValue = "当前: \(getHotkeyDescription())"
+                }
+            }
+        }
+    }
+
+    @objc private func saveSettings() {
+        guard let windowSnap = windowSnap else {
+            os_log("错误：windowSnap实例为nil", log: logger, type: .error)
+            let alert = NSAlert()
+            alert.messageText = "保存失败"
+            alert.informativeText = "内部错误：窗口调整器未初始化。请重启应用。"
+            alert.alertStyle = .critical
+            alert.addButton(withTitle: "确定")
+            alert.runModal()
+            return
+        }
+
+        // 停止旧的监听器
+        hotkeyListener?.stop()
+
+        // 更新配置
+        windowSnap.updateConfig(config)
+
+        // 保存配置（使用 completion 回调）
+        ConfigManager.shared.save(config)
+
+        // 创建新的监听器（关键：快捷键修改后需要重启）
+        hotkeyListener = HotkeyListener(windowSnap: windowSnap, config: config)
+        hotkeyListener?.start()
+
+        settingsWindow?.orderOut(nil)
+        cleanupSettingUIElements()
+        self.settingsWindow = nil
+    }
+}
+
+extension AppDelegate: NSWindowDelegate {
+    func windowWillClose(_ notification: Notification) {
+        guard let closingWindow = notification.object as? NSWindow,
+              closingWindow == settingsWindow else {
+            return
+        }
+        cleanupSettingUIElements()
+        settingsWindow = nil
+    }
+}
+
+extension AppDelegate: NSTextFieldDelegate {
+    func controlTextDidChange(_ obj: Notification) {
+        guard let textField = obj.object as? NSTextField else { return }
+
+        let value = Double(textField.stringValue) ?? 0
+        let tag = textField.tag
+
+        switch tag {
+        case 1:
+            let clampedValue = max(0, min(100, value))
+            config.xPercent = clampedValue / 100.0
+            xSlider?.doubleValue = clampedValue
+            xTextField?.stringValue = String(format: "%.0f", clampedValue)
+
+        case 2:
+            let clampedValue = max(0, min(100, value))
+            config.yPercent = clampedValue / 100.0
+            ySlider?.doubleValue = clampedValue
+            yTextField?.stringValue = String(format: "%.0f", clampedValue)
+
+        case 3:
+            let clampedValue = max(10, min(100, value))
+            config.widthPercent = clampedValue / 100.0
+            widthSlider?.doubleValue = clampedValue
+            widthTextField?.stringValue = String(format: "%.0f", clampedValue)
+
+        case 4:
+            let clampedValue = max(10, min(100, value))
+            config.heightPercent = clampedValue / 100.0
+            heightSlider?.doubleValue = clampedValue
+            heightTextField?.stringValue = String(format: "%.0f", clampedValue)
+
+        default:
+            break
+        }
+    }
+}
+
+// MARK: - 主入口点
+
+let app = NSApplication.shared
+let delegate = AppDelegate()
+app.delegate = delegate
+app.run()

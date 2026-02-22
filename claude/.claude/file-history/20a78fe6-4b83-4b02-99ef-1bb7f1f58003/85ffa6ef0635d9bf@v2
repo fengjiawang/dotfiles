@@ -1,0 +1,139 @@
+import Foundation
+import AppKit
+
+struct HotKey: Codable, Equatable {
+    let keyCode: UInt16
+    let modifierFlags: UInt
+
+    init(keyCode: UInt16, modifierFlags: NSEvent.ModifierFlags) {
+        self.keyCode = keyCode
+        self.modifierFlags = modifierFlags.rawValue
+    }
+
+    var displayString: String {
+        var parts: [String] = []
+
+        if modifierFlags & NSEvent.ModifierFlags.command.rawValue != 0 {
+            parts.append("⌘")
+        }
+        if modifierFlags & NSEvent.ModifierFlags.shift.rawValue != 0 {
+            parts.append("⇧")
+        }
+        if modifierFlags & NSEvent.ModifierFlags.control.rawValue != 0 {
+            parts.append("⌃")
+        }
+        if modifierFlags & NSEvent.ModifierFlags.option.rawValue != 0 {
+            parts.append("⌥")
+        }
+
+        let keyName = keyCodeToName(keyCode)
+        parts.append(keyName)
+
+        return parts.joined(separator: "")
+    }
+
+    private func keyCodeToName(_ code: UInt16) -> String {
+        switch code {
+        case 0: return "A"
+        case 1: return "S"
+        case 2: return "D"
+        case 3: return "F"
+        case 4: return "H"
+        case 5: return "G"
+        case 6: return "Z"
+        case 7: return "X"
+        case 8: return "C"
+        case 9: return "V"
+        case 10: return "B"
+        case 11: return "Q"
+        case 12: return "W"
+        case 13: return "E"
+        case 14: return "R"
+        case 15: return "Y"
+        case 16: return "T"
+        case 17: return "1"
+        case 18: return "2"
+        case 19: return "3"
+        case 20: return "4"
+        case 21: return "6"
+        case 22: return "5"
+        case 23: return "="
+        case 24: return "9"
+        case 25: return "7"
+        case 26: return "-"
+        case 27: return "8"
+        case 28: return "0"
+        case 29: return "]"
+        case 30: return "O"
+        case 31: return "U"
+        case 32: return "["
+        case 33: return "I"
+        case 34: return "P"
+        case 35: return "Return"
+        case 36: return "L"
+        case 37: return "J"
+        case 38: return "'"
+        case 39: return "K"
+        case 40: return ";"
+        case 41: return "\\"
+        case 42: return ","
+        case 43: return "/"
+        case 44: return "N"
+        case 45: return "M"
+        case 46: return "."
+        case 47: return "Tab"
+        case 48: return "Space"
+        case 49: return "`"
+        case 50: return "Delete"
+        case 51: return "Escape"
+        case 53: return "Esc"
+        case 55: return "Command"
+        case 56: return "Shift"
+        case 57: return "CapsLock"
+        case 58: return "Option"
+        case 59: return "Control"
+        case 60: return "RightShift"
+        case 61: return "RightOption"
+        case 62: return "RightControl"
+        case 63: return "Function"
+        case 64: return "F17"
+        case 65: return "VolumeUp"
+        case 66: return "VolumeDown"
+        case 67: return "Mute"
+        case 68: return "F18"
+        case 69: return "F19"
+        case 70: return "F20"
+        case 71: return "F5"
+        case 72: return "F6"
+        case 73: return "F7"
+        case 74: return "F3"
+        case 75: return "F8"
+        case 76: return "F9"
+        case 77: return "F11"
+        case 78: return "F13"
+        case 79: return "F16"
+        case 80: return "F14"
+        case 81: return "F10"
+        case 82: return "F12"
+        case 83: return "F15"
+        case 84: return "Help"
+        case 85: return "Home"
+        case 86: return "PageUp"
+        case 87: return "ForwardDelete"
+        case 88: return "F4"
+        case 89: return "End"
+        case 90: return "F2"
+        case 91: return "PageDown"
+        case 92: return "F1"
+        case 93: return "LeftArrow"
+        case 94: return "RightArrow"
+        case 95: return "DownArrow"
+        case 96: return "UpArrow"
+        case 97: return "RightCommand"
+        case 98: return "RightShift"
+        case 99: return "RightOption"
+        case 100: return "RightControl"
+        default: return "Key\(code)"
+        }
+    }
+}

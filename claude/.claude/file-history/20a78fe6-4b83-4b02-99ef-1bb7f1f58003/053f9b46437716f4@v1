@@ -1,0 +1,48 @@
+import Foundation
+import Combine
+
+final class SettingsManager: ObservableObject {
+    static let shared = SettingsManager()
+
+    private let userDefaults: UserDefaults
+    private let settingsKey = "com.windowsnap.settings"
+
+    @Published private(set) var settings: Settings {
+        didSet {
+            save()
+        }
+    }
+
+    init(userDefaults: UserDefaults = .standard) {
+        self.userDefaults = userDefaults
+
+        if let data = userDefaults.data(forKey: settingsKey),
+           let savedSettings = try? JSONDecoder().decode(Settings.self, from: data) {
+            self.settings = savedSettings
+        } else {
+            self.settings = .default
+        }
+    }
+
+    private func save() {
+        if let data = try? JSONEncoder().encode(settings) {
+            userDefaults.set(data, forKey: settingsKey)
+        }
+    }
+
+    func updateHotKey(_ hotKey: HotKey) {
+        settings.hotKey = hotKey
+    }
+
+    func updateWidthPercentage(_ percentage: Int) {
+        settings.widthPercentage = max(Settings.minPercentage, min(Settings.maxPercentage, percentage))
+    }
+
+    func updateHeightPercentage(_ percentage: Int) {
+        settings.heightPercentage = max(Settings.minPercentage, min(Settings.maxPercentage, percentage))
+    }
+
+    func resetToDefaults() {
+        settings = .default
+    }
+}

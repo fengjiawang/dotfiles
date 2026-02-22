@@ -1,0 +1,865 @@
+# WindowSnap Implementation Plan
+
+> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+
+**Goal:** Build a macOS menu bar application that centers and resizes windows via global hotkey
+
+**Architecture:** AppKit-based menu bar app with SwiftUI settings window. Uses Accessibility API for window control, Carbon Event Manager for hotkeys, UserDefaults for persistence. No Dock icon (LSUIElement agent).
+
+**Tech Stack:** Swift, AppKit, SwiftUI, Accessibility API, Carbon Event Manager, UserDefaults
+
+---
+
+## Task 1: Create Xcode Project Structure
+
+**Files:**
+- Create: `WindowSnap.xcodeproj` (via Xcode)
+- Create: `WindowSnap/WindowSnapApp.swift`
+- Create: `WindowSnap/Info.plist`
+
+**Step 1: Create new Xcode project**
+
+Run from terminal:
+```bash
+cd /Users/jwfeng/Downloads/for_claude/WindowSnap
+```
+
+Then use the Xcode scaffolding tool to create a macOS app:
+```
+mcp__XcodeBuildMCP__scaffold_macos_project with:
+- projectName: "WindowSnap"
+- outputPath: "/Users/jwfeng/Downloads/for_claude/WindowSnap"
+- bundleIdentifier: "com.windowsnap.app"
+- deploymentTarget: "13.0"
+- displayName: "WindowSnap"
+```
+
+Expected: New Xcode project created with workspace structure
+
+**Step 2: Configure Info.plist for menu bar agent**
+
+Add to `WindowSnap/WindowSnap/Info.plist`:
+```xml
+<key>LSUIElement</key>
+<true/>
+<key>NSHumanReadableCopyright</key>
+<string>Copyright © 2026</string>
+<key>CFBundleDisplayName</key>
+<string>WindowSnap</string>
+```
+
+**Step 3: Add Accessibility usage description**
+
+Add to Info.plist:
+```xml
+<key>NSAccessibilityUsageDescription</key>
+<string>WindowSnap needs accessibility access to control window positions and sizes.</string>
+```
+
+**Step 4: Verify project builds**
+
+Run: `mcp__XcodeBuildMCP__build_macos`
+Expected: Build succeeds
+
+**Step 5: Commit**
+
+```bash
+git add .
+git commit -m "feat: create Xcode project structure with menu bar agent config"
+```
+
+---
+
+## Task 2: Implement SettingsManager (Data Layer)
+
+**Files:**
+- Create: `WindowSnap/WindowSnap/SettingsManager.swift`
+
+**Step 1: Create SettingsManager with UserDefaults**
+
+Create file with:
+```swift
+import Foundation
+
+class SettingsManager: ObservableObject {
+    static let shared = SettingsManager()
+
+    @Published var xRatio: Double {
+        didSet {
+            UserDefaults.standard.set(xRatio, forKey: Keys.xRatio)
+        }
+    }
+
+    @Published var yRatio: Double {
+        didSet {
+            UserDefaults.standard.set(yRatio, forKey: Keys.yRatio)
+        }
+    }
+
+    @Published var hotkeyKeyCode: UInt16 {
+        didSet {
+            UserDefaults.standard.set(Int(hotkeyKeyCode), forKey: Keys.hotkeyKeyCode)
+        }
+    }
+
+    @Published var hotkeyModifiers: UInt32 {
+        didSet {
+            UserDefaults.standard.set(Int(hotkeyModifiers), forKey: Keys.hotkeyModifiers)
+        }
+    }
+
+    private enum Keys {
+        static let xRatio = "windowsnap.xRatio"
+        static let yRatio = "windowsnap.yRatio"
+        static let hotkeyKeyCode = "windowsnap.hotkeyKeyCode"
+        static let hotkeyModifiers = "windowsnap.hotkeyModifiers"
+    }
+
+    private init() {
+        // Load or set defaults
+        self.xRatio = UserDefaults.standard.object(forKey: Keys.xRatio) as? Double ?? 80.0
+        self.yRatio = UserDefaults.standard.object(forKey: Keys.yRatio) as? Double ?? 80.0
+        self.hotkeyKeyCode = UInt16(UserDefaults.standard.integer(forKey: Keys.hotkeyKeyCode) != 0
+            ? UserDefaults.standard.integer(forKey: Keys.hotkeyKeyCode)
+            : 6) // Z key
+        self.hotkeyModifiers = UInt32(UserDefaults.standard.integer(forKey: Keys.hotkeyModifiers) != 0
+            ? UserDefaults.standard.integer(forKey: Keys.hotkeyModifiers)
+            : 524288) // Option key
+    }
+
+    func reset() {
+        xRatio = 80.0
+        yRatio = 80.0
+        hotkeyKeyCode = 6
+        hotkeyModifiers = 524288
+    }
+}
+```
+
+**Step 2: Verify it compiles**
+
+Run: `mcp__XcodeBuildMCP__build_macos`
+Expected: Build succeeds
+
+**Step 3: Commit**
+
+```bash
+git add WindowSnap/WindowSnap/SettingsManager.swift
+git commit -m "feat: add SettingsManager with UserDefaults persistence"
+```
+
+---
+
+## Task 3: Implement WindowSnapEngine (Core Logic)
+
+**Files:**
+- Create: `WindowSnap/WindowSnap/WindowSnapEngine.swift`
+
+**Step 1: Create WindowSnapEngine with Accessibility API**
+
+Create file with:
+```swift
+import Cocoa
+import ApplicationServices
+
+class WindowSnapEngine {
+    static let shared = WindowSnapEngine()
+
+    private init() {}
+
+    func snapFrontmostWindow() {
+        // Check accessibility permission
+        guard AXIsProcessTrusted() else {
+            showPermissionAlert()
+            return
+        }
+
+        // Get frontmost application
+        guard let frontmostApp = NSWorkspace.shared.frontmostApplication else {
+            return
+        }
+
+        // Get focused window via Accessibility API
+        let appElement = AXUIElementCreateApplication(frontmostApp.processIdentifier)
+        var focusedWindow: CFTypeRef?
+        let result = AXUIElementCopyAttributeValue(appElement, kAXFocusedWindowAttribute as CFString, &focusedWindow)
+
+        guard result == .success, let windowElement = focusedWindow else {
+            return
+        }
+
+        // Get window frame
+        guard let windowFrame = getWindowFrame(windowElement as! AXUIElement) else {
+            return
+        }
+
+        // Determine target screen
+        guard let targetScreen = findTargetScreen(for: windowFrame) else {
+            return
+        }
+
+        // Calculate new frame
+        let settings = SettingsManager.shared
+        let visibleFrame = targetScreen.visibleFrame
+
+        let targetWidth = visibleFrame.width * (settings.xRatio / 100.0)
+        let targetHeight = visibleFrame.height * (settings.yRatio / 100.0)
+
+        let targetX = visibleFrame.origin.x + (visibleFrame.width - targetWidth) / 2
+        let targetY = visibleFrame.origin.y + (visibleFrame.height - targetHeight) / 2
+
+        // Apply new position and size
+        setWindowFrame(windowElement as! AXUIElement,
+                      x: targetX, y: targetY,
+                      width: targetWidth, height: targetHeight)
+    }
+
+    private func getWindowFrame(_ element: AXUIElement) -> CGRect? {
+        var positionValue: CFTypeRef?
+        var sizeValue: CFTypeRef?
+
+        guard AXUIElementCopyAttributeValue(element, kAXPositionAttribute as CFString, &positionValue) == .success,
+              AXUIElementCopyAttributeValue(element, kAXSizeAttribute as CFString, &sizeValue) == .success else {
+            return nil
+        }
+
+        var position = CGPoint.zero
+        var size = CGSize.zero
+
+        AXValueGetValue(positionValue as! AXValue, .cgPoint, &position)
+        AXValueGetValue(sizeValue as! AXValue, .cgSize, &size)
+
+        return CGRect(origin: position, size: size)
+    }
+
+    private func findTargetScreen(for windowFrame: CGRect) -> NSScreen? {
+        var maxArea: CGFloat = 0
+        var targetScreen: NSScreen?
+
+        for screen in NSScreen.screens {
+            let intersection = windowFrame.intersection(screen.frame)
+            let area = intersection.width * intersection.height
+
+            if area > maxArea {
+                maxArea = area
+                targetScreen = screen
+            }
+        }
+
+        // Fallback: use screen containing window center
+        if targetScreen == nil {
+            let center = CGPoint(x: windowFrame.midX, y: windowFrame.midY)
+            targetScreen = NSScreen.screens.first { $0.frame.contains(center) }
+        }
+
+        return targetScreen ?? NSScreen.main
+    }
+
+    private func setWindowFrame(_ element: AXUIElement, x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat) {
+        var newPosition = CGPoint(x: x, y: y)
+        var newSize = CGSize(width: width, height: height)
+
+        if let positionValue = AXValueCreate(.cgPoint, &newPosition) {
+            AXUIElementSetAttributeValue(element, kAXPositionAttribute as CFString, positionValue)
+        }
+
+        if let sizeValue = AXValueCreate(.cgSize, &newSize) {
+            AXUIElementSetAttributeValue(element, kAXSizeAttribute as CFString, sizeValue)
+        }
+    }
+
+    private func showPermissionAlert() {
+        let alert = NSAlert()
+        alert.messageText = "Accessibility Permission Required"
+        alert.informativeText = "WindowSnap needs accessibility access to control window positions. Please grant permission in System Settings."
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "Open System Settings")
+        alert.addButton(withTitle: "Cancel")
+
+        if alert.runModal() == .alertFirstButtonReturn {
+            if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
+                NSWorkspace.shared.open(url)
+            }
+        }
+    }
+}
+```
+
+**Step 2: Verify it compiles**
+
+Run: `mcp__XcodeBuildMCP__build_macos`
+Expected: Build succeeds
+
+**Step 3: Commit**
+
+```bash
+git add WindowSnap/WindowSnap/WindowSnapEngine.swift
+git commit -m "feat: add WindowSnapEngine with Accessibility API window control"
+```
+
+---
+
+## Task 4: Implement HotkeyManager (Global Hotkey)
+
+**Files:**
+- Create: `WindowSnap/WindowSnap/HotkeyManager.swift`
+
+**Step 1: Create HotkeyManager with Carbon Event Manager**
+
+Create file with:
+```swift
+import Cocoa
+import Carbon
+
+class HotkeyManager {
+    static let shared = HotkeyManager()
+
+    private var hotKeyRef: EventHotKeyRef?
+    private var eventHandler: EventHandlerRef?
+
+    private init() {}
+
+    func registerHotkey() {
+        unregisterHotkey()
+
+        let settings = SettingsManager.shared
+        let keyCode = settings.hotkeyKeyCode
+        let modifiers = settings.hotkeyModifiers
+
+        var hotKeyID = EventHotKeyID(signature: FourCharCode("WSNP"), id: 1)
+        var eventType = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: UInt32(kEventHotKeyPressed))
+
+        InstallEventHandler(GetApplicationEventTarget(), { (nextHandler, event, userData) -> OSStatus in
+            HotkeyManager.shared.hotkeyPressed()
+            return noErr
+        }, 1, &eventType, nil, &eventHandler)
+
+        let status = RegisterEventHotKey(UInt32(keyCode), modifiers, hotKeyID, GetApplicationEventTarget(), 0, &hotKeyRef)
+
+        if status != noErr {
+            print("Failed to register hotkey: \(status)")
+        }
+    }
+
+    func unregisterHotkey() {
+        if let hotKeyRef = hotKeyRef {
+            UnregisterEventHotKey(hotKeyRef)
+            self.hotKeyRef = nil
+        }
+
+        if let eventHandler = eventHandler {
+            RemoveEventHandler(eventHandler)
+            self.eventHandler = nil
+        }
+    }
+
+    private func hotkeyPressed() {
+        WindowSnapEngine.shared.snapFrontmostWindow()
+    }
+
+    deinit {
+        unregisterHotkey()
+    }
+}
+```
+
+**Step 2: Verify it compiles**
+
+Run: `mcp__XcodeBuildMCP__build_macos`
+Expected: Build succeeds
+
+**Step 3: Commit**
+
+```bash
+git add WindowSnap/WindowSnap/HotkeyManager.swift
+git commit -m "feat: add HotkeyManager with Carbon Event Manager"
+```
+
+---
+
+## Task 5: Implement MenuBarManager (Menu Bar Icon)
+
+**Files:**
+- Create: `WindowSnap/WindowSnap/MenuBarManager.swift`
+
+**Step 1: Create MenuBarManager with NSStatusItem**
+
+Create file with:
+```swift
+import Cocoa
+
+class MenuBarManager {
+    static let shared = MenuBarManager()
+
+    private var statusItem: NSStatusItem?
+
+    private init() {}
+
+    func setupMenuBar() {
+        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+
+        if let button = statusItem?.button {
+            // Use SF Symbol
+            if let image = NSImage(systemSymbolName: "rectangle.center.inset.filled", accessibilityDescription: "WindowSnap") {
+                image.isTemplate = true
+                button.image = image
+            }
+            button.toolTip = "WindowSnap - Center and resize windows"
+        }
+
+        let menu = NSMenu()
+
+        let settingsItem = NSMenuItem(title: "Settings...", action: #selector(openSettings), keyEquivalent: ",")
+        settingsItem.target = self
+        menu.addItem(settingsItem)
+
+        menu.addItem(NSMenuItem.separator())
+
+        let quitItem = NSMenuItem(title: "Quit WindowSnap", action: #selector(quit), keyEquivalent: "q")
+        quitItem.target = self
+        menu.addItem(quitItem)
+
+        statusItem?.menu = menu
+    }
+
+    @objc private func openSettings() {
+        SettingsWindowManager.shared.showSettings()
+    }
+
+    @objc private func quit() {
+        NSApplication.shared.terminate(nil)
+    }
+}
+
+class SettingsWindowManager {
+    static let shared = SettingsWindowManager()
+
+    private var settingsWindow: NSWindow?
+
+    private init() {}
+
+    func showSettings() {
+        if let window = settingsWindow {
+            window.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
+
+        let settingsView = SettingsView()
+        let hostingController = NSHostingController(rootView: settingsView)
+
+        let window = NSWindow(contentViewController: hostingController)
+        window.title = "WindowSnap Settings"
+        window.styleMask = [.titled, .closable]
+        window.setContentSize(NSSize(width: 400, height: 300))
+        window.center()
+        window.isReleasedWhenClosed = false
+
+        settingsWindow = window
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+}
+```
+
+**Step 2: Verify it compiles (will fail until SettingsView exists)**
+
+Note: This will not compile yet - we need SettingsView next
+
+**Step 3: Commit**
+
+```bash
+git add WindowSnap/WindowSnap/MenuBarManager.swift
+git commit -m "feat: add MenuBarManager with menu bar icon and menu"
+```
+
+---
+
+## Task 6: Implement SettingsView (Settings UI)
+
+**Files:**
+- Create: `WindowSnap/WindowSnap/SettingsView.swift`
+
+**Step 1: Create SwiftUI SettingsView**
+
+Create file with:
+```swift
+import SwiftUI
+
+struct SettingsView: View {
+    @ObservedObject var settings = SettingsManager.shared
+    @State private var isRecordingHotkey = false
+    @State private var hotkeyConflictWarning = false
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("WindowSnap Settings")
+                .font(.title2)
+                .padding(.top)
+
+            Divider()
+
+            // Hotkey Section
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Hotkey")
+                    .font(.headline)
+
+                Button(action: {
+                    isRecordingHotkey.toggle()
+                }) {
+                    Text(isRecordingHotkey ? "Press key combination..." : "Record new hotkey...")
+                        .frame(maxWidth: .infinity)
+                        .padding(8)
+                }
+                .buttonStyle(.bordered)
+                .keyboardShortcut(.defaultAction)
+
+                Text("Current: \(hotkeyDescription)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                if hotkeyConflictWarning {
+                    HStack {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.orange)
+                        Text("This hotkey may conflict with system shortcuts")
+                            .font(.caption)
+                    }
+                }
+            }
+            .padding(.horizontal)
+
+            // Window Size Section
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Window Size")
+                    .font(.headline)
+
+                VStack(spacing: 8) {
+                    HStack {
+                        Text("Width Ratio:")
+                        Slider(value: $settings.xRatio, in: 20...100, step: 5)
+                        Text("\(Int(settings.xRatio))%")
+                            .frame(width: 40)
+                    }
+
+                    HStack {
+                        Text("Height Ratio:")
+                        Slider(value: $settings.yRatio, in: 20...100, step: 5)
+                        Text("\(Int(settings.yRatio))%")
+                            .frame(width: 40)
+                    }
+                }
+
+                Text("Range: 20% - 100%")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal)
+
+            Button("Test Current Window") {
+                WindowSnapEngine.shared.snapFrontmostWindow()
+            }
+            .buttonStyle(.borderedProminent)
+
+            Spacer()
+        }
+        .frame(width: 400, height: 300)
+        .onChange(of: settings.hotkeyKeyCode) { _ in
+            checkHotkeyConflicts()
+            HotkeyManager.shared.registerHotkey()
+        }
+        .onChange(of: settings.hotkeyModifiers) { _ in
+            checkHotkeyConflicts()
+            HotkeyManager.shared.registerHotkey()
+        }
+    }
+
+    private var hotkeyDescription: String {
+        var description = ""
+
+        let modifiers = settings.hotkeyModifiers
+        if modifiers & 524288 != 0 { description += "⌥" }
+        if modifiers & 1048576 != 0 { description += "⌘" }
+        if modifiers & 262144 != 0 { description += "⌃" }
+        if modifiers & 131072 != 0 { description += "⇧" }
+
+        // Map key code to character (simplified)
+        let keyChar: String
+        switch settings.hotkeyKeyCode {
+        case 6: keyChar = "Z"
+        case 7: keyChar = "X"
+        case 8: keyChar = "C"
+        default: keyChar = "?"
+        }
+
+        return description + keyChar
+    }
+
+    private func checkHotkeyConflicts() {
+        // Check common system shortcuts
+        let modifiers = settings.hotkeyModifiers
+        let keyCode = settings.hotkeyKeyCode
+
+        // Spotlight: ⌘Space (49)
+        // Mission Control: ⌃↑ (126)
+        // Screenshot: ⌘⇧3 (20), ⌘⇧4 (21), ⌘⇧5 (23)
+
+        let conflictingCombos: [(UInt32, UInt16)] = [
+            (1048576, 49),  // ⌘Space
+            (262144, 126),  // ⌃↑
+            (1179648, 20),  // ⌘⇧3
+            (1179648, 21),  // ⌘⇧4
+            (1179648, 23),  // ⌘⇧5
+        ]
+
+        hotkeyConflictWarning = conflictingCombos.contains { $0.0 == modifiers && $0.1 == keyCode }
+    }
+}
+```
+
+**Step 2: Verify it compiles**
+
+Run: `mcp__XcodeBuildMCP__build_macos`
+Expected: Build succeeds
+
+**Step 3: Commit**
+
+```bash
+git add WindowSnap/WindowSnap/SettingsView.swift
+git commit -m "feat: add SettingsView with SwiftUI interface"
+```
+
+---
+
+## Task 7: Wire Up App Entry Point
+
+**Files:**
+- Modify: `WindowSnap/WindowSnap/WindowSnapApp.swift`
+
+**Step 1: Update WindowSnapApp to initialize managers**
+
+Replace content with:
+```swift
+import SwiftUI
+
+@main
+struct WindowSnapApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
+    var body: some Scene {
+        Settings {
+            EmptyView()
+        }
+    }
+}
+
+class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        // Set activation policy to accessory (no Dock icon)
+        NSApp.setActivationPolicy(.accessory)
+
+        // Check and request accessibility permission
+        if !AXIsProcessTrusted() {
+            showAccessibilityPermissionAlert()
+        }
+
+        // Initialize managers
+        MenuBarManager.shared.setupMenuBar()
+        HotkeyManager.shared.registerHotkey()
+    }
+
+    private func showAccessibilityPermissionAlert() {
+        let alert = NSAlert()
+        alert.messageText = "Accessibility Permission Required"
+        alert.informativeText = "WindowSnap needs accessibility access to control window positions. Please grant permission in System Settings."
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "Open System Settings")
+        alert.addButton(withTitle: "Quit")
+
+        let response = alert.runModal()
+        if response == .alertFirstButtonReturn {
+            if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
+                NSWorkspace.shared.open(url)
+            }
+        } else {
+            NSApp.terminate(nil)
+        }
+    }
+}
+```
+
+**Step 2: Verify it compiles**
+
+Run: `mcp__XcodeBuildMCP__build_macos`
+Expected: Build succeeds
+
+**Step 3: Commit**
+
+```bash
+git add WindowSnap/WindowSnap/WindowSnapApp.swift
+git commit -m "feat: wire up app entry point with manager initialization"
+```
+
+---
+
+## Task 8: Build and Manual Testing
+
+**Step 1: Build the app**
+
+Run: `mcp__XcodeBuildMCP__build_macos`
+Expected: Build succeeds with no errors
+
+**Step 2: Get app path**
+
+Run: `mcp__XcodeBuildMCP__get_mac_app_path`
+Expected: Returns path to WindowSnap.app
+
+**Step 3: Launch the app**
+
+Run: `mcp__XcodeBuildMCP__launch_mac_app` with the app path from step 2
+Expected:
+- Menu bar icon appears
+- No Dock icon
+- Permission dialog appears if not granted
+
+**Step 4: Manual testing checklist**
+
+Test these scenarios:
+1. Grant accessibility permission
+2. Click menu bar icon - menu appears
+3. Click "Settings..." - settings window opens
+4. Adjust sliders - values update
+5. Click "Test Current Window" - window centers and resizes
+6. Press ⌥Z hotkey - window centers and resizes
+7. Close settings window - no Dock icon remains
+8. Reopen settings - previous values persisted
+9. Click "Quit" - app terminates
+
+**Step 5: Document any issues**
+
+Create file `TESTING.md` with results and any bugs found
+
+**Step 6: Commit testing documentation**
+
+```bash
+git add TESTING.md
+git commit -m "docs: add manual testing results"
+```
+
+---
+
+## Task 9: Add Hotkey Recording (Enhancement)
+
+**Files:**
+- Modify: `WindowSnap/WindowSnap/SettingsView.swift`
+
+**Step 1: Add hotkey recording view modifier**
+
+Add to SettingsView:
+```swift
+// Add this modifier to the main VStack
+.onAppear {
+    NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+        if self.isRecordingHotkey {
+            self.settings.hotkeyKeyCode = event.keyCode
+            self.settings.hotkeyModifiers = event.modifierFlags.rawValue & 0xFFFF0000
+            self.isRecordingHotkey = false
+            return nil
+        }
+        return event
+    }
+}
+```
+
+**Step 2: Verify it compiles**
+
+Run: `mcp__XcodeBuildMCP__build_macos`
+Expected: Build succeeds
+
+**Step 3: Test hotkey recording**
+
+Launch app and test:
+1. Click "Record new hotkey..."
+2. Press a key combination (e.g., ⌘⇧R)
+3. Verify hotkey updates in "Current:" display
+4. Verify new hotkey works
+
+**Step 4: Commit**
+
+```bash
+git add WindowSnap/WindowSnap/SettingsView.swift
+git commit -m "feat: add interactive hotkey recording"
+```
+
+---
+
+## Task 10: Polish and Final Validation
+
+**Step 1: Add app icon (optional)**
+
+Create icon asset in Assets.xcassets if desired
+
+**Step 2: Run full validation checklist**
+
+From design document:
+- [ ] Menu bar icon appears immediately on launch
+- [ ] No Dock icon during normal operation
+- [ ] Settings window closes without Dock persistence
+- [ ] Hotkey triggers window centering
+- [ ] Multi-monitor centering on correct screen (if available)
+- [ ] Settings persist across app restarts
+- [ ] Accessibility permission flow works correctly
+- [ ] Warning shown for conflicting hotkeys
+
+**Step 3: Update README**
+
+Create `README.md`:
+```markdown
+# WindowSnap
+
+A macOS menu bar application that centers and resizes windows via global hotkey.
+
+## Features
+- Global hotkey (default: ⌥Z) to center and resize frontmost window
+- Customizable window size ratios (20%-100%)
+- Multi-monitor support
+- No Dock icon - pure menu bar app
+
+## Requirements
+- macOS 13.0 or later
+- Accessibility permission
+
+## Usage
+1. Launch WindowSnap
+2. Grant accessibility permission when prompted
+3. Click menu bar icon → Settings to customize
+4. Press ⌥Z (or custom hotkey) to snap windows
+
+## Building
+Open `WindowSnap.xcodeproj` in Xcode and build for macOS.
+```
+
+**Step 4: Commit final polish**
+
+```bash
+git add README.md
+git commit -m "docs: add README with usage instructions"
+```
+
+**Step 5: Tag release**
+
+```bash
+git tag -a v1.0.0 -m "Initial release of WindowSnap"
+```
+
+---
+
+## Execution Complete
+
+All tasks completed. WindowSnap should now be fully functional with:
+- Menu bar icon and menu
+- Settings window with customizable ratios and hotkey
+- Global hotkey registration
+- Window centering and resizing via Accessibility API
+- Persistence via UserDefaults
+- No Dock icon behavior

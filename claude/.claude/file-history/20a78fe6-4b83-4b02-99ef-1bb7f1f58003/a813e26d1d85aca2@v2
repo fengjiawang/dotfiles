@@ -1,0 +1,65 @@
+import Foundation
+import AppKit
+
+protocol HotKeyManagerDelegate: AnyObject {
+    func hotKeyManager(_ manager: HotKeyManager, didTriggerHotKey hotKey: HotKey)
+}
+
+final class HotKeyManager {
+    static let shared = HotKeyManager()
+
+    weak var delegate: HotKeyManagerDelegate?
+
+    private var currentHotKey: HotKey?
+    private var eventMonitor: Any?
+
+    private init() {}
+
+    func registerHotKey(_ hotKey: HotKey) -> Bool {
+        unregisterHotKey()
+        currentHotKey = hotKey
+        startMonitoring()
+        return true
+    }
+
+    func unregisterHotKey() {
+        stopMonitoring()
+        currentHotKey = nil
+    }
+
+    private func startMonitoring() {
+        guard let hotKey = currentHotKey else { return }
+
+        eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard let self = self else { return }
+
+            if self.matches(hotKey: hotKey, event: event) {
+                DispatchQueue.main.async {
+                    self.delegate?.hotKeyManager(self, didTriggerHotKey: hotKey)
+                }
+            }
+        }
+    }
+
+    private func stopMonitoring() {
+        if let monitor = eventMonitor {
+            NSEvent.removeMonitor(monitor)
+            eventMonitor = nil
+        }
+    }
+
+    private func matches(hotKey: HotKey, event: NSEvent) -> Bool {
+        guard event.keyCode == hotKey.keyCode else {
+            return false
+        }
+
+        let modifiers = event.modifierFlags.intersection([.command, .shift, .control, .option])
+        let required = NSEvent.ModifierFlags(rawValue: hotKey.modifierFlags)
+
+        return modifiers == required
+    }
+
+    func checkHotKeyConflict(hotKey: HotKey) -> Bool {
+        return false
+    }
+}

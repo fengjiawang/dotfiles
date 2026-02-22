@@ -1,0 +1,217 @@
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
+use std::process::Command;
+use std::sync::Mutex;
+
+use tauri::{Manager, WebviewWindow, State, Emitter};
+use tauri_plugin_global_shortcut::{Builder, ShortcutState, Shortcut};
+use std::str::FromStr;
+
+struct AppState {
+    x_ratio: f64,
+    y_ratio: f64,
+    shortcut: String,
+}
+
+#[tauri::command]
+fn get_settings(state: State<Mutex<AppState>>) -> serde_json::Value {
+    let state = state.lock().unwrap();
+    serde_json::json!({
+        "xRatio": state.x_ratio,
+        "yRatio": state.y_ratio,
+        "shortcut": state.shortcut
+    })
+}
+
+#[tauri::command]
+fn save_settings(state: State<Mutex<AppState>>, x_ratio: f64, y_ratio: f64, shortcut: String) -> Result<(), String> {
+    let mut state = state.lock().map_err(|e| e.to_string())?;
+    state.x_ratio = x_ratio;
+    state.y_ratio = y_ratio;
+    state.shortcut = shortcut;
+    Ok(())
+}
+
+#[tauri::command]
+fn snap_window(_window: WebviewWindow, state: State<Mutex<AppState>>) -> Result<(), String> {
+    let state = state.lock().map_err(|e| e.to_string())?;
+    let x_ratio = state.x_ratio;
+    let y_ratio = state.y_ratio;
+    drop(state);
+
+    // Get screen dimensions using AppleScript
+    let screen_script = r#"
+        tell application "Finder"
+            get bounds of window of desktop
+        end tell
+    "#;
+
+    let screen_output = Command::new("osascript")
+        .arg("-e")
+        .arg(screen_script)
+        .output()
+        .map_err(|e| format!("Failed to get screen dimensions: {}", e))?;
+
+    let screen_str = String::from_utf8_lossy(&screen_output.stdout);
+    let parts: Vec<&str> = screen_str.trim().split(',').collect();
+    if parts.len() != 4 {
+        return Err("Failed to parse screen dimensions".to_string());
+    }
+
+    let screen_width: f64 = parts[2].trim().parse().map_err(|e: std::num::ParseFloatError| e.to_string())?;
+    let screen_height: f64 = parts[3].trim().parse().map_err(|e: std::num::ParseFloatError| e.to_string())?;
+
+    // Calculate target window size
+    let target_width = (screen_width * x_ratio) as i32;
+    let target_height = (screen_height * y_ratio) as i32;
+    let target_x = ((screen_width - (screen_width * x_ratio)) / 2.0) as i32;
+    let target_y = ((screen_height - (screen_height * y_ratio)) / 2.0) as i32;
+
+    // Use AppleScript to resize and move the front window
+    let resize_script = format!(
+        r#"
+            tell application "System Events"
+                tell process "Finder"
+                    set position of window 1 to {{{}, {}}}
+                    set size of window 1 to {{{}, {}}}
+                end tell
+            end tell
+        "#,
+        target_x, target_y, target_width, target_height
+    );
+
+    let output = Command::new("osascript")
+        .arg("-e")
+        .arg(&resize_script)
+        .output()
+        .map_err(|e| format!("Failed to resize window: {}", e))?;
+
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        return Err(format!("AppleScript error: {}", stderr));
+    }
+
+    Ok(())
+}
+
+fn main() {
+    tauri::Builder::default()
+        .plugin(tauri_plugin_shell::init())
+        .invoke_handler(tauri::generate_handler![get_settings, save_settings, snap_window])
+        .manage(Mutex::new(AppState {
+            x_ratio: 0.8,
+            y_ratio: 0.8,
+            shortcut: "Cmd+Shift+S".to_string(),
+        }))
+        .setup(|app| {
+            let handle = app.handle().clone();
+
+            // Create menu for tray icon
+            let settings_menu = tauri::menu::MenuItemBuilder::with_id("settings", "Settings...")
+                .build(&handle)?;
+            let quit_menu = tauri::menu::MenuItemBuilder::with_id("quit", "Quit")
+                .accelerator("Cmd+Q")
+                .build(&handle)?;
+
+            let menu = tauri::menu::MenuBuilder::new(&handle)
+                .items(&[&settings_menu, &quit_menu])
+                .build()?;
+
+            // Create hidden main window
+            let _main_window = tauri::WebviewWindowBuilder::new(
+                app,
+                "main",
+                tauri::WebviewUrl::App("index.html".into()),
+            )
+            .title("WindowSnap")
+            .inner_size(1.0, 1.0)
+            .visible(false)
+            .build()?;
+
+            // Register global shortcut
+            {
+                let app_state = app.state::<Mutex<AppState>>();
+                let state = app_state.lock().unwrap();
+                let shortcut_str = state.shortcut.clone();
+                drop(state);
+
+                let shortcut = Shortcut::from_str(&shortcut_str)
+                    .map_err(|e| format!("Invalid shortcut: {}", e))?;
+
+                app.handle().plugin(
+                    Builder::new()
+                        .with_shortcut(shortcut)?
+                        .with_handler(move |app, _shortcut, event| {
+                            if event.state == ShortcutState::Pressed {
+                                let window = app.get_webview_window("main").unwrap();
+                                let _ = window.emit("trigger-snap", ());
+                            }
+                        })
+                        .build(),
+                )?;
+            }
+
+            let icon = tauri::image::Image::<'static>::new_owned(
+                include_bytes!("../icons/32x32.png").to_vec(),
+                32,
+                32,
+            );
+
+            let _tray = tauri::tray::TrayIconBuilder::new()
+                .icon(icon)
+                .menu(&menu)
+                .tooltip("WindowSnap")
+                .on_menu_event(move |app, event| {
+                    if event.id.as_ref() == "settings" {
+                        if let Some(window) = app.get_webview_window("settings") {
+                            window.show().ok();
+                            window.set_focus().ok();
+                        } else {
+                            let _ = tauri::WebviewWindowBuilder::new(
+                                app,
+                                "settings",
+                                tauri::WebviewUrl::App("index.html".into()),
+                            )
+                            .title("WindowSnap Settings")
+                            .inner_size(400.0, 320.0)
+                            .resizable(false)
+                            .always_on_top(true)
+                            .center()
+                            .build();
+                        }
+                    } else if event.id.as_ref() == "quit" {
+                        app.exit(0);
+                    }
+                })
+                .on_tray_icon_event(|tray, event| {
+                    if let tauri::tray::TrayIconEvent::Click {
+                        button: tauri::tray::MouseButton::Left,
+                        ..
+                    } = event
+                    {
+                        let app = tray.app_handle();
+                        if let Some(window) = app.get_webview_window("settings") {
+                            window.show().ok();
+                            window.set_focus().ok();
+                        } else {
+                            let _ = tauri::WebviewWindowBuilder::new(
+                                app,
+                                "settings",
+                                tauri::WebviewUrl::App("index.html".into()),
+                            )
+                            .title("WindowSnap Settings")
+                            .inner_size(400.0, 320.0)
+                            .resizable(false)
+                            .always_on_top(true)
+                            .center()
+                            .build();
+                        }
+                    }
+                })
+                .build(app)?;
+
+            Ok(())
+        })
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
+}

@@ -1,0 +1,128 @@
+# WindowSnap Design Document
+
+## Overview
+
+WindowSnap is a macOS menu bar application that snaps the foreground window to the center of the screen with configurable size ratios.
+
+## Features
+
+- **Window Snapping**: Press a configurable hotkey to center and resize the foreground window
+- **Configurable Size**: Adjustable xRatio and yRatio (default 0.8 = 80% of screen)
+- **Smooth Animation**: Bouncy animation effect when snapping windows
+- **Menu Bar Icon**: Persistent icon with dropdown menu for actions
+- **Settings Panel**: Configure hotkey, size ratios, and view current settings
+
+## Technical Stack
+
+- Swift 5.9+
+- SwiftUI for settings UI
+- Carbon framework (hotkey registration via RegisterEventHotKey)
+- ApplicationServices/AXSwift (Accessibility API for window manipulation)
+
+## Architecture
+
+```
+WindowSnap/
+├── Sources/
+│   ├── AppDelegate.swift          # App lifecycle, menu bar setup
+│   ├── Models/
+│   │   └── SettingsStore.swift    # UserDefaults-backed settings
+│   ├── Managers/
+│   │   ├── HotKeyManager.swift    # Carbon hotkey registration
+│   │   └── AccessibilityHelper.swift  # Accessibility permission handling
+│   ├── Services/
+│   │   └── WindowSnapper.swift    # Window manipulation logic
+│   └── Views/
+│       ├── SettingsView.swift     # Settings panel UI
+│       └── HotKeyRecorder.swift   # Custom hotkey recording component
+├── Resources/
+│   └── Assets.xcassets/           # App icon and assets
+└── project.yml                    # XcodeGen configuration
+```
+
+## Component Details
+
+### SettingsStore
+
+- Persists settings via UserDefaults
+- Keys: `xRatio`, `yRatio`, `hotKeyCode`, `hotKeyModifiers`
+- Provides default values and validation
+
+### HotKeyManager
+
+- Uses Carbon's `RegisterEventHotKey` API
+- Registers hotkey with system event loop
+- Detects registration failures (conflict detection)
+- Calls snap callback on hotkey press
+- Supports unregistering on deinit
+
+### WindowSnapper
+
+1. Use `AXUIElementCopyAttributeValue` to get foreground window
+2. Calculate target size: `screenSize * xRatio` and `screenSize * yRatio`
+3. Calculate target position: center of screen minus half target size
+4. Use `AXUIElementSetAttributeValue` to set position and size
+5. Animate the change with spring effect
+
+### AccessibilityHelper
+
+- Requests accessibility permissions on first launch
+- Provides permission check method
+- Shows guidance dialog if permissions not granted
+
+### Menu Bar Interaction
+
+- **Left Click**: Show dropdown menu with options
+  - "窗口居中" (Snap Window)
+  - "设置" (Settings)
+  - "退出" (Quit)
+
+## User Interface
+
+### Settings Panel (Popover)
+
+```
+┌─────────────────────────┐
+│  窗口比例设置            │
+├─────────────────────────┤
+│  横向比例: [━━━━━━●] 80% │
+│  纵向比例: [━━━━━━●] 80% │
+├─────────────────────────┤
+│  快捷键设置              │
+│  [ ⌘⇧ S       ] 点击修改 │
+├─────────────────────────┤
+│  ⚠️ 快捷键被占用        │  (shown on conflict)
+└─────────────────────────┘
+```
+
+## Animation Details
+
+- Spring animation with parameters:
+  - Mass: 1.0
+  - Stiffness: 250
+  - Damping: 13
+- Duration: approximately 0.4 seconds
+
+## Hotkey Default
+
+- Default: `Command + Shift + S` (kVK_Command_L = 0x37, kVK_Shift_L = 0x38, kVK_s = 0x01)
+
+## Error Handling
+
+- **No foreground window**: Silent ignore
+- **Hotkey conflict**: Disable hotkey, show warning in settings
+- **Accessibility permission denied**: Show alert with instructions to grant permission
+
+## Files to Create
+
+| File | Purpose |
+|------|---------|
+| `Sources/Models/SettingsStore.swift` | Settings persistence |
+| `Sources/Managers/HotKeyManager.swift` | Hotkey registration |
+| `Sources/Managers/AccessibilityHelper.swift` | Accessibility permissions |
+| `Sources/Services/WindowSnapper.swift` | Window manipulation |
+| `Sources/Views/SettingsView.swift` | Settings UI |
+| `Sources/Views/HotKeyRecorder.swift` | Hotkey input component |
+| `Resources/Assets.xcassets/` | App icon |
+| `project.yml` | XcodeGen configuration |
+| `setup.sh` | Build script |

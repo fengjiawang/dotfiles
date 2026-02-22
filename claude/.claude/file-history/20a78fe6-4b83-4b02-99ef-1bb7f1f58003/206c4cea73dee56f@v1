@@ -1,0 +1,188 @@
+import Foundation
+import AppKit
+import Accessibility
+
+enum WindowManagerError: Error, LocalizedError {
+    case noActiveWindow
+    case windowInFullscreen
+    case failedToGetWindowInfo
+    case failedToSetPosition
+    case failedToSetSize
+    case accessibilityPermissionRequired
+
+    var errorDescription: String? {
+        switch self {
+        case .noActiveWindow:
+            return "No active window found"
+        case .windowInFullscreen:
+            return "Window is in fullscreen mode"
+        case .failedToGetWindowInfo:
+            return "Failed to get window information"
+        case .failedToSetPosition:
+            return "Failed to set window position"
+        case .failedToSetSize:
+            return "Failed to set window size"
+        case .accessibilityPermissionRequired:
+            return "Accessibility permission is required"
+        }
+    }
+}
+
+final class WindowManager {
+    static let shared = WindowManager()
+
+    private init() {}
+
+    func centerAndScaleActiveWindow(
+        widthPercentage: Int,
+        heightPercentage: Int
+    ) throws {
+        guard let activeWindow = getActiveWindow() else {
+            throw WindowManagerError.noActiveWindow
+        }
+
+        guard !isWindowFullscreen(activeWindow) else {
+            throw WindowManagerError.windowInFullscreen
+        }
+
+        guard let screen = getScreenForWindow(activeWindow) else {
+            throw WindowManagerError.failedToGetWindowInfo
+        }
+
+        let screenFrame = screen.frame
+        let targetWidth = screenFrame.width * CGFloat(widthPercentage) / 100.0
+        let targetHeight = screenFrame.height * CGFloat(heightPercentage) / 100.0
+
+        let targetX = screenFrame.midX - targetWidth / 2
+        let targetY = screenFrame.midY - targetHeight / 2
+
+        let targetPosition = CGPoint(x: targetX, y: targetY)
+        let targetSize = CGSize(width: targetWidth, height: targetHeight)
+
+        try setWindowPosition(activeWindow, position: targetPosition)
+        try setWindowSize(activeWindow, size: targetSize)
+    }
+
+    private func getActiveWindow() -> AXUIElement? {
+        let options: CGWindowListOption = [.optionOnScreenOnly, .excludeDesktopElements]
+        guard let windowList = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]] else {
+            return nil
+        }
+
+        for windowInfo in windowList {
+            if let windowLayer = windowInfo[kCGWindowLayer as String] as? Int,
+               windowLayer == 0,
+               let windowID = windowInfo[kCGWindowNumber as String] as? UInt32 {
+                let axElement = AXUIElementCreateApplication(getPIDForWindowID(windowID))
+                var focusedWindow: AXUIElement?
+                let error = AXUIElementCopyAttributeValue(
+                    axElement,
+                    kAXFocusedWindowAttribute as CFString,
+                    &focusedWindow
+                )
+                if error == .success, let window = focusedWindow {
+                    return window
+                }
+            }
+        }
+
+        return nil
+    }
+
+    private func getPIDForWindowID(_ windowID: UInt32) -> pid_t {
+        var psn = ProcessSerialNumber(highLongOfPSN: 0, lowLongOfPSN: UInt32(windowID))
+        var pid: pid_t = 0
+        GetProcessPID(&psn, &pid)
+        return pid
+    }
+
+    private func isWindowFullscreen(_ window: AXUIElement) -> Bool {
+        var value: AnyObject?
+        let error = AXUIElementCopyAttributeValue(
+            window,
+            kAXFullscreenAttribute as CFString,
+            &value
+        )
+
+        if error == .success, let fullscreen = value as? Bool {
+            return fullscreen
+        }
+
+        return false
+    }
+
+    private func getScreenForWindow(_ window: AXUIElement) -> NSScreen? {
+        var position: CGPoint = .zero
+        var size: CGSize = .zero
+
+        if let positionValue = getAttributeValue(window, attribute: kAXPositionAttribute) as? [NSNumber: NSNumber] {
+            position.x = positionValue["X"]?.doubleValue ?? 0
+            position.y = positionValue["Y"]?.doubleValue ?? 0
+        }
+
+        if let sizeValue = getAttributeValue(window, attribute: kAXSizeAttribute) as? [NSNumber: NSNumber] {
+            size.width = sizeValue["W"]?.doubleValue ?? 0
+            size.height = sizeValue["H"]?.doubleValue ?? 0
+        }
+
+        let windowFrame = CGRect(x: position.x, y: position.y, width: size.width, height: size.height)
+
+        for screen in NSScreen.screens {
+            if screen.frame.intersects(windowFrame) {
+                return screen
+            }
+        }
+
+        return NSScreen.main
+    }
+
+    private func getAttributeValue(_ element: AXUIElement, attribute: String) -> AnyObject? {
+        var value: AnyObject?
+        AXUIElementCopyAttributeValue(element, attribute as CFString, &value)
+        return value
+    }
+
+    private func setWindowPosition(_ window: AXUIElement, position: CGPoint) throws {
+        let positionValue = [
+            "X": NSNumber(value: position.x),
+            "Y": NSNumber(value: position.y)
+        ]
+
+        let error = AXUIElementSetAttributeValue(
+            window,
+            kAXPositionAttribute as CFString,
+            positionValue as CFTypeRef
+        )
+
+        if error != .success {
+            throw WindowManagerError.failedToSetPosition
+        }
+    }
+
+    private func setWindowSize(_ window: AXUIElement, size: CGSize) throws {
+        let sizeValue = [
+            "W": NSNumber(value: size.width),
+            "H": NSNumber(value: size.height)
+        ]
+
+        let error = AXUIElementSetAttributeValue(
+            window,
+            kAXSizeAttribute as CFString,
+            sizeValue as CFTypeRef
+        )
+
+        if error != .success {
+            throw WindowManagerError.failedToSetSize
+        }
+    }
+
+    func checkAccessibilityPermission() -> Bool {
+        let options: NSDictionary = [kAXTrustedCheckOptionKey: true]
+        return AXIsProcessTrustedWithOptions(options)
+    }
+
+    func requestAccessibilityPermission() {
+        let options: NSDictionary = [kAXTrustedCheckOptionKey: true]
+        AXIsProcessTrustedWithOptions(options)
+    }
+}

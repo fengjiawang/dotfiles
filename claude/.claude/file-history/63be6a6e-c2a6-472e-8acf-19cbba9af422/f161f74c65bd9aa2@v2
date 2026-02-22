@@ -1,0 +1,210 @@
+import Foundation
+import Carbon
+import CoreGraphics
+import ApplicationServices
+
+class HotKeyManager {
+    static let shared = HotKeyManager()
+
+    private var eventTap: CFMachPort?
+    private var runLoopSource: CFRunLoopSource?
+    private var isListening = false
+
+    private var registeredHotKey: (keyCode: UInt16, modifiers: UInt32)?
+    private let hotKeySignature = OSType(bitPattern: 0x574E5331) // "WNS1"
+
+    private init() {}
+
+    func startListening() {
+        guard !isListening else { return }
+
+        let settings = SettingsManager.shared.settings
+        let modifiers = convertModifiers(settings.modifierFlags)
+        registeredHotKey = (settings.keyCode, modifiers)
+
+        setupEventTap()
+        isListening = true
+    }
+
+    func stopListening() {
+        guard isListening else { return }
+
+        if let runLoopSource = runLoopSource {
+            CFRunLoopRemoveSource(CFRunLoopGetMain(), runLoopSource, .commonModes)
+            self.runLoopSource = nil
+        }
+
+        if let eventTap = eventTap {
+            CFMachPortInvalidate(eventTap)
+            self.eventTap = nil
+        }
+
+        isListening = false
+        registeredHotKey = nil
+    }
+
+    func updateHotKey() {
+        stopListening()
+        startListening()
+    }
+
+    private func setupEventTap() {
+        let eventMask = CGEventType.keyDown.rawValue | CGEventType.keyUp.rawValue | CGEventType.flagsChanged.rawValue
+
+        // Use userInfo to pass self reference
+        let userInfo = UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque())
+
+        guard let eventTap = CGEvent.tapCreate(
+            tap: .cgSessionEventTap,
+            place: .headInsertEventTap,
+            options: .defaultTap,
+            eventsOfInterest: CGEventMask(eventMask),
+            callback: { (proxy, type, event, refcon) -> Unmanaged<CGEvent>? in
+                guard let refcon = refcon else { return Unmanaged.passUnretained(event) }
+                let manager = Unmanaged<HotKeyManager>.fromOpaque(refcon).takeUnretainedValue()
+                return manager.handleEventTap(proxy: proxy, type: type, event: event)
+            },
+            userInfo: userInfo
+        ) else {
+            print("Failed to create event tap - input monitoring permission may be required")
+            return
+        }
+
+        self.eventTap = eventTap
+
+        runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, eventTap, 0)
+        CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, .commonModes)
+
+        print("HotKeyManager: Event tap started for key \(registeredHotKey?.keyCode ?? 0)")
+    }
+
+    private func handleEventTap(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
+        // Handle tap timeout or user disable
+        if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
+            enableTap()
+            return Unmanaged.passUnretained(event)
+        }
+
+        if type == .keyDown {
+            let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
+
+            // Get flags from the event
+            let flags = event.flags
+
+            if let registered = registeredHotKey,
+               UInt16(keyCode) == registered.keyCode {
+                // Check modifiers match
+                let modifierMatch = checkModifierMatch(flags: flags, targetModifiers: registered.modifiers)
+                if modifierMatch {
+                    // Hotkey pressed!
+                    DispatchQueue.main.async {
+                        WindowManager.shared.centerFrontmostWindow()
+                    }
+                    return nil  // Consume the event
+                }
+            }
+        }
+
+        return Unmanaged.passUnretained(event)
+    }
+
+    private func enableTap() {
+        if let eventTap = eventTap {
+            CGEvent.tapEnable(tap: eventTap, enable: true)
+        }
+    }
+
+    private func checkModifierMatch(flags: CGEventFlags, targetModifiers: UInt32) -> Bool {
+        var matches = true
+        if targetModifiers & UInt32(cmdKey) != 0 { matches = matches && flags.contains(.maskCommand) }
+        if targetModifiers & UInt32(optionKey) != 0 { matches = matches && flags.contains(.maskAlternate) }
+        if targetModifiers & UInt32(controlKey) != 0 { matches = matches && flags.contains(.maskControl) }
+        if targetModifiers & UInt32(shiftKey) != 0 { matches = matches && flags.contains(.maskShift) }
+        return matches
+    }
+
+    private func convertModifiers(_ flags: UInt64) -> UInt32 {
+        var result: UInt32 = 0
+        if flags & 0x00010000 != 0 { result |= UInt32(cmdKey) }
+        if flags & 0x00080000 != 0 { result |= UInt32(optionKey) }
+        if flags & 0x00020000 != 0 { result |= UInt32(controlKey) }
+        if flags & 0x00040000 != 0 { result |= UInt32(shiftKey) }
+        return result
+    }
+
+    static func keyCodeToString(_ keyCode: UInt16) -> String {
+        switch keyCode {
+        case 0: return "A"
+        case 1: return "S"
+        case 2: return "D"
+        case 3: return "F"
+        case 4: return "H"
+        case 5: return "G"
+        case 6: return "Z"
+        case 7: return "X"
+        case 8: return "C"
+        case 9: return "V"
+        case 11: return "B"
+        case 12: return "Q"
+        case 13: return "W"
+        case 14: return "E"
+        case 15: return "R"
+        case 16: return "Y"
+        case 17: return "T"
+        case 18: return "1"
+        case 19: return "2"
+        case 20: return "3"
+        case 21: return "4"
+        case 22: return "6"
+        case 23: return "5"
+        case 24: return "="
+        case 25: return "9"
+        case 26: return "7"
+        case 27: return "-"
+        case 28: return "8"
+        case 29: return "0"
+        case 30: return "]"
+        case 31: return "O"
+        case 32: return "U"
+        case 33: return "["
+        case 34: return "I"
+        case 35: return "L"
+        case 36: return "Return"
+        case 37: return "K"
+        case 38: return "&"
+        case 39: return "'"
+        case 40: return ";"
+        case 41: return "\\"
+        case 42: return ","
+        case 43: return "/"
+        case 44: return "N"
+        case 45: return "M"
+        case 46: return "."
+        case 47: return "Tab"
+        case 48: return "Space"
+        case 50: return "`"
+        case 53: return "Escape"
+        case 55: return "⌘"
+        case 56: return "Shift"
+        case 57: return "CapsLock"
+        case 58: return "Option"
+        case 59: return "Control"
+        case 60: return "Right Shift"
+        case 61: return "Right Option"
+        case 62: return "Right Control"
+        case 64: return "F1"
+        case 65: return "F2"
+        case 66: return "F3"
+        case 67: return "F4"
+        case 68: return "F5"
+        case 69: return "F6"
+        case 70: return "F7"
+        case 71: return "F8"
+        case 72: return "F9"
+        case 73: return "F10"
+        case 74: return "F11"
+        case 75: return "F12"
+        default: return "Key \(keyCode)"
+        }
+    }
+}

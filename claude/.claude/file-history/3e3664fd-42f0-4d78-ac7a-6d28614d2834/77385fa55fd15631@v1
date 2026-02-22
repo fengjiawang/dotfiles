@@ -1,0 +1,28 @@
+import Foundation
+import ApplicationServices
+
+enum AccessibilityHelper {
+    static func requestAccessibilityPermission() {
+        let options: NSDictionary = [kAXTrustedCheckOptionValue: true as CFBoolean, kAXPrintDebugDescriptionKey: true as CFBoolean]
+        AXIsProcessTrustedWithOptions(options)
+    }
+
+    static var isPermissionGranted: Bool {
+        let options: NSDictionary = [kAXTrustedCheckOptionValue: true as CFBoolean]
+        return AXIsProcessTrustedWithOptions(options)
+    }
+
+    static func showPermissionAlert() {
+        let alert = NSAlert()
+        alert.messageText = "需要辅助功能权限"
+        alert.informativeText = "WindowSnap 需要辅助功能权限来控制窗口位置。请在系统设置 > 隐私与安全性 > 辅助功能 中启用 WindowSnap 的权限。"
+        alert.addButton(withText: "打开系统设置")
+        alert.addButton(withText: "取消")
+
+        if alert.runModal() == .alertFirstButtonReturn {
+            if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
+                NSWorkspace.shared.open(url)
+            }
+        }
+    }
+}

@@ -1,0 +1,30 @@
+{
+  "backupPath": "/Users/jwfeng/.cc-switch/backups/env-backup-20260130_081850.json",
+  "timestamp": "20260130_081850",
+  "conflicts": [
+    {
+      "varName": "ANTHROPIC_BASE_URL",
+      "varValue": "https://api.deepseek.com/anthropic",
+      "sourceType": "file",
+      "sourcePath": "/Users/jwfeng/.zshrc:44"
+    },
+    {
+      "varName": "ANTHROPIC_AUTH_TOKEN",
+      "varValue": "sk-b96c821fa00641c18c988f5f11210d9f # Deepseek",
+      "sourceType": "file",
+      "sourcePath": "/Users/jwfeng/.zshrc:45"
+    },
+    {
+      "varName": "ANTHROPIC_MODEL",
+      "varValue": "deepseek-chat",
+      "sourceType": "file",
+      "sourcePath": "/Users/jwfeng/.zshrc:49"
+    },
+    {
+      "varName": "ANTHROPIC_SMALL_FAST_MODEL",
+      "varValue": "deepseek-chat",
+      "sourceType": "file",
+      "sourcePath": "/Users/jwfeng/.zshrc:50"
+    }
+  ]
+}

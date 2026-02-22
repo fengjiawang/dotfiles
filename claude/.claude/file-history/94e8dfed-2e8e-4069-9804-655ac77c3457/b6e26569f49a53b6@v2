@@ -1,0 +1,110 @@
+# WindowSnap
+
+一个 macOS 后台工具，通过快捷键 Ctrl+Option+Z 将当前窗口调整到预设位置和大小。
+
+## 功能
+
+- 后台运行，菜单栏显示图标（可隐藏）
+- 快捷键: Ctrl+Option+Z
+- 可自定义窗口位置和大小百分比
+- 图形化设置窗口，实时调整参数
+- 可控制是否显示菜单栏图标
+- 体积小巧，内存占用极低
+
+## 系统要求
+
+- macOS 10.13 或更高版本
+- 辅助功能权限（用于控制其他应用的窗口）
+- 辅助功能权限（用于全局快捷键监听）
+
+## 安装与使用
+
+### 方法一：直接构建
+
+1. 克隆或下载此项目
+2. 打开终端，进入项目目录
+3. 运行构建脚本：
+   ```bash
+   ./build.sh
+   ```
+4. 将生成的 `WindowSnap.app` 拖到“应用程序”文件夹
+5. 首次运行时，需要授予辅助功能权限：
+   - 打开“系统偏好设置” > “安全性与隐私” > “隐私” > “辅助功能”
+   - 点击锁定图标并输入密码
+   - 添加 `WindowSnap.app` 到列表并勾选
+6. 将应用添加到登录项以实现开机自启：
+   - “系统偏好设置” > “用户与群组” > “登录项”
+   - 添加 `WindowSnap.app`
+
+### 方法二：手动构建
+
+```bash
+cd WindowSnap
+swift build --configuration release
+mkdir -p WindowSnap.app/Contents/MacOS
+cp .build/release/WindowSnap WindowSnap.app/Contents/MacOS/
+# 创建 Info.plist 和复制配置文件（参考 build.sh）
+```
+
+## 配置
+
+### 图形化设置
+通过菜单栏图标点击"设置"打开设置窗口：
+- 调整位置和大小百分比滑块（0-100%）
+- 勾选/取消"显示菜单栏图标"
+- 点击"保存"应用设置
+
+### 配置文件位置
+配置自动保存到 `~/Library/Application Support/WindowSnap/config.json`，格式如下：
+```json
+{
+  "xPercent": 0.25,
+  "yPercent": 0.25,
+  "widthPercent": 0.5,
+  "heightPercent": 0.5,
+  "showMenuBarIcon": true
+}
+```
+
+### 高级配置
+如需手动编辑配置文件，可以直接修改上述JSON文件，然后重启应用生效。
+
+## 工作原理
+
+1. 使用 Core Graphics 事件监听全局快捷键
+2. 通过 Accessibility API 获取当前活动窗口
+3. 根据配置计算目标位置和大小
+4. 调整窗口位置和尺寸
+
+## 常见问题
+
+### 快捷键无效
+- 检查是否已授予辅助功能权限
+- 检查是否有其他应用占用了相同的快捷键
+- 重启应用或重新登录系统
+
+### 窗口无法调整
+- 某些应用（如系统应用）可能限制窗口操作
+- 确保目标应用支持 Accessibility API
+
+### 应用无法启动
+- 确保系统版本符合要求
+- 尝试重新构建应用
+
+## 卸载
+
+1. 退出 WindowSnap 应用
+2. 从“应用程序”文件夹删除 `WindowSnap.app`
+3. 从登录项中移除
+4. 从辅助功能权限列表中移除
+
+## 源代码结构
+
+- `Sources/main.swift` - 主程序代码
+- `Resources/config.plist` - 配置文件
+- `Package.swift` - Swift 包配置文件
+- `build.sh` - 构建脚本
+
+## 许可证
+
+MIT License

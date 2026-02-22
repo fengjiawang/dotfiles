@@ -1,0 +1,232 @@
+import Foundation
+import AppKit
+import Carbon
+import CoreGraphics
+
+class WindowSnap {
+
+    // 配置：位置和大小百分比
+    struct Config {
+        let xPercent: Double // 横坐标百分比 (0.0 - 1.0)
+        let yPercent: Double // 纵坐标百分比 (0.0 - 1.0)
+        let widthPercent: Double // 宽度百分比 (0.0 - 1.0)
+        let heightPercent: Double // 高度百分比 (0.0 - 1.0)
+
+        static let `default` = Config(
+            xPercent: 0.25,
+            yPercent: 0.25,
+            widthPercent: 0.5,
+            heightPercent: 0.5
+        )
+
+        // 从plist文件加载配置
+        static func load() -> Config {
+            // 尝试从Resources目录加载
+            let bundle = Bundle.main
+            guard let configURL = bundle.url(forResource: "config", withExtension: "plist") else {
+                print("未找到配置文件，使用默认配置。")
+                return .default
+            }
+
+            guard let data = try? Data(contentsOf: configURL) else {
+                print("无法读取配置文件，使用默认配置。")
+                return .default
+            }
+
+            do {
+                let plist = try PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: Any]
+                let xPercent = plist?["xPercent"] as? Double ?? Config.default.xPercent
+                let yPercent = plist?["yPercent"] as? Double ?? Config.default.yPercent
+                let widthPercent = plist?["widthPercent"] as? Double ?? Config.default.widthPercent
+                let heightPercent = plist?["heightPercent"] as? Double ?? Config.default.heightPercent
+
+                // 验证百分比范围
+                let clampedX = max(0.0, min(1.0, xPercent))
+                let clampedY = max(0.0, min(1.0, yPercent))
+                let clampedWidth = max(0.0, min(1.0, widthPercent))
+                let clampedHeight = max(0.0, min(1.0, heightPercent))
+
+                return Config(
+                    xPercent: clampedX,
+                    yPercent: clampedY,
+                    widthPercent: clampedWidth,
+                    heightPercent: clampedHeight
+                )
+            } catch {
+                print("配置文件格式错误: \(error)，使用默认配置。")
+                return .default
+            }
+        }
+    }
+
+    private let config: Config
+
+    init(config: Config = Config.load()) {
+        self.config = config
+    }
+
+    // 检查辅助功能权限
+    func checkAccessibilityPermission() -> Bool {
+        let options: NSDictionary = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString: true]
+        let trusted = AXIsProcessTrustedWithOptions(options)
+        return trusted
+    }
+
+    // 获取当前活动窗口
+    func getActiveWindow() -> AXUIElement? {
+        guard let frontmostApp = NSWorkspace.shared.frontmostApplication else {
+            return nil
+        }
+
+        let app = AXUIElementCreateApplication(frontmostApp.processIdentifier)
+
+        var value: AnyObject?
+        let result = AXUIElementCopyAttributeValue(app, kAXFocusedWindowAttribute as CFString, &value)
+
+        if result == .success, let window = value as! AXUIElement? {
+            return window
+        }
+
+        // 如果无法获取聚焦窗口，尝试获取主窗口
+        let result2 = AXUIElementCopyAttributeValue(app, kAXMainWindowAttribute as CFString, &value)
+        if result2 == .success, let window = value as! AXUIElement? {
+            return window
+        }
+
+        return nil
+    }
+
+    // 获取屏幕尺寸
+    func getScreenSize() -> NSSize? {
+        guard let screen = NSScreen.main else {
+            return nil
+        }
+        return screen.frame.size
+    }
+
+    // 调整窗口位置和大小
+    func resizeAndMoveWindow(_ window: AXUIElement) {
+        guard let screenSize = getScreenSize() else {
+            return
+        }
+
+        let targetWidth = screenSize.width * CGFloat(config.widthPercent)
+        let targetHeight = screenSize.height * CGFloat(config.heightPercent)
+        let targetX = screenSize.width * CGFloat(config.xPercent)
+        let targetY = screenSize.height * CGFloat(config.yPercent)
+
+        // 创建位置和大小值
+        var point = CGPoint(x: targetX, y: targetY)
+        let positionValue = AXValueCreate(.cgPoint, &point)
+        var size = CGSize(width: targetWidth, height: targetHeight)
+        let sizeValue = AXValueCreate(.cgSize, &size)
+
+        // 设置窗口位置
+        AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, positionValue!)
+
+        // 设置窗口大小
+        AXUIElementSetAttributeValue(window, kAXSizeAttribute as CFString, sizeValue!)
+    }
+
+    // 执行调整
+    func snapActiveWindow() {
+        guard checkAccessibilityPermission() else {
+            print("辅助功能权限未授予。请前往系统偏好设置 > 安全性与隐私 > 隐私 > 辅助功能中授予权限。")
+            return
+        }
+
+        guard let window = getActiveWindow() else {
+            print("无法获取当前活动窗口。")
+            return
+        }
+
+        resizeAndMoveWindow(window)
+    }
+}
+
+// 全局快捷键监听器
+class HotkeyListener {
+    private let windowSnap = WindowSnap()
+    private var eventTap: CFMachPort?
+
+    deinit {
+        if let tap = eventTap {
+            CFMachPortInvalidate(tap)
+        }
+    }
+
+    // 事件回调
+    private let eventCallback: CGEventTapCallBack = { (proxy, type, event, refcon) -> Unmanaged<CGEvent>? in
+        let listener = Unmanaged<HotkeyListener>.fromOpaque(refcon!).takeUnretainedValue()
+        if listener.handleEvent(event: event) {
+            return nil // 消费事件，阻止传递给其他应用
+        }
+        return Unmanaged.passRetained(event) // 传递事件
+    }
+
+    private func handleEvent(event: CGEvent) -> Bool {
+        // 检查是否为键盘事件
+        guard event.type == .keyDown else { return false }
+
+        // 获取键码
+        let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
+        // z键的键码为6（US布局）
+        guard keyCode == 6 else { return false }
+
+        // 获取修饰键标志
+        let flags = event.flags
+        let controlPressed = flags.contains(.maskControl)
+        let optionPressed = flags.contains(.maskAlternate)
+
+        if controlPressed && optionPressed {
+            // 触发窗口调整
+            DispatchQueue.main.async {
+                self.windowSnap.snapActiveWindow()
+            }
+            return true
+        }
+
+        return false
+    }
+
+    func start() {
+        // 检查辅助功能权限（事件监听也需要）
+        guard windowSnap.checkAccessibilityPermission() else {
+            print("请授予辅助功能权限以监听全局快捷键。")
+            return
+        }
+
+        // 创建事件监听
+        let eventMask = (1 << CGEventType.keyDown.rawValue)
+        guard let tap = CGEvent.tapCreate(
+            tap: .cghidEventTap,
+            place: .headInsertEventTap,
+            options: .defaultTap,
+            eventsOfInterest: CGEventMask(eventMask),
+            callback: eventCallback,
+            userInfo: Unmanaged.passUnretained(self).toOpaque()
+        ) else {
+            print("无法创建事件监听。请检查权限。")
+            return
+        }
+
+        eventTap = tap
+
+        // 创建运行循环源
+        let runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
+        CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, .commonModes)
+
+        // 启用事件监听
+        CGEvent.tapEnable(tap: tap, enable: true)
+
+        print("快捷键监听已启动。按下 Ctrl+Option+Z 调整当前窗口。")
+        print("应用已后台运行。")
+
+        // 运行运行循环
+        CFRunLoopRun()
+    }
+}
+
+// 主入口点
+let listener = HotkeyListener()
+listener.start()

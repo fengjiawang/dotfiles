@@ -1,0 +1,54 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Build Commands
+
+```bash
+# Development build
+swift build
+
+# Release build
+swift build --configuration release
+
+# Full build with app bundle creation
+./build.sh
+```
+
+## Project Overview
+
+WindowSnap is a macOS menu bar application that snaps/resizes the active window to preset position and size using a global hotkey (default: Ctrl+Option+Z).
+
+**Tech Stack:** Swift 5.9+, macOS 10.13+, AppKit, Carbon, CoreGraphics, Accessibility API
+
+## Architecture
+
+The entire application is in a single file `Sources/main.swift` (~1250 lines):
+
+- **Enums** - `ModifierKey` and `KeyCode` enums with typed key codes and display names
+- **WindowSnapError** - Error type with localized descriptions for user-friendly alerts
+- **AppConfig** - Configuration model with typed `UInt64` modifiers and validation
+- **ConfigManager** - Thread-safe singleton using GCD barrier queue with caching
+- **WindowSnap** - Core service: cached permission checks, center-point screen detection, throw-based error handling
+- **HotkeyListener** - Global shortcut listener using static `CGEventTap` callback with opaque pointer passing
+- **AppDelegate** - App lifecycle, menu bar icon, settings window UI, display change notification
+
+## Key Implementation Details
+
+- **Window positioning**: Uses `NSScreen.visibleFrame` (excludes Dock/menu bar) and Accessibility API `AXUIElementSetAttributeValue`
+- **Multi-monitor**: `getScreenForWindow()` first checks if window center is in screen's visibleFrame, then falls back to maximum overlap area detection
+- **Hotkey detection**: Static callback receives opaque pointer to `HotkeyListener`, extracts `self` via `Unmanaged.fromOpaque()`, uses `ModifierKey.from(cgFlags:)` for modifier conversion
+- **Configuration format**: `hotkeyModifiers` uses typed `UInt64` with `ModifierKey` enum values; save triggers listener restart for hotkey changes to take effect immediately
+
+## Important Implementation Notes
+
+- **Permission caching**: `WindowSnap.checkAccessibilityPermission()` caches result for 60 seconds to avoid synchronous AX API calls on each hotkey trigger
+- **Thread safety**: `ConfigManager` uses `DispatchQueue.concurrent` with barrier for writes, simple sync for reads, and in-memory caching
+- **Hotkey hot-reload**: `saveSettings()` calls `hotkeyListener.stop()` then creates a new `HotkeyListener` instance to ensure shortcut changes take effect immediately
+- **Display change handling**: Registers for `NSApplication.didChangeScreenParametersNotification` to detect multi-monitor configuration changes
+
+## Common Tasks
+
+- **Modify default hotkey**: Use `ModifierKey` enum values: `ModifierKey.control.rawValue | ModifierKey.option.rawValue`
+- **Add preset positions**: Extend `AppConfig` with additional percentage fields and update `resizeAndMoveWindow()`
+- **Debug Accessibility issues**: Check logs with `os_log` subsystem `com.windowsnap.app`

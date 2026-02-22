@@ -1,0 +1,161 @@
+import Cocoa
+
+@main
+class AppDelegate: NSObject, NSApplicationDelegate {
+    private var statusBar: NSStatusBar?
+    private var statusItem: NSStatusItem?
+    private var popover: NSPopover?
+    private var settingsWindow: NSWindow?
+    private var settingsViewModel: SettingsViewModel?
+
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
+        checkAccessibilityPermission()
+
+        setupStatusBar()
+        setupMenu()
+        setupHotKey()
+    }
+
+    func applicationWillTerminate(_ aNotification: Notification) {
+        HotKeyManager.shared.unregisterHotKey()
+    }
+
+    private func checkAccessibilityPermission() {
+        if !WindowManager.shared.checkAccessibilityPermission() {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.showPermissionAlert()
+            }
+        }
+    }
+
+    private func showPermissionAlert() {
+        let alert = NSAlert()
+        alert.messageText = "Accessibility Permission Required"
+        alert.informativeText = "WindowSnap needs permission to control other applications. Click 'Open System Settings' to grant access."
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "Open System Settings")
+        alert.addButton(withTitle: "Cancel")
+
+        if alert.runModal() == .alertFirstButtonReturn {
+            WindowManager.shared.requestAccessibilityPermission()
+        }
+    }
+
+    private func setupStatusBar() {
+        statusBar = NSStatusBar.system
+        statusItem = statusBar?.statusItem(withLength: NSStatusItem.variableLength)
+
+        if let button = statusItem?.button {
+            button.image = NSImage(systemSymbolName: "arrow.up.left.and.arrow.down.right", accessibilityDescription: "WindowSnap")
+            button.action = #selector(togglePopover(_:))
+            button.target = self
+        }
+
+        popover = NSPopover()
+        popover?.contentSize = NSSize(width: 280, height: 200)
+        popover?.behavior = .transient
+        popover?.contentViewController = MenuBarViewController()
+    }
+
+    private func setupMenu() {
+        let menu = NSMenu()
+
+        let settingsItem = NSMenuItem(
+            title: "Settings...",
+            action: #selector(openSettings(_:)),
+            keyEquivalent: ","
+        )
+        settingsItem.target = self
+        menu.addItem(settingsItem)
+
+        menu.addItem(NSMenuItem.separator())
+
+        let quitItem = NSMenuItem(
+            title: "Quit",
+            action: #selector(quitApp(_:)),
+            keyEquivalent: "q"
+        )
+        quitItem.target = self
+        menu.addItem(quitItem)
+
+        statusItem?.menu = menu
+    }
+
+    private func setupHotKey() {
+        let settings = SettingsManager.shared.settings
+
+        HotKeyManager.shared.delegate = self
+
+        if !HotKeyManager.shared.registerHotKey(settings.hotKey) {
+            showAlert(
+                title: "Registration Failed",
+                message: "Failed to register hotkey. Please try a different combination."
+            )
+        }
+    }
+
+    @objc private func togglePopover(_ sender: Any?) {
+        if let button = statusItem?.button {
+            if popover?.isShown == true {
+                popover?.performClose(sender)
+            } else {
+                popover?.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            }
+        }
+    }
+
+    @objc private func openSettings(_ sender: Any?) {
+        if settingsWindow == nil {
+            settingsViewModel = SettingsViewModel()
+            settingsViewModel?.onClose = { [weak self] in
+                self?.settingsWindow?.close()
+                self?.settingsWindow = nil
+                self?.settingsViewModel = nil
+            }
+            settingsWindow = NSWindow(
+                contentRect: NSRect(x: 0, y: 0, width: 320, height: 280),
+                styleMask: [.titled, .closable],
+                backing: .buffered,
+                defer: false
+            )
+            settingsWindow?.title = "WindowSnap Settings"
+            settingsWindow?.contentViewController = SettingsViewController(viewModel: settingsViewModel!)
+        }
+
+        settingsWindow?.center()
+        settingsWindow?.orderFrontRegardless()
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    @objc private func quitApp(_ sender: Any?) {
+        NSApp.terminate(nil)
+    }
+
+    private func showAlert(title: String, message: String) {
+        let alert = NSAlert()
+        alert.messageText = title
+        alert.informativeText = message
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
+    }
+}
+
+extension AppDelegate: HotKeyManagerDelegate {
+    func hotKeyManager(_ manager: HotKeyManager, didTriggerHotKey hotKey: HotKey) {
+        let settings = SettingsManager.shared.settings
+
+        do {
+            try WindowManager.shared.centerAndScaleActiveWindow(
+                widthPercentage: settings.widthPercentage,
+                heightPercentage: settings.heightPercentage
+            )
+        } catch let error as WindowManagerError {
+            if error != .noActiveWindow {
+                showAlert(title: "Error", message: error.localizedDescription)
+            }
+        } catch {
+            showAlert(title: "Error", message: error.localizedDescription)
+        }
+    }
+}

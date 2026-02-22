@@ -1,0 +1,39 @@
+#!/bin/bash
+
+set -e
+
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$PROJECT_DIR"
+
+echo "🪟 WindowSnap Build Script"
+echo "=========================="
+
+# Check for XcodeGen
+if ! command -v xcodegen &> /dev/null; then
+    echo "📦 Installing XcodeGen..."
+    brew install xcodegen
+fi
+
+# Generate Xcode project
+echo "🔧 Generating Xcode project..."
+xcodegen generate
+
+# Build the project
+echo "🏗️ Building WindowSnap..."
+xcodebuild -project WindowSnap.xcodeproj \
+    -scheme WindowSnap \
+    -configuration Release \
+    -destination "platform=macOS" \
+    build
+
+echo ""
+echo "✅ Build successful!"
+echo ""
+echo "📋 Next steps:"
+echo "1. Open WindowSnap.xcodeproj in Xcode"
+echo "2. Go to System Preferences → Security & Privacy → Accessibility"
+echo "3. Add WindowSnap to the list and enable it"
+echo "4. Run the app from Xcode or from ~/Applications"
+echo ""
+echo "💡 Tip: Right-click the menu bar icon to open settings"
+echo "   Default shortcut: Option + Z"

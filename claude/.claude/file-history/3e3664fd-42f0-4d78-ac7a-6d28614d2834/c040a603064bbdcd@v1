@@ -1,0 +1,84 @@
+import SwiftUI
+
+struct SettingsView: View {
+    @ObservedObject var settings = SettingsStore.shared
+    @State private var isRecordingHotKey = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("窗口比例设置")
+                .font(.headline)
+
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("横向比例")
+                    Spacer()
+                    Text("\(Int(settings.xRatio * 100))%")
+                        .foregroundColor(.secondary)
+                        .monospacedDigit()
+                }
+
+                Slider(value: $settings.xRatio, in: 0.3...1.0, step: 0.05)
+                    .labelsHidden()
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("纵向比例")
+                    Spacer()
+                    Text("\(Int(settings.yRatio * 100))%")
+                        .foregroundColor(.secondary)
+                        .monospacedDigit()
+                }
+
+                Slider(value: $settings.yRatio, in: 0.3...1.0, step: 0.05)
+                    .labelsHidden()
+            }
+
+            Divider()
+
+            Text("快捷键设置")
+                .font(.headline)
+
+            HotKeyRecorder(
+                keyCode: $settings.hotKeyCode,
+                modifiers: $settings.hotKeyModifiers,
+                isRecording: $isRecordingHotKey
+            )
+
+            Text("当前快捷键: \(settings.hotKeyDisplayString)")
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            Divider()
+
+            Button(action: {
+                WindowSnapper.snapForegroundWindow(
+                    xRatio: settings.xRatio,
+                    yRatio: settings.yRatio
+                )
+            }) {
+                HStack {
+                    Image(systemName: "arrow.up.left.and.arrow.down.right")
+                    Text("测试窗口居中")
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+
+            HStack {
+                Image(systemName: "info.circle")
+                    .foregroundColor(.secondary)
+                Text("点击菜单栏图标，选择「窗口居中」来测试")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding()
+        .frame(width: 280)
+    }
+}
+
+#Preview {
+    SettingsView()
+}

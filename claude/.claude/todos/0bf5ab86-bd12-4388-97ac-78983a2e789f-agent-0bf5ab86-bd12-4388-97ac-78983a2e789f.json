@@ -1,0 +1,47 @@
+[
+  {
+    "content": "Task 1: 修复 WindowManager 获取目标窗口 PID 的核心 bug",
+    "status": "in_progress",
+    "activeForm": "Fixing WindowManager PID bug"
+  },
+  {
+    "content": "Task 2: 重构 centerWindow() 使用正确的目标进程 PID",
+    "status": "pending",
+    "activeForm": "Refactoring centerWindow()"
+  },
+  {
+    "content": "Task 3: 修复 popover 内存泄漏",
+    "status": "pending",
+    "activeForm": "Fixing popover memory leak"
+  },
+  {
+    "content": "Task 4: 修复快捷键 monitor 未移除问题",
+    "status": "pending",
+    "activeForm": "Fixing event monitor leak"
+  },
+  {
+    "content": "Task 5: 修复设置窗口重复创建问题",
+    "status": "pending",
+    "activeForm": "Fixing settings window duplication"
+  },
+  {
+    "content": "Task 6: 迁移热键系统从 Carbon API 到 CGEvent API",
+    "status": "pending",
+    "activeForm": "Migrating hotkey system"
+  },
+  {
+    "content": "Task 7: 增强错误处理",
+    "status": "pending",
+    "activeForm": "Enhancing error handling"
+  },
+  {
+    "content": "Task 8: 完善多屏支持和细节优化",
+    "status": "pending",
+    "activeForm": "Improving multi-monitor support"
+  },
+  {
+    "content": "Task 9: 集成测试和最终验证",
+    "status": "pending",
+    "activeForm": "Running integration tests"
+  }
+]

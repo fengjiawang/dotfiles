@@ -1,0 +1,216 @@
+2026-02-02T03:52:46.822Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (21.6ms): security find-generic-password -a $USER -w -s "Claude Code"
+2026-02-02T03:52:46.839Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (15.8ms): security find-generic-password -a "jwfeng" -w -s "Claude Code-credentials"
+2026-02-02T03:52:46.846Z [DEBUG] Watching for changes in setting files /Users/jwfeng/.claude, /Users/jwfeng/Downloads/for_claude/.claude...
+2026-02-02T03:52:46.849Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2026-02-02T03:52:46.849Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2026-02-02T03:52:46.849Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2026-02-02T03:52:46.849Z [DEBUG] Applying permission update: Adding 15 allow rule(s) to destination 'localSettings': ["Bash(swift:*)","Bash(mkdir:*)","Bash(/usr/bin/swift package init:*)","Bash(/usr/bin/swift build:*)","Bash(/usr/bin/env swift build:*)","Bash(bash --noprofile --norc -c:*)","Bash(env -i /usr/bin/swift build:*)","Bash(/usr/bin/swiftc:*)","Bash(/usr/bin/env -i PATH=/usr/bin:/bin:/usr/sbin:/sbin /usr/bin/swiftc:*)","Bash(/bin/sh:*)","Bash(chmod:*)","Bash(/bin/bash:*)","Bash(./build.sh:*)","Bash(env -i PATH=/usr/bin:/bin:/usr/sbin:/sbin /usr/bin/swift build:*)","Bash(killall:*)"]
+2026-02-02T03:52:46.850Z [DEBUG] LSP server manager initialized successfully
+2026-02-02T03:52:46.850Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2026-02-02T03:52:46.851Z [DEBUG] Loading plugin context7 from source: "./external_plugins/context7"
+2026-02-02T03:52:46.866Z [DEBUG] Git remote URL: null
+2026-02-02T03:52:46.866Z [DEBUG] No git remote URL found
+2026-02-02T03:52:46.866Z [DEBUG] Not in a GitHub repository, skipping path mapping update
+2026-02-02T03:52:46.866Z [DEBUG] Using git SHA for context7@claude-plugins-official: 6d3752c000e2
+2026-02-02T03:52:46.866Z [DEBUG] Plugin context7@claude-plugins-official version 6d3752c000e2 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/context7/6d3752c000e2
+2026-02-02T03:52:46.866Z [DEBUG] Copied local plugin context7 to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/context7/6d3752c000e2
+2026-02-02T03:52:46.867Z [DEBUG] Loading plugin frontend-design from source: "./plugins/frontend-design"
+2026-02-02T03:52:46.871Z [DEBUG] Using git SHA for frontend-design@claude-plugins-official: 6d3752c000e2
+2026-02-02T03:52:46.871Z [DEBUG] Plugin frontend-design@claude-plugins-official version 6d3752c000e2 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/frontend-design/6d3752c000e2
+2026-02-02T03:52:46.871Z [DEBUG] Copied local plugin frontend-design to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/frontend-design/6d3752c000e2
+2026-02-02T03:52:46.872Z [DEBUG] Loading plugin rust-analyzer-lsp from source: "./plugins/rust-analyzer-lsp"
+2026-02-02T03:52:46.872Z [DEBUG] Using provided version for rust-analyzer-lsp@claude-plugins-official: 1.0.0
+2026-02-02T03:52:46.872Z [DEBUG] Plugin rust-analyzer-lsp@claude-plugins-official version 1.0.0 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/rust-analyzer-lsp/1.0.0
+2026-02-02T03:52:46.872Z [DEBUG] Copied local plugin rust-analyzer-lsp to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/rust-analyzer-lsp/1.0.0
+2026-02-02T03:52:46.872Z [DEBUG] Plugin rust-analyzer-lsp has no entry.skills defined
+2026-02-02T03:52:46.872Z [DEBUG] Loading plugin swift-lsp from source: "./plugins/swift-lsp"
+2026-02-02T03:52:46.872Z [DEBUG] Using provided version for swift-lsp@claude-plugins-official: 1.0.0
+2026-02-02T03:52:46.872Z [DEBUG] Plugin swift-lsp@claude-plugins-official version 1.0.0 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/swift-lsp/1.0.0
+2026-02-02T03:52:46.872Z [DEBUG] Copied local plugin swift-lsp to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/swift-lsp/1.0.0
+2026-02-02T03:52:46.872Z [DEBUG] Plugin swift-lsp has no entry.skills defined
+2026-02-02T03:52:46.872Z [DEBUG] Found 4 plugins (4 enabled, 0 disabled)
+2026-02-02T03:52:46.873Z [DEBUG] Stats cache is up to date
+2026-02-02T03:52:46.873Z [DEBUG] Plugin autoupdate: skipped (auto-updater disabled)
+2026-02-02T03:52:46.874Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/jwfeng/.claude/skills, project=[]
+2026-02-02T03:52:46.918Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (43.4ms): ps aux | grep -E "Visual Studio Code|Code Helper|Cursor Helper|Windsurf Helper|IntelliJ IDEA|PyCharm
+2026-02-02T03:52:46.919Z [DEBUG] Loaded 4 installed plugins from /Users/jwfeng/.claude/plugins/installed_plugins.json
+2026-02-02T03:52:46.925Z [DEBUG] Creating shell snapshot for zsh (/bin/zsh)
+2026-02-02T03:52:46.926Z [DEBUG] Looking for shell config file: /Users/jwfeng/.zshrc
+2026-02-02T03:52:46.926Z [DEBUG] Snapshots directory: /Users/jwfeng/.claude/shell-snapshots
+2026-02-02T03:52:46.926Z [DEBUG] Creating snapshot at: /Users/jwfeng/.claude/shell-snapshots/snapshot-zsh-1770004366926-kt40qs.sh
+2026-02-02T03:52:46.926Z [DEBUG] Shell binary exists: true
+2026-02-02T03:52:46.926Z [DEBUG] Execution timeout: 10000ms
+2026-02-02T03:52:46.926Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude/todos/cab5e7ea-790c-4488-895a-6d018433b59c-agent-cab5e7ea-790c-4488-895a-6d018433b59c.json.tmp.25199.1770004366926
+2026-02-02T03:52:46.927Z [DEBUG] Temp file written successfully, size: 2 bytes
+2026-02-02T03:52:46.927Z [DEBUG] Renaming /Users/jwfeng/.claude/todos/cab5e7ea-790c-4488-895a-6d018433b59c-agent-cab5e7ea-790c-4488-895a-6d018433b59c.json.tmp.25199.1770004366926 to /Users/jwfeng/.claude/todos/cab5e7ea-790c-4488-895a-6d018433b59c-agent-cab5e7ea-790c-4488-895a-6d018433b59c.json
+2026-02-02T03:52:46.928Z [DEBUG] File /Users/jwfeng/.claude/todos/cab5e7ea-790c-4488-895a-6d018433b59c-agent-cab5e7ea-790c-4488-895a-6d018433b59c.json written atomically
+2026-02-02T03:52:46.930Z [DEBUG] getPluginSkills: Processing 4 enabled plugins
+2026-02-02T03:52:46.930Z [DEBUG] Checking plugin context7: skillsPath=none, skillsPaths=0 paths
+2026-02-02T03:52:46.930Z [DEBUG] Checking plugin frontend-design: skillsPath=exists, skillsPaths=0 paths
+2026-02-02T03:52:46.930Z [DEBUG] Attempting to load skills from plugin frontend-design default skillsPath: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/frontend-design/6d3752c000e2/skills
+2026-02-02T03:52:46.930Z [DEBUG] Total plugin commands loaded: 0
+2026-02-02T03:52:46.930Z [DEBUG] Registered 0 hooks from 4 plugins
+2026-02-02T03:52:46.930Z [DEBUG] Loaded 1 skills from plugin frontend-design default directory
+2026-02-02T03:52:46.930Z [DEBUG] Checking plugin rust-analyzer-lsp: skillsPath=none, skillsPaths=0 paths
+2026-02-02T03:52:46.930Z [DEBUG] Checking plugin swift-lsp: skillsPath=none, skillsPaths=0 paths
+2026-02-02T03:52:46.930Z [DEBUG] Total plugin skills loaded: 1
+2026-02-02T03:52:46.930Z [DEBUG] Total plugin agents loaded: 0
+2026-02-02T03:52:46.930Z [DEBUG] Loaded 0 unique skills (managed: 0, user: 0, project: 0, legacy commands: 0)
+2026-02-02T03:52:46.930Z [DEBUG] getSkills returning: 0 skill dir commands, 1 plugin skills
+2026-02-02T03:52:46.944Z [DEBUG] Metrics opt-out check failed: No API key available
+2026-02-02T03:52:46.944Z [DEBUG] Metrics check failed, defaulting to disabled
+2026-02-02T03:52:46.949Z [DEBUG] MCP server "plugin:context7:context7": Starting connection with timeout of 30000ms
+2026-02-02T03:52:46.952Z [DEBUG] All plugins already exist, skipping migration
+2026-02-02T03:52:46.958Z [DEBUG] Initialized versioned plugins system with 4 plugins
+2026-02-02T03:52:46.960Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude.json.tmp.25199.1770004366960
+2026-02-02T03:52:46.960Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T03:52:46.960Z [DEBUG] Temp file written successfully, size: 6892 bytes
+2026-02-02T03:52:46.960Z [DEBUG] Applied original permissions to temp file
+2026-02-02T03:52:46.960Z [DEBUG] Renaming /Users/jwfeng/.claude.json.tmp.25199.1770004366960 to /Users/jwfeng/.claude.json
+2026-02-02T03:52:46.960Z [DEBUG] File /Users/jwfeng/.claude.json written atomically
+2026-02-02T03:52:46.962Z [DEBUG] Getting matching hook commands for SessionStart with query: startup
+2026-02-02T03:52:46.962Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T03:52:46.962Z [DEBUG] Matched 0 unique hooks for query "startup" (0 before deduplication)
+2026-02-02T03:52:46.968Z [DEBUG] Getting matching hook commands for SubagentStart with query: Plan
+2026-02-02T03:52:46.968Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T03:52:46.968Z [DEBUG] Matched 0 unique hooks for query "Plan" (0 before deduplication)
+2026-02-02T03:52:46.970Z [DEBUG] Getting matching hook commands for SubagentStart with query: Explore
+2026-02-02T03:52:46.970Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T03:52:46.970Z [DEBUG] Matched 0 unique hooks for query "Explore" (0 before deduplication)
+2026-02-02T03:52:47.001Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude.json.tmp.25199.1770004367001
+2026-02-02T03:52:47.001Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T03:52:47.001Z [DEBUG] Temp file written successfully, size: 6816 bytes
+2026-02-02T03:52:47.001Z [DEBUG] Applied original permissions to temp file
+2026-02-02T03:52:47.001Z [DEBUG] Renaming /Users/jwfeng/.claude.json.tmp.25199.1770004367001 to /Users/jwfeng/.claude.json
+2026-02-02T03:52:47.002Z [DEBUG] File /Users/jwfeng/.claude.json written atomically
+2026-02-02T03:52:47.003Z [DEBUG] Official marketplace auto-install skipped: already_attempted
+2026-02-02T03:52:47.003Z [DEBUG] performStartupChecks called
+2026-02-02T03:52:47.003Z [DEBUG] Starting background plugin installations
+2026-02-02T03:52:47.003Z [DEBUG] performBackgroundPluginInstallations called
+2026-02-02T03:52:47.010Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude.json.tmp.25199.1770004367010
+2026-02-02T03:52:47.010Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T03:52:47.010Z [DEBUG] Temp file written successfully, size: 6892 bytes
+2026-02-02T03:52:47.010Z [DEBUG] Applied original permissions to temp file
+2026-02-02T03:52:47.010Z [DEBUG] Renaming /Users/jwfeng/.claude.json.tmp.25199.1770004367010 to /Users/jwfeng/.claude.json
+2026-02-02T03:52:47.010Z [DEBUG] File /Users/jwfeng/.claude.json written atomically
+2026-02-02T03:52:47.010Z [DEBUG] AutoUpdaterWrapper: Installation type: native
+2026-02-02T03:52:47.011Z [DEBUG] Found 4 enabled plugins
+2026-02-02T03:52:47.011Z [DEBUG] All plugins already exist, skipping migration
+2026-02-02T03:52:47.011Z [DEBUG] Found 4 installed plugins (V2 format)
+2026-02-02T03:52:47.011Z [DEBUG] Loaded plugins - Enabled: 4, Disabled: 0, Commands: 0, Agents: 0, Errors: 0
+2026-02-02T03:52:47.012Z [DEBUG] Found 0 missing plugins (not installed):
+2026-02-02T03:52:47.012Z [DEBUG] Setting installation status: 0 marketplaces, 0 installable plugins, 0 uninstallable plugins
+2026-02-02T03:52:47.033Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude.json.tmp.25199.1770004367033
+2026-02-02T03:52:47.033Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T03:52:47.033Z [DEBUG] Temp file written successfully, size: 6892 bytes
+2026-02-02T03:52:47.033Z [DEBUG] Applied original permissions to temp file
+2026-02-02T03:52:47.033Z [DEBUG] Renaming /Users/jwfeng/.claude.json.tmp.25199.1770004367033 to /Users/jwfeng/.claude.json
+2026-02-02T03:52:47.033Z [DEBUG] File /Users/jwfeng/.claude.json written atomically
+2026-02-02T03:52:47.802Z [DEBUG] Ripgrep first use test: PASSED (mode=builtin, path=/Users/jwfeng/.local/share/claude/versions/2.0.74)
+2026-02-02T03:52:48.095Z [ERROR] MCP server "plugin:context7:context7" Server stderr: WARNING: Using default CLIENT_IP_ENCRYPTION_KEY.
+2026-02-02T03:52:48.169Z [ERROR] MCP server "plugin:context7:context7" Server stderr: Context7 Documentation MCP Server v2.1.1 running on stdio
+2026-02-02T03:52:48.173Z [DEBUG] MCP server "plugin:context7:context7": Successfully connected to undefined server in 1225ms
+2026-02-02T03:52:48.173Z [DEBUG] MCP server "plugin:context7:context7": Connection established with capabilities: {"hasTools":true,"hasPrompts":false,"hasResources":false,"serverVersion":{"name":"Context7","version":"2.1.1"}}
+2026-02-02T03:52:48.283Z [DEBUG] Shell snapshot created successfully (172599 bytes)
+2026-02-02T03:52:48.802Z [DEBUG] Stream started - received first chunk
+2026-02-02T03:52:48.916Z [DEBUG] Stream started - received first chunk
+2026-02-02T03:52:51.115Z [DEBUG] Getting matching hook commands for SubagentStop with query: undefined
+2026-02-02T03:52:51.115Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T03:52:51.115Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-02T03:52:52.469Z [DEBUG] Getting matching hook commands for SubagentStop with query: undefined
+2026-02-02T03:52:52.469Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T03:52:52.469Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-02T03:52:57.168Z [DEBUG] UserCommandMessage rendering: "skills" (args: "none")
+2026-02-02T03:52:57.168Z [DEBUG] isSkillFormat: false
+2026-02-02T03:52:57.192Z [DEBUG] AutoUpdaterWrapper: Installation type: native
+2026-02-02T03:53:00.888Z [DEBUG] AutoUpdaterWrapper: Installation type: native
+2026-02-02T03:53:16.359Z [DEBUG] AutoUpdaterWrapper: Installation type: native
+2026-02-02T03:53:20.364Z [DEBUG] AutoUpdaterWrapper: Installation type: native
+2026-02-02T03:53:43.792Z [DEBUG] Install counts cache is stale (>24h old)
+2026-02-02T03:53:43.792Z [DEBUG] Fetching install counts from https://raw.githubusercontent.com/anthropics/claude-plugins-official/refs/heads/stats/stats/plugin-installs.json
+2026-02-02T03:53:44.188Z [DEBUG] Install counts cache saved successfully
+2026-02-02T03:54:04.051Z [DEBUG] Using cached install counts
+2026-02-02T03:54:32.188Z [DEBUG] Using cached install counts
+2026-02-02T03:54:34.477Z [DEBUG] Using cached install counts
+2026-02-02T03:55:32.105Z [DEBUG] FileHistory: Added snapshot for eb8edd9f-b117-476c-b980-4f7fce38b0f8, tracking 0 files
+2026-02-02T03:55:32.109Z [DEBUG] UserCommandMessage rendering: "plugin" (args: "none")
+2026-02-02T03:55:32.109Z [DEBUG] isSkillFormat: false
+2026-02-02T03:55:32.133Z [DEBUG] AutoUpdaterWrapper: Installation type: native
+2026-02-02T03:55:35.099Z [DEBUG] AutoUpdaterWrapper: Installation type: native
+2026-02-02T03:55:37.808Z [DEBUG] AutoUpdaterWrapper: Installation type: native
+2026-02-02T03:55:49.443Z [INFO] SSH not configured for GitHub, using HTTPS for obra/superpowers-marketplace
+2026-02-02T03:55:50.777Z [DEBUG] Added marketplace source: superpowers-marketplace
+2026-02-02T03:55:50.779Z [DEBUG] Loading plugin context7 from source: "./external_plugins/context7"
+2026-02-02T03:55:50.788Z [DEBUG] Using git SHA for context7@claude-plugins-official: 6d3752c000e2
+2026-02-02T03:55:50.788Z [DEBUG] Plugin context7@claude-plugins-official version 6d3752c000e2 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/context7/6d3752c000e2
+2026-02-02T03:55:50.788Z [DEBUG] Copied local plugin context7 to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/context7/6d3752c000e2
+2026-02-02T03:55:50.789Z [DEBUG] Loading plugin frontend-design from source: "./plugins/frontend-design"
+2026-02-02T03:55:50.795Z [DEBUG] Using git SHA for frontend-design@claude-plugins-official: 6d3752c000e2
+2026-02-02T03:55:50.795Z [DEBUG] Plugin frontend-design@claude-plugins-official version 6d3752c000e2 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/frontend-design/6d3752c000e2
+2026-02-02T03:55:50.795Z [DEBUG] Copied local plugin frontend-design to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/frontend-design/6d3752c000e2
+2026-02-02T03:55:50.796Z [DEBUG] Loading plugin rust-analyzer-lsp from source: "./plugins/rust-analyzer-lsp"
+2026-02-02T03:55:50.796Z [DEBUG] Using provided version for rust-analyzer-lsp@claude-plugins-official: 1.0.0
+2026-02-02T03:55:50.796Z [DEBUG] Plugin rust-analyzer-lsp@claude-plugins-official version 1.0.0 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/rust-analyzer-lsp/1.0.0
+2026-02-02T03:55:50.796Z [DEBUG] Copied local plugin rust-analyzer-lsp to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/rust-analyzer-lsp/1.0.0
+2026-02-02T03:55:50.796Z [DEBUG] Plugin rust-analyzer-lsp has no entry.skills defined
+2026-02-02T03:55:50.796Z [DEBUG] Loading plugin swift-lsp from source: "./plugins/swift-lsp"
+2026-02-02T03:55:50.796Z [DEBUG] Using provided version for swift-lsp@claude-plugins-official: 1.0.0
+2026-02-02T03:55:50.797Z [DEBUG] Plugin swift-lsp@claude-plugins-official version 1.0.0 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/swift-lsp/1.0.0
+2026-02-02T03:55:50.797Z [DEBUG] Copied local plugin swift-lsp to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/swift-lsp/1.0.0
+2026-02-02T03:55:50.797Z [DEBUG] Plugin swift-lsp has no entry.skills defined
+2026-02-02T03:55:50.797Z [DEBUG] Found 4 plugins (4 enabled, 0 disabled)
+2026-02-02T03:55:50.797Z [DEBUG] Total plugin commands loaded: 0
+2026-02-02T03:55:50.797Z [DEBUG] Total plugin agents loaded: 0
+2026-02-02T03:55:50.802Z [DEBUG] FileHistory: Making snapshot for message d0bba1de-8c02-436b-ae1e-3c4c27d0cfc8
+2026-02-02T03:55:50.803Z [DEBUG] FileHistory: Added snapshot for d0bba1de-8c02-436b-ae1e-3c4c27d0cfc8, tracking 0 files
+2026-02-02T03:55:50.806Z [DEBUG] UserCommandMessage rendering: "plugin" (args: "marketplace add obra/superpowers-marketplace")
+2026-02-02T03:55:50.806Z [DEBUG] isSkillFormat: false
+2026-02-02T03:55:50.811Z [DEBUG] AutoUpdaterWrapper: Installation type: native
+2026-02-02T03:56:01.003Z [DEBUG] AutoUpdaterWrapper: Installation type: native
+2026-02-02T03:56:10.952Z [DEBUG] Using cached install counts
+2026-02-02T03:56:19.749Z [DEBUG] Caching plugin from source: {"source":"url","url":"https://github.com/obra/superpowers.git"} to temporary path /Users/jwfeng/.claude/plugins/cache/temp_git_1770004579749_7mxfod
+2026-02-02T03:56:21.282Z [DEBUG] Cloned repository from https://github.com/obra/superpowers.git to /Users/jwfeng/.claude/plugins/cache/temp_git_1770004579749_7mxfod
+2026-02-02T03:56:21.283Z [DEBUG] Successfully cached plugin superpowers to /Users/jwfeng/.claude/plugins/cache/superpowers
+2026-02-02T03:56:21.289Z [DEBUG] Saved 5 installed plugins to /Users/jwfeng/.claude/plugins/installed_plugins.json
+2026-02-02T03:56:21.289Z [DEBUG] Added installed plugin: superpowers@superpowers-marketplace (scope: user)
+2026-02-02T03:56:21.290Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude/settings.json.tmp.25199.1770004581290
+2026-02-02T03:56:21.290Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T03:56:21.290Z [DEBUG] Temp file written successfully, size: 820 bytes
+2026-02-02T03:56:21.290Z [DEBUG] Applied original permissions to temp file
+2026-02-02T03:56:21.290Z [DEBUG] Renaming /Users/jwfeng/.claude/settings.json.tmp.25199.1770004581290 to /Users/jwfeng/.claude/settings.json
+2026-02-02T03:56:21.291Z [DEBUG] File /Users/jwfeng/.claude/settings.json written atomically
+2026-02-02T03:56:21.292Z [DEBUG] Loading plugin context7 from source: "./external_plugins/context7"
+2026-02-02T03:56:21.301Z [DEBUG] FileHistory: Making snapshot for message 2d8c9336-1e57-42d4-8aef-e093adb71819
+2026-02-02T03:56:21.301Z [DEBUG] FileHistory: Added snapshot for 2d8c9336-1e57-42d4-8aef-e093adb71819, tracking 0 files
+2026-02-02T03:56:21.301Z [DEBUG] Using git SHA for context7@claude-plugins-official: 6d3752c000e2
+2026-02-02T03:56:21.301Z [DEBUG] Plugin context7@claude-plugins-official version 6d3752c000e2 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/context7/6d3752c000e2
+2026-02-02T03:56:21.301Z [DEBUG] Copied local plugin context7 to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/context7/6d3752c000e2
+2026-02-02T03:56:21.302Z [DEBUG] Loading plugin frontend-design from source: "./plugins/frontend-design"
+2026-02-02T03:56:21.303Z [DEBUG] UserCommandMessage rendering: "plugin" (args: "install  superpowers@superpowers-marketplace")
+2026-02-02T03:56:21.303Z [DEBUG] isSkillFormat: false
+2026-02-02T03:56:21.307Z [DEBUG] AutoUpdaterWrapper: Installation type: native
+2026-02-02T03:56:21.308Z [DEBUG] Using git SHA for frontend-design@claude-plugins-official: 6d3752c000e2
+2026-02-02T03:56:21.308Z [DEBUG] Plugin frontend-design@claude-plugins-official version 6d3752c000e2 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/frontend-design/6d3752c000e2
+2026-02-02T03:56:21.308Z [DEBUG] Copied local plugin frontend-design to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/frontend-design/6d3752c000e2
+2026-02-02T03:56:21.309Z [DEBUG] Loading plugin rust-analyzer-lsp from source: "./plugins/rust-analyzer-lsp"
+2026-02-02T03:56:21.309Z [DEBUG] Using provided version for rust-analyzer-lsp@claude-plugins-official: 1.0.0
+2026-02-02T03:56:21.309Z [DEBUG] Plugin rust-analyzer-lsp@claude-plugins-official version 1.0.0 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/rust-analyzer-lsp/1.0.0
+2026-02-02T03:56:21.309Z [DEBUG] Copied local plugin rust-analyzer-lsp to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/rust-analyzer-lsp/1.0.0
+2026-02-02T03:56:21.309Z [DEBUG] Plugin rust-analyzer-lsp has no entry.skills defined
+2026-02-02T03:56:21.310Z [DEBUG] Loading plugin swift-lsp from source: "./plugins/swift-lsp"
+2026-02-02T03:56:21.310Z [DEBUG] Using provided version for swift-lsp@claude-plugins-official: 1.0.0
+2026-02-02T03:56:21.310Z [DEBUG] Plugin swift-lsp@claude-plugins-official version 1.0.0 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/swift-lsp/1.0.0
+2026-02-02T03:56:21.310Z [DEBUG] Copied local plugin swift-lsp to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/swift-lsp/1.0.0
+2026-02-02T03:56:21.310Z [DEBUG] Plugin swift-lsp has no entry.skills defined
+2026-02-02T03:56:21.310Z [DEBUG] Loading plugin superpowers from source: {"source":"url","url":"https://github.com/obra/superpowers.git"}
+2026-02-02T03:56:21.310Z [DEBUG] Using provided version for superpowers@superpowers-marketplace: 4.1.1
+2026-02-02T03:56:21.310Z [DEBUG] Using versioned cached plugin superpowers from /Users/jwfeng/.claude/plugins/cache/superpowers-marketplace/superpowers/4.1.1
+2026-02-02T03:56:21.310Z [DEBUG] Loaded hooks from standard location for plugin superpowers: /Users/jwfeng/.claude/plugins/cache/superpowers-marketplace/superpowers/4.1.1/hooks/hooks.json
+2026-02-02T03:56:21.310Z [DEBUG] Found 5 plugins (5 enabled, 0 disabled)
+2026-02-02T03:56:21.311Z [DEBUG] Loaded 1 agents from plugin superpowers default directory
+2026-02-02T03:56:21.311Z [DEBUG] Total plugin agents loaded: 1
+2026-02-02T03:56:21.311Z [DEBUG] Loaded 3 commands from plugin superpowers default directory
+2026-02-02T03:56:21.311Z [DEBUG] Total plugin commands loaded: 3
+2026-02-02T03:56:27.315Z [DEBUG] Getting matching hook commands for SessionEnd with query: prompt_input_exit
+2026-02-02T03:56:27.315Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T03:56:27.315Z [DEBUG] Matched 0 unique hooks for query "prompt_input_exit" (0 before deduplication)

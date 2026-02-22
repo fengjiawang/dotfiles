@@ -1,0 +1,70 @@
+{
+  "version": 2,
+  "plugins": {
+    "context7@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "/Users/jwfeng",
+        "installPath": "/Users/jwfeng/.claude/plugins/cache/claude-plugins-official/context7/6d3752c000e2",
+        "version": "6d3752c000e2",
+        "installedAt": "2026-01-26T06:34:16.930Z",
+        "lastUpdated": "2026-01-26T06:34:16.930Z",
+        "gitCommitSha": "6d3752c000e2b3d0e6137bd7adb04895d6f40f14"
+      }
+    ],
+    "frontend-design@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "/Users/jwfeng",
+        "installPath": "/Users/jwfeng/.claude/plugins/cache/claude-plugins-official/frontend-design/6d3752c000e2",
+        "version": "6d3752c000e2",
+        "installedAt": "2026-01-26T06:34:16.930Z",
+        "lastUpdated": "2026-01-26T06:34:16.930Z",
+        "gitCommitSha": "6d3752c000e2b3d0e6137bd7adb04895d6f40f14"
+      }
+    ],
+    "rust-analyzer-lsp@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "/Users/jwfeng",
+        "installPath": "/Users/jwfeng/.claude/plugins/cache/claude-plugins-official/rust-analyzer-lsp/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-01-26T06:34:16.930Z",
+        "lastUpdated": "2026-01-26T06:34:16.930Z",
+        "gitCommitSha": "6d3752c000e2b3d0e6137bd7adb04895d6f40f14"
+      }
+    ],
+    "swift-lsp@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/Users/jwfeng/.claude/plugins/cache/claude-plugins-official/swift-lsp/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-01-29T13:04:19.842Z",
+        "lastUpdated": "2026-01-29T13:04:19.842Z",
+        "isLocal": true
+      }
+    ],
+    "superpowers@superpowers-marketplace": [
+      {
+        "scope": "user",
+        "installPath": "/Users/jwfeng/.claude/plugins/cache/superpowers-marketplace/superpowers/4.1.1",
+        "version": "4.1.1",
+        "installedAt": "2026-02-02T03:56:21.289Z",
+        "lastUpdated": "2026-02-02T03:56:21.289Z",
+        "gitCommitSha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
+        "isLocal": false
+      }
+    ],
+    "superpowers@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/Users/jwfeng/.claude/plugins/cache/claude-plugins-official/superpowers/4.1.1",
+        "version": "4.1.1",
+        "installedAt": "2026-02-03T08:33:15.731Z",
+        "lastUpdated": "2026-02-03T08:33:15.731Z",
+        "gitCommitSha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
+        "isLocal": false
+      }
+    ]
+  }
+}

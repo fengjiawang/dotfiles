@@ -1,0 +1,175 @@
+import Foundation
+import ApplicationServices
+import CoreGraphics
+import AppKit
+
+class WindowManager {
+    static let shared = WindowManager()
+
+    private init() {}
+
+    func setupAccessibilityPermission() {
+        let options: NSDictionary = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true]
+        let accessEnabled = AXIsProcessTrustedWithOptions(options)
+        if !accessEnabled {
+            print("Warning: Accessibility permission not granted. Window centering may not work.")
+        }
+    }
+
+    func centerFrontmostWindow() {
+        guard let targetWindow = getFrontmostWindow() else {
+            print("No active window found")
+            return
+        }
+
+        let screen = getCurrentScreen(for: targetWindow)
+        let settings = SettingsManager.shared.settings
+
+        centerWindow(targetWindow, on: screen, scaleX: settings.scaleX, scaleY: settings.scaleY)
+    }
+
+    func getFrontmostWindow() -> CGWindowID? {
+        let options: CGWindowListOption = [.optionOnScreenOnly, .excludeDesktopElements]
+        let windowListInfo = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]]
+
+        guard let windows = windowListInfo else { return nil }
+
+        for window in windows {
+            if let windowLayer = window[kCGWindowLayer as String] as? Int,
+               windowLayer == 0,
+               let windowID = window[kCGWindowNumber as String] as? CGWindowID,
+               let ownerName = window[kCGWindowOwnerName as String] as? String {
+                // Skip our own app's windows
+                if ownerName == "WindowSnap" { continue }
+                return windowID
+            }
+        }
+
+        return nil
+    }
+
+    func getCurrentScreen(for windowID: CGWindowID) -> NSScreen? {
+        let options: CGWindowListOption = [.optionOnScreenOnly]
+        let windowListInfo = CGWindowListCopyWindowInfo(options, windowID) as? [[String: Any]]
+
+        guard let windowInfo = windowListInfo?.first,
+              let bounds = windowInfo[kCGWindowBounds as String] as? [String: CGFloat],
+              let x = bounds["X"], let y = bounds["Y"],
+              let width = bounds["Width"], let height = bounds["Height"] else {
+            // Fallback to screen with mouse
+            return getScreenWithMouse()
+        }
+
+        let windowFrame = CGRect(x: x, y: y, width: width, height: height)
+
+        for screen in NSScreen.screens {
+            if screen.frame.intersects(windowFrame) {
+                return screen
+            }
+        }
+
+        return getScreenWithMouse()
+    }
+
+    private func getScreenWithMouse() -> NSScreen? {
+        let mouseLocation = NSEvent.mouseLocation
+        for screen in NSScreen.screens {
+            if screen.frame.contains(mouseLocation) {
+                return screen
+            }
+        }
+        return NSScreen.screens.first
+    }
+
+    func isOwnWindow(windowID: CGWindowID) -> Bool {
+        let options: CGWindowListOption = [.optionOnScreenOnly]
+        guard let windowList = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]] else {
+            return false
+        }
+
+        for window in windowList {
+            if let id = window[kCGWindowNumber as String] as? CGWindowID,
+               id == windowID,
+               let ownerName = window[kCGWindowOwnerName as String] as? String {
+                return ownerName == "WindowSnap"
+            }
+        }
+        return false
+    }
+
+    func getWindowPID(for windowID: CGWindowID) -> pid_t? {
+        let options: CGWindowListOption = [.optionOnScreenOnly]
+        guard let windowList = CGWindowListCopyWindowInfo(options, windowID) as? [[String: Any]],
+              let windowInfo = windowList.first,
+              let pid = windowInfo[kCGWindowOwnerPID as String] as? pid_t else {
+            return nil
+        }
+        return pid
+    }
+
+    private func centerWindow(_ windowID: CGWindowID, on screen: NSScreen?, scaleX: Double, scaleY: Double) {
+        guard let screen = screen else {
+            print("Error: No screen available for window \(windowID)")
+            return
+        }
+
+        guard let targetPID = getWindowPID(for: windowID) else {
+            print("Error: Could not get PID for window \(windowID)")
+            return
+        }
+
+        let screenFrame = screen.frame
+        let targetWidth = screenFrame.width * scaleX
+        let targetHeight = screenFrame.height * scaleY
+
+        let newX = screenFrame.origin.x + (screenFrame.width - targetWidth) / 2
+        let newY = screenFrame.origin.y + (screenFrame.height - targetHeight) / 2
+
+        // Use AXUIElement with the TARGET process PID, not current process
+        let axApp = AXUIElementCreateApplication(targetPID)
+
+        var windows: CFArray?
+        let copyResult = AXUIElementCopyAttributeValues(axApp, kAXWindowsAttribute as CFString, 0, 10, &windows)
+
+        guard copyResult == .success, let winList = windows else {
+            print("Error: Could not get windows from AX API for PID \(targetPID), error: \(copyResult)")
+            return
+        }
+
+        let count = CFArrayGetCount(winList)
+        for i in 0..<count {
+            let axWin = unsafeBitCast(CFArrayGetValueAtIndex(winList, i), to: AXUIElement.self)
+
+            // Verify this is the window we want by checking its ID
+            var windowRef: AXUIElement?
+            let copyWindowRef = AXUIElementCopyAttributeValue(axWin, kAXWindowAttribute as CFString, &windowRef)
+
+            if copyWindowRef == .success {
+                var axWindowID: CGWindowID = 0
+                if let windowRef = windowRef {
+                    let valueResult = AXUIElementGetAttributeValue(windowRef, kAXWindowNumberKey as CFString, &axWindowID)
+                    if valueResult == .success && axWindowID == windowID {
+                        // Found the matching window, apply position and size
+                        setPosition(axWin, x: newX, y: newY)
+                        setSize(axWin, width: targetWidth, height: targetHeight)
+                        print("Info: Centered window \(windowID) on screen with scale \(scaleX)x\(scaleY)")
+                        return
+                    }
+                }
+            }
+        }
+        print("Error: Could not find window \(windowID) in AX windows list")
+    }
+
+    private func setPosition(_ element: AXUIElement, x: CGFloat, y: CGFloat) {
+        var point = CGPoint(x: x, y: y)
+        guard let newPosition = AXValueCreate(.cgPoint, &point) else { return }
+        AXUIElementSetAttributeValue(element, kAXPositionAttribute as CFString, newPosition)
+    }
+
+    private func setSize(_ element: AXUIElement, width: CGFloat, height: CGFloat) {
+        var size = CGSize(width: width, height: height)
+        guard let newSize = AXValueCreate(.cgSize, &size) else { return }
+        AXUIElementSetAttributeValue(element, kAXSizeAttribute as CFString, newSize)
+    }
+}

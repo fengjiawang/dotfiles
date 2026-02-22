@@ -1,0 +1,9 @@
+# Claude Code Configuration
+
+## Bash Commands
+
+**Always unalias before running bash commands** - some systems have aliases (like `cp -i`) that cause confirmation prompts.
+
+```bash
+\cp -Rf source dest  # Use \cp to bypass alias
+```

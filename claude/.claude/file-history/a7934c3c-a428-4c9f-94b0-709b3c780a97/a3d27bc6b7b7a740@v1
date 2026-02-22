@@ -1,0 +1,96 @@
+import Foundation
+import Cocoa
+
+class Preferences {
+    static let shared = Preferences()
+    
+    private let defaults = UserDefaults.standard
+    
+    // Keys
+    private let kXRatio = "xRatio"
+    private let kYRatio = "yRatio"
+    private let kShortcutKeyCode = "shortcutKeyCode"
+    private let kShortcutModifiers = "shortcutModifiers"
+    
+    // Default values
+    let defaultXRatio: Double = 0.7
+    let defaultYRatio: Double = 0.7
+    let defaultKeyCode: UInt16 = 45  // 'N' key
+    let defaultModifiers: UInt = UInt(NSEvent.ModifierFlags.command.rawValue | NSEvent.ModifierFlags.option.rawValue)
+    
+    // Current values
+    var xRatio: Double {
+        get { return defaults.double(forKey: kXRatio) > 0 ? defaults.double(forKey: kXRatio) : defaultXRatio }
+        set { defaults.set(newValue, forKey: kXRatio) }
+    }
+    
+    var yRatio: Double {
+        get { return defaults.double(forKey: kYRatio) > 0 ? defaults.double(forKey: kYRatio) : defaultYRatio }
+        set { defaults.set(newValue, forKey: kYRatio) }
+    }
+    
+    var shortcutKeyCode: UInt16 {
+        get { return UInt16(defaults.integer(forKey: kShortcutKeyCode)) > 0 ? UInt16(defaults.integer(forKey: kShortcutKeyCode)) : defaultKeyCode }
+        set { defaults.set(Int(newValue), forKey: kShortcutKeyCode) }
+    }
+    
+    var shortcutModifiers: UInt {
+        get { return UInt(defaults.integer(forKey: kShortcutModifiers)) > 0 ? UInt(defaults.integer(forKey: kShortcutModifiers)) : defaultModifiers }
+        set { defaults.set(Int(newValue), forKey: kShortcutModifiers) }
+    }
+    
+    private init() {}
+    
+    func load() {
+        // Register defaults
+        let defaultValues: [String: Any] = [
+            kXRatio: defaultXRatio,
+            kYRatio: defaultYRatio,
+            kShortcutKeyCode: Int(defaultKeyCode),
+            kShortcutModifiers: Int(defaultModifiers)
+        ]
+        defaults.register(defaults: defaultValues)
+    }
+    
+    func resetToDefaults() {
+        xRatio = defaultXRatio
+        yRatio = defaultYRatio
+        shortcutKeyCode = defaultKeyCode
+        shortcutModifiers = defaultModifiers
+    }
+}
+
+// Helper extension for modifier flags
+extension NSEvent.ModifierFlags {
+    var stringRepresentation: String {
+        var result = ""
+        if contains(.command) { result += "⌘" }
+        if contains(.option) { result += "⌥" }
+        if contains(.control) { result += "⌃" }
+        if contains(.shift) { result += "⇧" }
+        return result
+    }
+}
+
+// Helper to get key name from key code
+func keyCodeToString(_ keyCode: UInt16) -> String {
+    let keyCodeMap: [UInt16: String] = [
+        0: "A", 1: "S", 2: "D", 3: "F", 4: "H", 5: "G", 6: "Z", 7: "X",
+        8: "C", 9: "V", 11: "B", 12: "Q", 13: "W", 14: "E", 15: "R",
+        16: "Y", 17: "T", 18: "1", 19: "2", 20: "3", 21: "4", 22: "6",
+        23: "5", 24: "=" , 25: "9", 26: "7", 27: "-", 28: "8", 29: "0",
+        30: "]", 31: "O", 32: "U", 33: "[", 34: "I", 35: "P", 36: "Return",
+        37: "L", 38: "J", 39: "'", 40: "K", 41: ";", 42: "\\", 43: ",",
+        44: "/", 45: "N", 46: "M", 47: ".", 48: "Tab", 49: "Space",
+        50: "`", 51: "Delete", 53: "Escape", 55: "Command", 56: "Shift",
+        57: "Caps Lock", 58: "Option", 59: "Control", 60: "Right Shift",
+        61: "Right Option", 62: "Right Control", 63: "Function",
+        96: "F5", 97: "F6", 98: "F7", 99: "F3", 100: "F8", 101: "F9",
+        103: "F11", 105: "F13", 106: "F16", 107: "F14", 109: "F10",
+        111: "F12", 113: "F15", 114: "Help", 115: "Home", 116: "Page Up",
+        117: "Delete Forward", 118: "F4", 119: "End", 120: "F2", 121: "Page Down",
+        122: "F1", 123: "Left Arrow", 124: "Right Arrow", 125: "Down Arrow",
+        126: "Up Arrow"
+    ]
+    return keyCodeMap[keyCode] ?? "Unknown"
+}

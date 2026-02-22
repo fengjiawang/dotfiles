@@ -1,0 +1,37 @@
+name: WindowSnap
+options:
+  bundleIdPrefix: com.windowsnap
+  deploymentTarget:
+    macOS: "12.0"
+  xcodeVersion: "15.0"
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MACOSX_DEPLOYMENT_TARGET: "12.0"
+    CODE_SIGN_STYLE: Automatic
+    ENABLE_HARDENED_RUNTIME: YES
+    APP_SANDBOX_CONTAINER_ID: ""
+    COMBINE_HIDPI_IMAGES: YES
+
+targets:
+  WindowSnap:
+    type: application
+    platform: macOS
+    sources:
+      - path: WindowSnap/Sources
+    resources:
+      - path: WindowSnap/Resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.windowsnap.app
+        INFOPLIST_FILE: WindowSnap/Resources/Info.plist
+        PRODUCT_NAME: WindowSnap
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_EMIT_LOC_STRINGS: YES
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
+        ENABLE_USER_SCRIPT_SANDBOXING: NO

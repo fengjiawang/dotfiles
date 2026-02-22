@@ -1,0 +1,30 @@
+# This is Git's per-user configuration file.
+[user]
+	email = jwfeng96@ustc.edu.cn
+	name = jwfeng
+# Please adapt and uncomment the following lines:
+#	name = jwfeng
+#	email = jwfeng96@ustc.edu.cn
+[core]
+	excludesfile = /Users/jwfeng/.gitignore_global
+	pager = delta
+[http]
+        sslVerify = false
+        postBuffer = 1048576000
+        ; proxy = http://office.jwfeng.top:17890
+[https]
+        ; proxy = https://office.jwfeng.top:17890
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	pager = less --mouse --wheel-lines=3 -R -F -X
+	line-numbers = true
+	side-by-side = true
+	line-fill-method = spaces
+	syntax-theme = Coldark-Dark
+	file-style = omit
+	file-decoration-style = omit
+	hunk-header-style = file line-number syntax
+[init]
+	defaultBranch = main

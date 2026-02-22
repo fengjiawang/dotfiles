@@ -1,0 +1,119 @@
+2026-01-29T14:24:14.955Z [DEBUG] Watching for changes in setting files /Users/jwfeng/.claude...
+2026-01-29T14:24:14.974Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (18.2ms): security find-generic-password -a $USER -w -s "Claude Code"
+2026-01-29T14:24:14.987Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (13.0ms): security find-generic-password -a "jwfeng" -w -s "Claude Code-credentials"
+2026-01-29T14:24:14.990Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2026-01-29T14:24:14.990Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2026-01-29T14:24:14.990Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2026-01-29T14:24:14.991Z [DEBUG] LSP server manager initialized successfully
+2026-01-29T14:24:14.991Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2026-01-29T14:24:14.993Z [DEBUG] Loading plugin context7 from source: "./external_plugins/context7"
+2026-01-29T14:24:15.005Z [DEBUG] Git remote URL: null
+2026-01-29T14:24:15.005Z [DEBUG] No git remote URL found
+2026-01-29T14:24:15.005Z [DEBUG] Not in a GitHub repository, skipping path mapping update
+2026-01-29T14:24:15.005Z [DEBUG] Using git SHA for context7@claude-plugins-official: 6d3752c000e2
+2026-01-29T14:24:15.005Z [DEBUG] Plugin context7@claude-plugins-official version 6d3752c000e2 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/context7/6d3752c000e2
+2026-01-29T14:24:15.005Z [DEBUG] Copied local plugin context7 to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/context7/6d3752c000e2
+2026-01-29T14:24:15.006Z [DEBUG] Loading plugin frontend-design from source: "./plugins/frontend-design"
+2026-01-29T14:24:15.014Z [DEBUG] Using git SHA for frontend-design@claude-plugins-official: 6d3752c000e2
+2026-01-29T14:24:15.014Z [DEBUG] Plugin frontend-design@claude-plugins-official version 6d3752c000e2 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/frontend-design/6d3752c000e2
+2026-01-29T14:24:15.014Z [DEBUG] Copied local plugin frontend-design to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/frontend-design/6d3752c000e2
+2026-01-29T14:24:15.015Z [DEBUG] Loading plugin rust-analyzer-lsp from source: "./plugins/rust-analyzer-lsp"
+2026-01-29T14:24:15.015Z [DEBUG] Using provided version for rust-analyzer-lsp@claude-plugins-official: 1.0.0
+2026-01-29T14:24:15.015Z [DEBUG] Plugin rust-analyzer-lsp@claude-plugins-official version 1.0.0 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/rust-analyzer-lsp/1.0.0
+2026-01-29T14:24:15.015Z [DEBUG] Copied local plugin rust-analyzer-lsp to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/rust-analyzer-lsp/1.0.0
+2026-01-29T14:24:15.015Z [DEBUG] Plugin rust-analyzer-lsp has no entry.skills defined
+2026-01-29T14:24:15.015Z [DEBUG] Loading plugin swift-lsp from source: "./plugins/swift-lsp"
+2026-01-29T14:24:15.015Z [DEBUG] Using provided version for swift-lsp@claude-plugins-official: 1.0.0
+2026-01-29T14:24:15.015Z [DEBUG] Plugin swift-lsp@claude-plugins-official version 1.0.0 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/swift-lsp/1.0.0
+2026-01-29T14:24:15.015Z [DEBUG] Copied local plugin swift-lsp to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/swift-lsp/1.0.0
+2026-01-29T14:24:15.016Z [DEBUG] Plugin swift-lsp has no entry.skills defined
+2026-01-29T14:24:15.016Z [DEBUG] Found 4 plugins (4 enabled, 0 disabled)
+2026-01-29T14:24:15.017Z [DEBUG] Stats cache stale (2026-01-25), processing 2026-01-26 to 2026-01-28 in background
+2026-01-29T14:24:15.017Z [DEBUG] Plugin autoupdate: skipped (auto-updater disabled)
+2026-01-29T14:24:15.019Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/jwfeng/.claude/skills, project=[]
+2026-01-29T14:24:15.062Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (42.2ms): ps aux | grep -E "Visual Studio Code|Code Helper|Cursor Helper|Windsurf Helper|IntelliJ IDEA|PyCharm
+2026-01-29T14:24:15.062Z [DEBUG] Loaded 4 installed plugins from /Users/jwfeng/.claude/plugins/installed_plugins.json
+2026-01-29T14:24:15.069Z [DEBUG] Creating shell snapshot for zsh (/bin/zsh)
+2026-01-29T14:24:15.069Z [DEBUG] Looking for shell config file: /Users/jwfeng/.zshrc
+2026-01-29T14:24:15.069Z [DEBUG] Snapshots directory: /Users/jwfeng/.claude/shell-snapshots
+2026-01-29T14:24:15.070Z [DEBUG] Creating snapshot at: /Users/jwfeng/.claude/shell-snapshots/snapshot-zsh-1769696655069-36h7kz.sh
+2026-01-29T14:24:15.070Z [DEBUG] Shell binary exists: true
+2026-01-29T14:24:15.070Z [DEBUG] Execution timeout: 10000ms
+2026-01-29T14:24:15.070Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude/todos/8976ff7e-ecc4-4b6c-b10d-fcd5dd1da4a0-agent-8976ff7e-ecc4-4b6c-b10d-fcd5dd1da4a0.json.tmp.66763.1769696655070
+2026-01-29T14:24:15.071Z [DEBUG] Temp file written successfully, size: 2 bytes
+2026-01-29T14:24:15.071Z [DEBUG] Renaming /Users/jwfeng/.claude/todos/8976ff7e-ecc4-4b6c-b10d-fcd5dd1da4a0-agent-8976ff7e-ecc4-4b6c-b10d-fcd5dd1da4a0.json.tmp.66763.1769696655070 to /Users/jwfeng/.claude/todos/8976ff7e-ecc4-4b6c-b10d-fcd5dd1da4a0-agent-8976ff7e-ecc4-4b6c-b10d-fcd5dd1da4a0.json
+2026-01-29T14:24:15.071Z [DEBUG] File /Users/jwfeng/.claude/todos/8976ff7e-ecc4-4b6c-b10d-fcd5dd1da4a0-agent-8976ff7e-ecc4-4b6c-b10d-fcd5dd1da4a0.json written atomically
+2026-01-29T14:24:15.071Z [DEBUG] getPluginSkills: Processing 4 enabled plugins
+2026-01-29T14:24:15.071Z [DEBUG] Checking plugin context7: skillsPath=none, skillsPaths=0 paths
+2026-01-29T14:24:15.071Z [DEBUG] Checking plugin frontend-design: skillsPath=exists, skillsPaths=0 paths
+2026-01-29T14:24:15.071Z [DEBUG] Attempting to load skills from plugin frontend-design default skillsPath: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/frontend-design/6d3752c000e2/skills
+2026-01-29T14:24:15.072Z [DEBUG] Total plugin commands loaded: 0
+2026-01-29T14:24:15.072Z [DEBUG] Registered 0 hooks from 4 plugins
+2026-01-29T14:24:15.072Z [DEBUG] Loaded 1 skills from plugin frontend-design default directory
+2026-01-29T14:24:15.072Z [DEBUG] Checking plugin rust-analyzer-lsp: skillsPath=none, skillsPaths=0 paths
+2026-01-29T14:24:15.072Z [DEBUG] Checking plugin swift-lsp: skillsPath=none, skillsPaths=0 paths
+2026-01-29T14:24:15.072Z [DEBUG] Total plugin skills loaded: 1
+2026-01-29T14:24:15.072Z [DEBUG] Total plugin agents loaded: 0
+2026-01-29T14:24:15.072Z [DEBUG] Loaded 0 unique skills (managed: 0, user: 0, project: 0, legacy commands: 0)
+2026-01-29T14:24:15.073Z [DEBUG] getSkills returning: 0 skill dir commands, 1 plugin skills
+2026-01-29T14:24:15.078Z [DEBUG] Stats cache saved successfully (lastComputedDate: 2026-01-28)
+2026-01-29T14:24:15.078Z [DEBUG] Stats cache lastComputedDate updated (no new data)
+2026-01-29T14:24:15.082Z [DEBUG] Acquired mtime-based lock on running version: /Users/jwfeng/.local/share/claude/versions/2.0.74
+2026-01-29T14:24:15.091Z [DEBUG] MCP server "plugin:context7:context7": Starting connection with timeout of 30000ms
+2026-01-29T14:24:15.093Z [DEBUG] All plugins already exist, skipping migration
+2026-01-29T14:24:15.094Z [DEBUG] Initialized versioned plugins system with 4 plugins
+2026-01-29T14:24:15.096Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude.json.tmp.66763.1769696655096
+2026-01-29T14:24:15.096Z [DEBUG] Preserving file permissions: 100600
+2026-01-29T14:24:15.096Z [DEBUG] Temp file written successfully, size: 5454 bytes
+2026-01-29T14:24:15.096Z [DEBUG] Applied original permissions to temp file
+2026-01-29T14:24:15.096Z [DEBUG] Renaming /Users/jwfeng/.claude.json.tmp.66763.1769696655096 to /Users/jwfeng/.claude.json
+2026-01-29T14:24:15.096Z [DEBUG] File /Users/jwfeng/.claude.json written atomically
+2026-01-29T14:24:15.097Z [DEBUG] Getting matching hook commands for SessionStart with query: startup
+2026-01-29T14:24:15.097Z [DEBUG] Found 0 hook matchers in settings
+2026-01-29T14:24:15.097Z [DEBUG] Matched 0 unique hooks for query "startup" (0 before deduplication)
+2026-01-29T14:24:15.108Z [DEBUG] Getting matching hook commands for SubagentStart with query: Explore
+2026-01-29T14:24:15.108Z [DEBUG] Found 0 hook matchers in settings
+2026-01-29T14:24:15.108Z [DEBUG] Matched 0 unique hooks for query "Explore" (0 before deduplication)
+2026-01-29T14:24:15.111Z [DEBUG] Getting matching hook commands for SubagentStart with query: Plan
+2026-01-29T14:24:15.111Z [DEBUG] Found 0 hook matchers in settings
+2026-01-29T14:24:15.111Z [DEBUG] Matched 0 unique hooks for query "Plan" (0 before deduplication)
+2026-01-29T14:24:15.152Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude.json.tmp.66763.1769696655152
+2026-01-29T14:24:15.152Z [DEBUG] Preserving file permissions: 100600
+2026-01-29T14:24:15.152Z [DEBUG] Temp file written successfully, size: 5378 bytes
+2026-01-29T14:24:15.152Z [DEBUG] Applied original permissions to temp file
+2026-01-29T14:24:15.152Z [DEBUG] Renaming /Users/jwfeng/.claude.json.tmp.66763.1769696655152 to /Users/jwfeng/.claude.json
+2026-01-29T14:24:15.152Z [DEBUG] File /Users/jwfeng/.claude.json written atomically
+2026-01-29T14:24:15.155Z [DEBUG] Official marketplace auto-install skipped: already_attempted
+2026-01-29T14:24:15.155Z [DEBUG] performStartupChecks called
+2026-01-29T14:24:15.155Z [DEBUG] Trust not accepted for current directory - skipping plugin installations
+2026-01-29T14:24:15.163Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude.json.tmp.66763.1769696655163
+2026-01-29T14:24:15.163Z [DEBUG] Preserving file permissions: 100600
+2026-01-29T14:24:15.163Z [DEBUG] Temp file written successfully, size: 5454 bytes
+2026-01-29T14:24:15.163Z [DEBUG] Applied original permissions to temp file
+2026-01-29T14:24:15.163Z [DEBUG] Renaming /Users/jwfeng/.claude.json.tmp.66763.1769696655163 to /Users/jwfeng/.claude.json
+2026-01-29T14:24:15.163Z [DEBUG] File /Users/jwfeng/.claude.json written atomically
+2026-01-29T14:24:15.163Z [DEBUG] AutoUpdaterWrapper: Installation type: native
+2026-01-29T14:24:15.164Z [DEBUG] Loaded plugins - Enabled: 4, Disabled: 0, Commands: 0, Agents: 0, Errors: 0
+2026-01-29T14:24:15.191Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude.json.tmp.66763.1769696655191
+2026-01-29T14:24:15.191Z [DEBUG] Preserving file permissions: 100600
+2026-01-29T14:24:15.192Z [DEBUG] Temp file written successfully, size: 6057 bytes
+2026-01-29T14:24:15.192Z [DEBUG] Applied original permissions to temp file
+2026-01-29T14:24:15.192Z [DEBUG] Renaming /Users/jwfeng/.claude.json.tmp.66763.1769696655191 to /Users/jwfeng/.claude.json
+2026-01-29T14:24:15.192Z [DEBUG] File /Users/jwfeng/.claude.json written atomically
+2026-01-29T14:24:16.031Z [DEBUG] Stream started - received first chunk
+2026-01-29T14:24:16.032Z [DEBUG] Stream started - received first chunk
+2026-01-29T14:24:16.159Z [DEBUG] Ripgrep first use test: PASSED (mode=builtin, path=/Users/jwfeng/.local/share/claude/versions/2.0.74)
+2026-01-29T14:24:16.226Z [ERROR] MCP server "plugin:context7:context7" Server stderr: WARNING: Using default CLIENT_IP_ENCRYPTION_KEY.
+2026-01-29T14:24:16.306Z [ERROR] MCP server "plugin:context7:context7" Server stderr: Context7 Documentation MCP Server v2.1.1 running on stdio
+2026-01-29T14:24:16.309Z [DEBUG] MCP server "plugin:context7:context7": Successfully connected to undefined server in 1220ms
+2026-01-29T14:24:16.309Z [DEBUG] MCP server "plugin:context7:context7": Connection established with capabilities: {"hasTools":true,"hasPrompts":false,"hasResources":false,"serverVersion":{"name":"Context7","version":"2.1.1"}}
+2026-01-29T14:24:16.561Z [DEBUG] Shell snapshot created successfully (172598 bytes)
+2026-01-29T14:24:17.118Z [DEBUG] Getting matching hook commands for SubagentStop with query: undefined
+2026-01-29T14:24:17.118Z [DEBUG] Found 0 hook matchers in settings
+2026-01-29T14:24:17.118Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-01-29T14:24:17.491Z [DEBUG] Getting matching hook commands for SubagentStop with query: undefined
+2026-01-29T14:24:17.491Z [DEBUG] Found 0 hook matchers in settings
+2026-01-29T14:24:17.491Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-01-29T14:24:25.058Z [DEBUG] Getting matching hook commands for SessionEnd with query: prompt_input_exit
+2026-01-29T14:24:25.058Z [DEBUG] Found 0 hook matchers in settings
+2026-01-29T14:24:25.058Z [DEBUG] Matched 0 unique hooks for query "prompt_input_exit" (0 before deduplication)

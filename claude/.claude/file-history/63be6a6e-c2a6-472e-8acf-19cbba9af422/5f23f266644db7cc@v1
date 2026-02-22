@@ -1,0 +1,66 @@
+import Cocoa
+
+@main
+class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
+
+    var statusBarManager: StatusBarManager?
+    private var _settingsWindowController: NSWindowController?
+    private var _settingsWindow: NSWindow?
+
+    var settingsWindowController: NSWindowController? {
+        return _settingsWindowController
+    }
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        // Initialize managers
+        SettingsManager.shared.load()
+        HotKeyManager.shared.startListening()
+        WindowManager.shared.setupAccessibilityPermission()
+
+        // Setup menu bar first
+        statusBarManager = StatusBarManager()
+
+        // Show settings window (will stay open until user closes it)
+        showSettingsWindow()
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        HotKeyManager.shared.stopListening()
+    }
+
+    func showSettingsWindow() {
+        // If window already exists and is visible, just bring it to front
+        if let existingWindow = _settingsWindow, existingWindow.isVisible {
+            existingWindow.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
+
+        // If window exists but is closed, recreate it
+        let settingsVC = SettingsViewController()
+        let window = NSWindow(contentViewController: settingsVC)
+        window.title = "WindowSnap Settings"
+        window.styleMask = [.titled, .closable, .miniaturizable]
+        window.center()
+        window.delegate = self
+        window.isReleasedWhenClosed = true
+
+        let wc = NSWindowController(window: window)
+        wc.showWindow(nil)
+
+        window.makeKeyAndOrderFront(nil)
+        window.orderFrontRegardless()
+        NSApp.activate(ignoringOtherApps: true)
+
+        _settingsWindowController = wc
+        _settingsWindow = window
+    }
+
+    func windowWillClose(_ notification: Notification) {
+        if let window = notification.object as? NSWindow, window == _settingsWindow {
+            _settingsWindow = nil
+            _settingsWindowController = nil
+            NSApp.setActivationPolicy(.accessory)
+        }
+    }
+}

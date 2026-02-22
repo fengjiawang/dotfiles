@@ -1,0 +1,107 @@
+import Foundation
+import Cocoa
+
+class StatusBarManager {
+    private var statusItem: NSStatusItem?
+    private weak var popover: NSPopover?
+
+    init() {
+        setupStatusBar()
+    }
+
+    deinit {
+        if let item = statusItem {
+            NSStatusBar.system.removeStatusItem(item)
+        }
+    }
+
+    private func setupStatusBar() {
+        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+
+        if let button = statusItem?.button {
+            button.image = NSImage(systemSymbolName: "arrow.up.left.and.arrow.down.right", accessibilityDescription: "WindowSnap")
+            button.image?.size = NSSize(width: 18, height: 18)
+
+            // Right-click to show settings
+            button.sendAction(on: [.rightMouseUp, .leftMouseUp])
+
+            // Use block-based action instead of target-action
+            setupButtonAction()
+        }
+
+        // Add menu for left-click
+        setupMenu()
+    }
+
+    private func setupButtonAction() {
+        guard let button = statusItem?.button else { return }
+
+        // Store the manager reference
+        let manager = self
+
+        // Override the target/action using method swizzling or a different approach
+        // Since NSStatusItem button doesn't easily support block actions, we'll use a gesture
+        if let button = statusItem?.button {
+            let leftClick = NSClickGestureRecognizer(target: manager, action: #selector(handleLeftClick(_:)))
+            button.addGestureRecognizer(leftClick)
+
+            let rightClick = NSClickGestureRecognizer(target: manager, action: #selector(handleRightClick(_:)))
+            rightClick.buttonMask = 0x2 // Right button
+            button.addGestureRecognizer(rightClick)
+        }
+    }
+
+    @objc private func handleLeftClick(_ gesture: NSClickGestureRecognizer) {
+        // Toggle popover or show menu
+        showPopover()
+    }
+
+    @objc private func handleRightClick(_ gesture: NSClickGestureRecognizer) {
+        showSettings()
+    }
+
+    private func setupMenu() {
+        let menu = NSMenu()
+
+        let settingsItem = NSMenuItem(title: "Settings...", action: #selector(showSettings), keyEquivalent: ",")
+        settingsItem.target = self
+        menu.addItem(settingsItem)
+
+        menu.addItem(NSMenuItem.separator())
+
+        let quitItem = NSMenuItem(title: "Quit WindowSnap", action: #selector(quitApp), keyEquivalent: "q")
+        quitItem.target = self
+        menu.addItem(quitItem)
+
+        statusItem?.menu = menu
+    }
+
+    func showPopover() {
+        let popover = NSPopover()
+        popover.contentViewController = SettingsViewController()
+        popover.behavior = .transient
+        popover.animates = false
+
+        self.popover = popover
+
+        if let button = statusItem?.button {
+            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+        }
+    }
+
+    @objc func showSettings() {
+        // Close popover if open
+        popover?.close()
+
+        // Show settings window
+        NSApp.setActivationPolicy(.regular)
+
+        if let delegate = NSApp.delegate as? AppDelegate {
+            delegate.showSettingsWindow()
+        }
+    }
+
+    @objc func quitApp() {
+        NSApp.terminate(nil)
+    }
+}

@@ -1,0 +1,80 @@
+import SwiftUI
+import Carbon
+
+@main
+struct WindowSnapApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
+    var body: some Scene {
+        Settings {
+            SettingsView()
+        }
+    }
+}
+
+class AppDelegate: NSObject, NSApplicationDelegate {
+    var statusItem: NSStatusItem!
+    var popover: NSPopover!
+    var hotKeyManager: HotKeyManager?
+    var settings = SettingsStore.shared
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        setupStatusItem()
+        setupPopover()
+        setupHotKey()
+
+        // Request accessibility permissions
+        AccessibilityHelper.requestAccessibilityPermission()
+    }
+
+    func setupStatusItem() {
+        statusItem = NSStatusItem(length: NSStatusItem.variableLength)
+        statusItem.button?.image = NSImage(systemSymbolName: "arrow.up.left.and.arrow.down.right", accessibilityDescription: "WindowSnap")
+
+        statusItem.button?.target = self
+        statusItem.button?.action = #selector(statusItemClicked)
+
+        // Right click menu
+        let menu = NSMenu()
+        menu.addItem(NSMenuItem(title: "设置", action: #selector(openSettings), keyEquivalent: ","))
+        menu.addItem(NSMenuItem.separator())
+        menu.addItem(NSMenuItem(title: "退出", action: #selector(quitApp), keyEquivalent: "q"))
+        statusItem.menu = menu
+    }
+
+    func setupPopover() {
+        popover = NSPopover()
+        popover.contentSize = NSSize(width: 300, height: 200)
+        popover.contentViewController = NSHostingController(rootView: SettingsView())
+        popover.behavior = .transient
+    }
+
+    func setupHotKey() {
+        hotKeyManager = HotKeyManager { [weak self] in
+            self?.snapCurrentWindow()
+        }
+        hotKeyManager?.registerHotKey(keyCode: settings.hotKeyCode, modifierFlags: settings.hotKeyModifiers)
+    }
+
+    @objc func statusItemClicked() {
+        if popover.isShown {
+            popover.performClose(nil)
+        } else {
+            if let button = statusItem.button {
+                popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            }
+        }
+    }
+
+    @objc func openSettings() {
+        popover.show(relativeTo: statusItem.button!.bounds, of: statusItem.button!, preferredEdge: .minY)
+    }
+
+    @objc func quitApp() {
+        NSApplication.shared.terminate(0)
+    }
+
+    func snapCurrentWindow() {
+        WindowSnapper.snapForegroundWindow(xRatio: settings.xRatio, yRatio: settings.yRatio)
+    }
+}

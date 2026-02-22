@@ -1,0 +1,16 @@
+import Foundation
+
+struct Settings: Codable, Equatable {
+    var hotKey: HotKey
+    var widthPercentage: Int
+    var heightPercentage: Int
+
+    static let `default` = Settings(
+        hotKey: HotKey(keyCode: 6, modifierFlags: [.option]),
+        widthPercentage: 80,
+        heightPercentage: 80
+    )
+
+    static let minPercentage: Int = 10
+    static let maxPercentage: Int = 100
+}

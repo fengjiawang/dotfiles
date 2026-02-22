@@ -1,0 +1,292 @@
+# WindowSnap - macOS Menu Bar Application Design
+
+**Date:** 2026-02-03
+**Purpose:** Center and resize the frontmost window to configurable dimensions via global hotkey
+
+## Overview
+
+WindowSnap is a macOS menu bar utility that allows users to quickly center and resize the active window using a customizable global hotkey. The app runs as a background agent with no Dock presence, providing settings for window size ratios and hotkey customization.
+
+## Application Architecture
+
+### App Structure
+- Pure menu bar application using SwiftUI and AppKit
+- Uses `NSApplication.shared.setActivationPolicy(.accessory)` for no Dock icon
+- Background agent that persists in menu bar
+
+### Core Components
+
+1. **AppDelegate**
+   - Entry point and app lifecycle management
+   - Initializes menu bar icon and managers
+
+2. **MenuBarManager**
+   - Manages NSStatusItem (menu bar icon)
+   - Handles menu creation and interaction
+   - Icon: SF Symbol "rectangle.center.inset.filled" (template mode)
+
+3. **WindowSnapEngine**
+   - Core window manipulation logic
+   - Uses Accessibility API (AXUIElement) for window control
+   - Calculates target frames and applies transformations
+
+4. **HotkeyManager**
+   - Registers global hotkey using MASShortcut or Carbon Event Manager
+   - Handles hotkey activation callbacks
+   - Manages hotkey conflicts and warnings
+
+5. **SettingsManager**
+   - Persists preferences to UserDefaults
+   - Provides default values and validation
+
+6. **SettingsWindow**
+   - SwiftUI-based settings interface
+   - Non-resizable, ~400x300px
+   - Auto-saves changes
+
+### Technology Stack
+- SwiftUI for settings UI
+- AppKit for menu bar and window management
+- Accessibility API for window manipulation
+- MASShortcut or Carbon Event Manager for global hotkeys
+- UserDefaults for persistence
+
+## Core Functionality
+
+### Window Manipulation Flow
+
+When the hotkey is triggered:
+
+1. **Get Frontmost Window**
+   - Use `NSWorkspace.shared.frontmostApplication` for active app
+   - Query Accessibility API for focused window
+   - Skip if no window found (e.g., desktop active)
+
+2. **Determine Target Screen**
+   - Enumerate `NSScreen.screens`
+   - Calculate intersection area of window with each screen
+   - Select screen with largest window area
+   - Fallback: Use screen containing window's center point
+
+3. **Calculate New Frame**
+   - Get screen's visible frame (excludes menu bar/Dock)
+   - Target width = `visibleFrame.width × (xRatio / 100)`
+   - Target height = `visibleFrame.height × (yRatio / 100)`
+   - Center position:
+     - `x = visibleFrame.origin.x + (visibleFrame.width - targetWidth) / 2`
+     - `y = visibleFrame.origin.y + (visibleFrame.height - targetHeight) / 2`
+
+4. **Apply Changes**
+   - Set `kAXPositionAttribute` via Accessibility API
+   - Set `kAXSizeAttribute` via Accessibility API
+   - Handle errors gracefully (silent failure for restricted windows)
+
+### Multi-Monitor Support
+- Windows are centered on their current screen
+- Largest intersection area determines target screen
+- No cross-monitor movement (stays on current display)
+
+## Settings Interface
+
+### Layout Design
+
+```
+┌─────────────────────────────────────┐
+│         WindowSnap Settings         │
+├─────────────────────────────────────┤
+│                                     │
+│  Hotkey                            │
+│  ┌───────────────────────────────┐ │
+│  │  Record new hotkey...         │ │
+│  └───────────────────────────────┘ │
+│  Current: ⌥Z                       │
+│                                     │
+│  Window Size                       │
+│  ┌─────────────────────────────┐   │
+│  │ Width Ratio:  [80] %        │   │
+│  │ ━━━━━━●━━━━━━━━━━━━━        │   │
+│  └─────────────────────────────┘   │
+│  ┌─────────────────────────────┐   │
+│  │ Height Ratio: [80] %        │   │
+│  │ ━━━━━━●━━━━━━━━━━━━━        │   │
+│  └─────────────────────────────┘   │
+│                                     │
+│  Range: 20% - 100%                 │
+│                                     │
+│       [Test Current Window]        │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+### UI Components
+
+- **Hotkey Recorder**: Click to activate, captures next key combination
+- **Sliders**: Range 20-100%, step size 5, synchronized with text field
+- **Test Button**: Applies settings to frontmost window without saving (preview)
+- **Auto-save**: Changes persist immediately (no Save/Cancel buttons)
+
+### Window Behavior
+- Opens centered on screen with menu bar icon
+- Closes via standard controls or clicking away
+- No Dock icon on close
+- Single instance (reopening brings existing window to front)
+
+## Hotkey Management
+
+### Implementation Details
+
+**Registration:**
+- Use MASShortcut library (or Carbon Event Manager fallback)
+- Register on launch and re-register on settings change
+
+**Storage Format:**
+```swift
+UserDefaults.standard.set(6, forKey: "windowsnap.hotkeyKeyCode")  // Z key
+UserDefaults.standard.set(524288, forKey: "windowsnap.hotkeyModifiers")  // Option
+```
+
+**Modifier Bitmasks:**
+- Option (⌥): 524288
+- Command (⌘): 1048576
+- Control (⌃): 262144
+- Shift (⇧): 131072
+
+### Conflict Detection
+
+Check against common system shortcuts:
+- Spotlight: ⌘Space
+- Mission Control: ⌃↑
+- Screenshot: ⌘⇧3, ⌘⇧4, ⌘⇧5
+- App Switcher: ⌘Tab
+
+**Behavior:**
+- Show warning banner: "⚠️ This hotkey may conflict with system shortcuts"
+- Still allow saving (user choice prioritized)
+
+### Activation Flow
+1. User presses registered hotkey
+2. HotkeyManager receives callback
+3. Invokes `WindowSnapEngine.snapFrontmostWindow()`
+4. Optional: Brief visual/haptic feedback
+
+## Menu Bar Integration
+
+### Status Item
+- Created via `NSStatusBar.system.statusItem(withLength: .variableLength)`
+- Icon: SF Symbol (template mode for light/dark adaptation)
+- Tooltip: "WindowSnap - Center and resize windows"
+
+### Menu Structure
+```
+┌─────────────────────┐
+│ Settings...      ⌘, │
+├─────────────────────┤
+│ Quit WindowSnap  ⌘Q │
+└─────────────────────┘
+```
+
+**Behavior:**
+- Left-click and right-click show same menu
+- "Settings..." opens/focuses SettingsWindow
+- "Quit" terminates app via `NSApplication.shared.terminate(nil)`
+
+## Data Persistence
+
+### UserDefaults Keys
+- `windowsnap.xRatio` → Double (default: 80.0)
+- `windowsnap.yRatio` → Double (default: 80.0)
+- `windowsnap.hotkeyKeyCode` → Int (default: 6)
+- `windowsnap.hotkeyModifiers` → UInt (default: 524288)
+
+### Default Settings
+- Width Ratio: 80%
+- Height Ratio: 80%
+- Hotkey: ⌥Z (Option+Z)
+
+## Accessibility Permissions
+
+### First Launch Flow
+
+1. Check `AXIsProcessTrusted()` on launch
+2. If denied, show alert:
+   - **Title**: "Accessibility Permission Required"
+   - **Message**: "WindowSnap needs accessibility access to control window positions. Please grant permission in System Settings."
+   - **Primary Button**: "Open System Settings" → Opens Privacy & Security
+   - **Secondary Button**: "Quit"
+3. Re-check permission status after user returns
+4. If still denied: Show menu bar icon but hotkey fails with notification
+
+### System Settings Deep Link
+```swift
+NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
+```
+
+## Edge Cases & Error Handling
+
+### Window Types
+- **Minimized windows**: Skip (frame unavailable)
+- **Fullscreen windows**: Skip (shouldn't reposition)
+- **System dialogs**: May fail silently if inaccessible
+- **Windows with size constraints**: Accessibility API clamps to minimum
+
+### Environment
+- **Multiple spaces/desktops**: Window stays on current space
+- **Screen disconnection**: Falls back to primary screen
+- **Permission denied**: Silent failure with notification on hotkey trigger
+
+### Failure Modes
+- No frontmost window: No-op
+- Window manipulation fails: Silent (don't disrupt workflow)
+- Hotkey registration fails: Show notification, retry on next settings change
+
+## Testing Strategy
+
+### Manual Testing Scenarios
+1. Various applications (Safari, Notes, Terminal, Finder, etc.)
+2. Multi-monitor configurations (if available)
+3. Hotkey conflicts with system shortcuts
+4. Permission grant/deny flows
+5. Edge cases: minimized, fullscreen, system windows
+6. Verify no Dock icon at any lifecycle stage
+
+### Validation Checklist
+- [ ] Menu bar icon appears immediately on launch
+- [ ] No Dock icon during normal operation
+- [ ] Settings window closes without Dock persistence
+- [ ] Hotkey triggers window centering
+- [ ] Multi-monitor centering on correct screen
+- [ ] Settings persist across app restarts
+- [ ] Accessibility permission flow works correctly
+- [ ] Warning shown for conflicting hotkeys
+
+## Implementation Notes
+
+### Xcode Project Setup
+- macOS target with minimum deployment version (e.g., macOS 13.0+)
+- Enable App Sandbox with appropriate entitlements:
+  - Accessibility usage description in Info.plist
+- Configure as agent application (LSUIElement = YES)
+
+### Dependencies
+- MASShortcut (optional, for simplified hotkey management)
+- Native frameworks: AppKit, SwiftUI, Accessibility
+
+### Build Configuration
+- Info.plist keys:
+  - `LSUIElement` = YES (no Dock icon)
+  - `NSHumanReadableCopyright`
+  - `CFBundleDisplayName` = "WindowSnap"
+  - Accessibility usage description
+
+## Future Considerations (Out of Scope)
+
+- Window state memory/toggle behavior
+- Custom positioning presets (corners, halves)
+- Multi-window operations
+- Keyboard navigation in settings
+- Animated window transitions
+
+---
+
+**Design Status**: ✅ Validated
+**Next Steps**: Implementation planning and Xcode project setup

@@ -1,0 +1,133 @@
+import SwiftUI
+
+struct SettingsView: View {
+    @ObservedObject var settings = SettingsManager.shared
+    @State private var isRecordingHotkey = false
+    @State private var hotkeyConflictWarning = false
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("WindowSnap Settings")
+                .font(.title2)
+                .padding(.top)
+
+            Divider()
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Hotkey")
+                    .font(.headline)
+
+                Button(action: {
+                    isRecordingHotkey.toggle()
+                }) {
+                    Text(isRecordingHotkey ? "Press key combination..." : "Record new hotkey...")
+                        .frame(maxWidth: .infinity)
+                        .padding(8)
+                }
+                .buttonStyle(.bordered)
+
+                Text("Current: \(hotkeyDescription)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                if hotkeyConflictWarning {
+                    HStack {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.orange)
+                        Text("This hotkey may conflict with system shortcuts")
+                            .font(.caption)
+                    }
+                }
+            }
+            .padding(.horizontal)
+
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Window Size")
+                    .font(.headline)
+
+                VStack(spacing: 8) {
+                    HStack {
+                        Text("Width Ratio:")
+                        Slider(value: $settings.xRatio, in: 20...100, step: 5)
+                        Text("\(Int(settings.xRatio))%")
+                            .frame(width: 40)
+                    }
+
+                    HStack {
+                        Text("Height Ratio:")
+                        Slider(value: $settings.yRatio, in: 20...100, step: 5)
+                        Text("\(Int(settings.yRatio))%")
+                            .frame(width: 40)
+                    }
+                }
+
+                Text("Range: 20% - 100%")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal)
+
+            Button("Test Current Window") {
+                WindowSnapEngine.shared.snapFrontmostWindow()
+            }
+            .buttonStyle(.borderedProminent)
+
+            Spacer()
+        }
+        .frame(width: 400, height: 300)
+        .onChange(of: settings.hotkeyKeyCode) { _ in
+            checkHotkeyConflicts()
+            HotkeyManager.shared.registerHotkey()
+        }
+        .onChange(of: settings.hotkeyModifiers) { _ in
+            checkHotkeyConflicts()
+            HotkeyManager.shared.registerHotkey()
+        }
+        .onAppear {
+            NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+                if self.isRecordingHotkey {
+                    self.settings.hotkeyKeyCode = event.keyCode
+                    self.settings.hotkeyModifiers = UInt32(event.modifierFlags.rawValue & 0xFFFF0000)
+                    self.isRecordingHotkey = false
+                    return nil
+                }
+                return event
+            }
+        }
+    }
+
+    private var hotkeyDescription: String {
+        var description = ""
+
+        let modifiers = settings.hotkeyModifiers
+        if modifiers & 524288 != 0 { description += "⌥" }
+        if modifiers & 1048576 != 0 { description += "⌘" }
+        if modifiers & 262144 != 0 { description += "⌃" }
+        if modifiers & 131072 != 0 { description += "⇧" }
+
+        let keyChar: String
+        switch settings.hotkeyKeyCode {
+        case 6: keyChar = "Z"
+        case 7: keyChar = "X"
+        case 8: keyChar = "C"
+        default: keyChar = "?"
+        }
+
+        return description + keyChar
+    }
+
+    private func checkHotkeyConflicts() {
+        let modifiers = settings.hotkeyModifiers
+        let keyCode = settings.hotkeyKeyCode
+
+        let conflictingCombos: [(UInt32, UInt16)] = [
+            (1048576, 49),
+            (262144, 126),
+            (1179648, 20),
+            (1179648, 21),
+            (1179648, 23),
+        ]
+
+        hotkeyConflictWarning = conflictingCombos.contains { $0.0 == modifiers && $0.1 == keyCode }
+    }
+}

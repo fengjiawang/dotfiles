@@ -1,0 +1,81 @@
+import Foundation
+import ApplicationServices
+import CoreGraphics
+
+struct WindowSnapper {
+    static func snapForegroundWindow(xRatio: Double, yRatio: Double) {
+        guard let foregroundWindow = getForegroundWindow() else {
+            return
+        }
+
+        guard let screenFrame = getMainScreenFrame() else {
+            return
+        }
+
+        let targetWidth = screenFrame.width * xRatio
+        let targetHeight = screenFrame.height * yRatio
+        let targetX = screenFrame.origin.x + (screenFrame.width - targetWidth) / 2
+        let targetY = screenFrame.origin.y + (screenFrame.height - targetHeight) / 2
+
+        let targetFrame = CGRect(x: targetX, y: targetY, width: targetWidth, height: targetHeight)
+
+        setWindowFrame(window: foregroundWindow, frame: targetFrame)
+    }
+
+    private static func getForegroundWindow() -> AXUIElement? {
+        let pid = NSWorkspace.shared.frontmostApplication?.processIdentifier ?? 0
+        guard pid > 0 else { return nil }
+
+        let appElement = AXUIElementCreateApplication(pid)
+        var value: AnyObject?
+
+        let result = AXUIElementCopyAttributeValue(appElement, kAXMainWindowAttribute as CFString, &value)
+
+        guard result == .success, let window = value as! AXUIElement? else {
+            return nil
+        }
+
+        return window
+    }
+
+    private static func getMainScreenFrame() -> CGRect? {
+        if let screen = NSScreen.main {
+            return screen.frame
+        }
+        return nil
+    }
+
+    private static func setWindowFrame(window: AXUIElement, frame: CGRect) {
+        let position = CGPoint(x: frame.origin.x, y: frame.origin.y)
+        let size = CGSize(width: frame.width, height: frame.height)
+
+        // Animate the window change
+        animateWindowChange(window: window, toPosition: position, toSize: size)
+    }
+
+    private static func animateWindowChange(window: AXUIElement, toPosition: CGPoint, toSize: CGSize) {
+        // Set position
+        let positionValue = CGPointValue(point: toPosition)
+        let positionAXValue = AXValueCreate(.cgPoint, positionValue)! as CFTypeRef
+
+        let setPositionResult = AXUIElementSetAttributeValue(
+            window,
+            kAXPositionAttribute as CFString,
+            positionAXValue
+        )
+
+        // Set size
+        let sizeValue = CGSizeValue(size: toSize)
+        let sizeAXValue = AXValueCreate(.cgSize, sizeValue)! as CFTypeRef
+
+        let setSizeResult = AXUIElementSetAttributeValue(
+            window,
+            kAXSizeAttribute as CFString,
+            sizeAXValue
+        )
+
+        if setPositionResult != .success || setSizeResult != .success {
+            print("Failed to set window position/size")
+        }
+    }
+}

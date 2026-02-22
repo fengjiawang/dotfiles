@@ -1,0 +1,14 @@
+{
+  "name": "windowsnap",
+  "version": "0.1.0",
+  "description": "MacOS menu bar app for window snapping",
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "check": "cargo check && tauri check"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "http-server": "^14.1.1"
+  }
+}

@@ -1,0 +1,172 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+WindowSnap is a macOS menu bar application that centers and resizes windows using a global hotkey. The app runs as a pure menu bar utility (no Dock icon) with customizable window size ratios and hotkey configuration.
+
+## Build Commands
+
+**Open in Xcode:**
+```bash
+open WindowSnap.xcodeproj
+```
+
+**Build using xcodebuild:**
+```bash
+# Debug build
+xcodebuild -project WindowSnap.xcodeproj -scheme WindowSnap -configuration Debug build
+
+# Release build
+xcodebuild -project WindowSnap.xcodeproj -scheme WindowSnap -configuration Release build
+```
+
+**Build using MCP tools (preferred when available):**
+```bash
+mcp__XcodeBuildMCP__build_macos
+```
+
+**Locate built .app:**
+```bash
+find ~/Library/Developer/Xcode/DerivedData/WindowSnap-* -name "WindowSnap.app" -type d
+```
+
+**Run the app:**
+```bash
+open ~/Library/Developer/Xcode/DerivedData/WindowSnap-*/Build/Products/Debug/WindowSnap.app
+```
+
+## File Commands
+
+**CRITICAL:** When using command-line file operations, always use unaliased commands:
+- Use `\rm` instead of `rm`
+- Use `\cp` instead of `cp`
+- Use `\ls` instead of `ls`
+
+This ensures consistent behavior across different shell configurations.
+
+## Architecture
+
+### Core Components (all in `WindowSnap/` directory)
+
+The app uses a **flat architecture** - all Swift files are in the `WindowSnap/` directory, not separated into packages:
+
+1. **WindowSnapApp.swift** - App entry point and lifecycle
+   - `AppDelegate` handles launch and permission requests
+   - Critical: Must temporarily switch to `.regular` activation policy when requesting accessibility permissions, then switch to `.accessory` after permission is granted
+   - Accessibility permission flow uses `AXIsProcessTrustedWithOptions` with `kAXTrustedCheckOptionPrompt`
+
+2. **WindowSnapEngine.swift** - Core window manipulation logic
+   - Uses Accessibility API (`AXUIElement`, `AXUIElementCopyAttributeValue`)
+   - Multi-screen detection via intersection area calculation
+   - Handles window positioning and resizing with `kAXPositionAttribute` and `kAXSizeAttribute`
+
+3. **HotkeyManager.swift** - Global hotkey registration
+   - Uses Carbon Event Manager with FourCharCode signature `0x57534E50` ('WSNP')
+   - Registers/unregisters hotkeys on settings changes
+
+4. **SettingsManager.swift** - UserDefaults persistence
+   - `@Published` properties: `xRatio`, `yRatio`, `hotkeyKeyCode`, `hotkeyModifiers`
+   - **Critical initialization pattern:** Load values into local variables first, then assign to `@Published` properties to avoid triggering `didSet` during `init()`
+   - Never reassign to self within `didSet` (causes infinite recursion)
+
+5. **MenuBarManager.swift** - NSStatusItem management
+   - Menu bar icon with Settings and Quit options
+   - Manages `SettingsWindowManager` singleton for window lifecycle
+
+6. **SettingsView.swift** - SwiftUI settings interface
+   - Sliders for window size ratios (20%-100%)
+   - Hotkey recorder using `NSEvent.addLocalMonitorForEvents`
+   - Conflict detection for system shortcuts
+   - Test button to preview window snapping
+
+### Configuration Files
+
+- **WindowSnap/Info.plist** - App metadata
+  - `LSUIElement` = YES (no Dock icon)
+  - `NSAccessibilityUsageDescription` required for window manipulation
+
+- **WindowSnap/WindowSnap.entitlements** - App permissions/sandbox
+
+### Documentation
+
+- **docs/plans/2026-02-03-windowsnap-design.md** - Original design specification
+- **docs/plans/2026-02-03-windowsnap-implementation.md** - Implementation plan
+- **使用说明.txt** - User guide (Chinese)
+
+## Key Technical Details
+
+### Accessibility Permission Challenge
+
+**Problem:** LSUIElement apps (`.accessory` activation policy) cannot properly trigger system permission dialogs on first launch.
+
+**Solution:**
+1. Check `AXIsProcessTrusted()` before setting activation policy
+2. If no permission: temporarily use `.regular` mode and call `NSApp.activate(ignoringOtherApps: true)`
+3. Trigger system prompt with `AXIsProcessTrustedWithOptions` (includes `kAXTrustedCheckOptionPrompt`)
+4. After permission granted: app quits and user must restart
+5. On subsequent launches with permission: go straight to `.accessory` mode
+
+### SettingsManager Initialization Pattern
+
+**Critical pattern to avoid `didSet` triggers during initialization:**
+
+```swift
+private init() {
+    // Load into temporary variables first
+    let loadedXRatio = UserDefaults.standard.object(forKey: Keys.xRatio) as? Double ?? 80.0
+    let loadedYRatio = UserDefaults.standard.object(forKey: Keys.yRatio) as? Double ?? 80.0
+
+    // Then assign to @Published properties (didSet won't trigger until after init completes)
+    self.xRatio = max(20.0, min(100.0, loadedXRatio))
+    self.yRatio = max(20.0, min(100.0, loadedYRatio))
+}
+```
+
+**Never do this in `didSet`:**
+```swift
+didSet {
+    xRatio = max(20.0, min(100.0, xRatio)) // ❌ Infinite recursion!
+}
+```
+
+### Multi-Screen Window Detection
+
+Windows are snapped to their current screen using intersection area calculation:
+1. Get window frame from Accessibility API
+2. Calculate intersection with each `NSScreen`
+3. Select screen with largest intersection area
+4. Use that screen's `visibleFrame` (excludes menu bar/Dock) for centering
+
+### Hotkey Storage Format
+
+UserDefaults keys:
+- `windowsnap.hotkeyKeyCode` - UInt16 key code (default: 6 for Z key)
+- `windowsnap.hotkeyModifiers` - UInt32 modifier bitmask (default: 524288 for Option)
+
+Modifier bitmasks:
+- Option (⌥): 524288
+- Command (⌘): 1048576
+- Control (⌃): 262144
+- Shift (⇧): 131072
+
+## Common Issues
+
+### Build Failure: "Missing package product 'WindowSnapFeature'"
+
+This is a stale error from the original scaffolded template. The app doesn't actually use the `WindowSnapPackage/` - all code is in `WindowSnap/` directory. If this error appears, it means Xcode project settings still reference the package. Clean derived data and rebuild.
+
+### Accessibility Permission Not Appearing in System Settings
+
+The app must use `.regular` activation policy when showing the permission prompt. See "Accessibility Permission Challenge" above.
+
+### Force Unwrapping Safety
+
+Always check for `nil` before casting `CFTypeRef` to specific types:
+```swift
+guard result == .success,
+      let windowElement = focusedWindow as? AXUIElement else { return }
+```
+
+Never use `as!` for CoreFoundation type casts from Accessibility API.

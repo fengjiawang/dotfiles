@@ -1,0 +1,159 @@
+import Cocoa
+
+final class MenuBarViewController: NSViewController {
+    private let settings = SettingsManager.shared
+
+    private lazy var stackView: NSStackView = {
+        let stack = NSStackView()
+        stack.orientation = .vertical
+        stack.spacing = 12
+        stack.alignment = .leading
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
+
+    private lazy var titleLabel: NSTextField = {
+        let label = NSTextField(labelWithString: "WindowSnap")
+        label.font = NSFont.systemFont(ofSize: 16, weight: .semibold)
+        return label
+    }()
+
+    private lazy var widthRow: PercentageRowView = {
+        let row = PercentageRowView(title: "Width", percentage: settings.settings.widthPercentage)
+        row.onChange = { [weak self] newValue in
+            self?.settings.updateWidthPercentage(newValue)
+        }
+        return row
+    }()
+
+    private lazy var heightRow: PercentageRowView = {
+        let row = PercentageRowView(title: "Height", percentage: settings.settings.heightPercentage)
+        row.onChange = { [weak self] newValue in
+            self?.settings.updateHeightPercentage(newValue)
+        }
+        return row
+    }()
+
+    private lazy var hotkeyLabel: NSTextField = {
+        let label = NSTextField(labelWithString: "HotKey: \(settings.settings.hotKey.displayString)")
+        label.font = NSFont.monospacedSystemFont(ofSize: 12, weight: .regular)
+        return label
+    }()
+
+    private lazy var infoLabel: NSTextField = {
+        let label = NSTextField(labelWithString: "Press the hotkey to center and scale the active window.")
+        label.font = NSFont.systemFont(ofSize: 11)
+        label.textColor = .secondaryLabelColor
+        label.lineBreakMode = .byWordWrapping
+        return label
+    }()
+
+    override func loadView() {
+        view = NSView(frame: NSRect(x: 0, y: 0, width: 280, height: 200))
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        setupUI()
+    }
+
+    private func setupUI() {
+        view.addSubview(stackView)
+
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16)
+        ])
+
+        stackView.addArrangedSubview(titleLabel)
+        stackView.addArrangedSubview(widthRow)
+        stackView.addArrangedSubview(heightRow)
+        stackView.addArrangedSubview(hotkeyLabel)
+        stackView.addArrangedSubview(infoLabel)
+    }
+}
+
+final class PercentageRowView: NSView {
+    var onChange: ((Int) -> Void)?
+
+    private let title: String
+    private var currentPercentage: Int
+
+    private lazy var titleLabel: NSTextField = {
+        let label = NSTextField(labelWithString: title)
+        label.font = NSFont.systemFont(ofSize: 12, weight: .medium)
+        return label
+    }()
+
+    private lazy var slider: NSSlider = {
+        let slider = NSSlider()
+        slider.minValue = 10
+        slider.maxValue = 100
+        slider.integerValue = currentPercentage
+        slider.target = self
+        slider.action = #selector(sliderChanged(_:))
+        return slider
+    }()
+
+    private lazy var textField: NSTextField = {
+        let field = NSTextField(string: "\(currentPercentage)%")
+        field.font = NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .regular)
+        field.isBezeled = true
+        field.bezelStyle = .roundedBezel
+        field.isEditable = true
+        field.alignment = .center
+        field.action = #selector(textFieldChanged(_:))
+        field.target = self
+        return field
+    }()
+
+    init(title: String, percentage: Int) {
+        self.title = title
+        self.currentPercentage = percentage
+        super.init(frame: .zero)
+        setupUI()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupUI() {
+        let stack = NSStackView(views: [titleLabel, slider, textField])
+        stack.orientation = .horizontal
+        stack.spacing = 8
+        stack.alignment = .centerY
+        stack.translatesAutoresizingMaskIntoConstraints = false
+
+        addSubview(stack)
+
+        NSLayoutConstraint.activate([
+            stack.topAnchor.constraint(equalTo: topAnchor),
+            stack.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stack.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stack.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            titleLabel.widthAnchor.constraint(equalToConstant: 60),
+            textField.widthAnchor.constraint(equalToConstant: 60)
+        ])
+    }
+
+    @objc private func sliderChanged(_ sender: NSSlider) {
+        currentPercentage = sender.integerValue
+        textField.stringValue = "\(currentPercentage)%"
+        onChange?(currentPercentage)
+    }
+
+    @objc private func textFieldChanged(_ sender: NSTextField) {
+        if let value = Int(sender.stringValue), value >= 10, value <= 100 {
+            currentPercentage = value
+            slider.integerValue = value
+            onChange?(currentPercentage)
+        } else {
+            textField.stringValue = "\(currentPercentage)%"
+        }
+    }
+}

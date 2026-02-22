@@ -1,0 +1,107 @@
+import Foundation
+import AppKit
+import Carbon
+
+class WindowSnap {
+
+    // 配置：位置和大小百分比
+    struct Config {
+        let xPercent: Double // 横坐标百分比 (0.0 - 1.0)
+        let yPercent: Double // 纵坐标百分比 (0.0 - 1.0)
+        let widthPercent: Double // 宽度百分比 (0.0 - 1.0)
+        let heightPercent: Double // 高度百分比 (0.0 - 1.0)
+
+        static let `default` = Config(
+            xPercent: 0.25,
+            yPercent: 0.25,
+            widthPercent: 0.5,
+            heightPercent: 0.5
+        )
+    }
+
+    private let config: Config
+
+    init(config: Config = .default) {
+        self.config = config
+    }
+
+    // 检查辅助功能权限
+    func checkAccessibilityPermission() -> Bool {
+        let options: NSDictionary = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString: true]
+        let trusted = AXIsProcessTrustedWithOptions(options)
+        return trusted
+    }
+
+    // 获取当前活动窗口
+    func getActiveWindow() -> AXUIElement? {
+        guard let frontmostApp = NSWorkspace.shared.frontmostApplication else {
+            return nil
+        }
+
+        let app = AXUIElementCreateApplication(frontmostApp.processIdentifier)
+
+        var value: AnyObject?
+        let result = AXUIElementCopyAttributeValue(app, kAXFocusedWindowAttribute as CFString, &value)
+
+        if result == .success, let window = value as! AXUIElement? {
+            return window
+        }
+
+        // 如果无法获取聚焦窗口，尝试获取主窗口
+        let result2 = AXUIElementCopyAttributeValue(app, kAXMainWindowAttribute as CFString, &value)
+        if result2 == .success, let window = value as! AXUIElement? {
+            return window
+        }
+
+        return nil
+    }
+
+    // 获取屏幕尺寸
+    func getScreenSize() -> NSSize? {
+        guard let screen = NSScreen.main else {
+            return nil
+        }
+        return screen.frame.size
+    }
+
+    // 调整窗口位置和大小
+    func resizeAndMoveWindow(_ window: AXUIElement) {
+        guard let screenSize = getScreenSize() else {
+            return
+        }
+
+        let targetWidth = screenSize.width * CGFloat(config.widthPercent)
+        let targetHeight = screenSize.height * CGFloat(config.heightPercent)
+        let targetX = screenSize.width * CGFloat(config.xPercent)
+        let targetY = screenSize.height * CGFloat(config.yPercent)
+
+        // 创建位置和大小值
+        let positionValue = AXValueCreate(.cgPoint, [targetX, targetY] as CFArray)
+        let sizeValue = AXValueCreate(.cgSize, [targetWidth, targetHeight] as CFArray)
+
+        // 设置窗口位置
+        AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, positionValue!)
+
+        // 设置窗口大小
+        AXUIElementSetAttributeValue(window, kAXSizeAttribute as CFString, sizeValue!)
+    }
+
+    // 执行调整
+    func snapActiveWindow() {
+        guard checkAccessibilityPermission() else {
+            print("辅助功能权限未授予。请前往系统偏好设置 > 安全性与隐私 > 隐私 > 辅助功能中授予权限。")
+            return
+        }
+
+        guard let window = getActiveWindow() else {
+            print("无法获取当前活动窗口。")
+            return
+        }
+
+        resizeAndMoveWindow(window)
+    }
+}
+
+// 主入口点
+let windowSnap = WindowSnap()
+windowSnap.snapActiveWindow()

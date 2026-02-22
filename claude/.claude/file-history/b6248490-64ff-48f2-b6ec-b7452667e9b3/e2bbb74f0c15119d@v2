@@ -1,0 +1,53 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Build Commands
+
+```bash
+# Release build
+swift build --configuration release
+
+# Full build with app bundle creation
+./build.sh
+
+# Development build
+swift build
+```
+
+## Project Overview
+
+WindowSnap is a macOS menu bar application that snaps/resizes the active window to preset position and size using a global hotkey (default: Ctrl+Option+Z).
+
+**Tech Stack:** Swift 5.9+, macOS 10.13+, AppKit, Carbon, CoreGraphics, Accessibility API
+
+## Architecture
+
+The entire application is in a single file `Sources/main.swift` (~1083 lines):
+
+- **AppConfig** - Configuration model struct with validation
+- **ConfigManager** - Singleton for JSON persistence at `~/Library/Application Support/WindowSnap/config.json`
+- **WindowSnap** - Core service: checks Accessibility permissions, gets active window via AX API, calculates position/size, applies changes
+- **HotkeyListener** - Global keyboard shortcut listener using `CGEventTap` (low-level Core Graphics API)
+- **AppDelegate** - App lifecycle, menu bar icon, settings window UI, application menu
+
+## Critical Issues to Note
+
+1. **HotkeyListener memory management** (`main.swift:292-301`): The `eventCallback` closure uses `takeUnretainedValue()` with `passUnretained(self)` - this is a memory management bug that can cause crashes or leaks.
+
+2. **Hotkey not updating after configuration change** (`main.swift:1003-1015`): `saveSettings()` only updates config references but doesn't restart the `CGEventTap`. The shortcut change won't take effect until the app is restarted.
+
+3. **Permission check on every hotkey trigger** (`main.swift:244-248`): `checkAccessibilityPermission()` is called synchronously on every hotkey press, which can cause UI lag.
+
+## Key Implementation Details
+
+- **Window positioning**: Uses `NSScreen.visibleFrame` (excludes Dock/menu bar) and Accessibility API `AXUIElementSetAttributeValue`
+- **Multi-monitor**: `getScreenForWindow()` finds screen by checking if window's top-left corner is contained in screen's visibleFrame
+- **Hotkey detection**: Raw `CGEventTap` callback filters by keycode and modifier flags; modifier conversion involves bit-shifting (`config.hotkeyModifiers >> 1`)
+- **Configuration format**: `hotkeyModifiers` uses `NSEventModifierFlags` raw values (`shift=0x20000`, `control=0x40000`, `option=0x80000`, `command=0x100000`)
+
+## Common Tasks
+
+- **Modify default hotkey**: Change `hotkeyKeyCode: Int = 6` and `hotkeyModifiers: Int = 0x180000` in `AppConfig.init()`
+- **Add preset positions**: Extend `AppConfig` with additional percentage fields and update `resizeAndMoveWindow()`
+- **Debug Accessibility issues**: Check logs with `os_log` subsystem `com.windowsnap.app`

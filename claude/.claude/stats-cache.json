@@ -1,0 +1,89 @@
+{
+  "version": 2,
+  "lastComputedDate": "2026-02-02",
+  "dailyActivity": [
+    {
+      "date": "2026-01-29",
+      "messageCount": 832,
+      "sessionCount": 2,
+      "toolCallCount": 267
+    },
+    {
+      "date": "2026-01-30",
+      "messageCount": 195,
+      "sessionCount": 1,
+      "toolCallCount": 57
+    },
+    {
+      "date": "2026-02-02",
+      "messageCount": 2524,
+      "sessionCount": 16,
+      "toolCallCount": 677
+    }
+  ],
+  "dailyModelTokens": [
+    {
+      "date": "2026-01-29",
+      "tokensByModel": {
+        "deepseek-reasoner": 1102357
+      }
+    },
+    {
+      "date": "2026-01-30",
+      "tokensByModel": {
+        "MiniMax-M2.1": 121979
+      }
+    },
+    {
+      "date": "2026-02-02",
+      "tokensByModel": {
+        "MiniMax-M2.1": 1635321
+      }
+    }
+  ],
+  "modelUsage": {
+    "MiniMax-M2.1": {
+      "inputTokens": 1483674,
+      "outputTokens": 273626,
+      "cacheReadInputTokens": 92715944,
+      "cacheCreationInputTokens": 5863887,
+      "webSearchRequests": 0,
+      "costUSD": 0,
+      "contextWindow": 0,
+      "maxOutputTokens": 0
+    },
+    "deepseek-reasoner": {
+      "inputTokens": 998009,
+      "outputTokens": 104348,
+      "cacheReadInputTokens": 29412096,
+      "cacheCreationInputTokens": 0,
+      "webSearchRequests": 0,
+      "costUSD": 0,
+      "contextWindow": 0,
+      "maxOutputTokens": 0
+    }
+  },
+  "totalSessions": 19,
+  "totalMessages": 3551,
+  "longestSession": {
+    "sessionId": "1f435d33-0e6e-4cd4-a12d-ac474c5557de",
+    "duration": 256737915,
+    "messageCount": 195,
+    "timestamp": "2026-01-30T08:35:51.376Z"
+  },
+  "firstSessionDate": "2026-01-29T13:01:29.226Z",
+  "hourCounts": {
+    "11": 2,
+    "12": 3,
+    "13": 1,
+    "15": 1,
+    "16": 2,
+    "17": 1,
+    "18": 4,
+    "19": 1,
+    "21": 1,
+    "22": 1,
+    "23": 2
+  },
+  "totalSpeculationTimeSavedMs": 0
+}

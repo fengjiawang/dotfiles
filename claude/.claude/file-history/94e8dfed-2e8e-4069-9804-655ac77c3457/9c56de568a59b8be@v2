@@ -1,0 +1,38 @@
+#!/bin/bash
+set -e
+
+echo "构建 WindowSnap..."
+swift build --configuration release
+
+echo "复制可执行文件..."
+mkdir -p WindowSnap.app/Contents/MacOS
+cp .build/release/WindowSnap WindowSnap.app/Contents/MacOS/
+
+echo "创建 Info.plist..."
+cat > WindowSnap.app/Contents/Info.plist <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleExecutable</key>
+    <string>WindowSnap</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.example.WindowSnap</string>
+    <key>CFBundleName</key>
+    <string>WindowSnap</string>
+    <key>CFBundleVersion</key>
+    <string>1.0</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+    <key>LSUIElement</key>
+    <true/>
+</dict>
+</plist>
+EOF
+
+echo "复制配置文件..."
+mkdir -p WindowSnap.app/Contents/Resources
+cp Resources/config.plist WindowSnap.app/Contents/Resources/
+
+echo "完成！应用位于 WindowSnap.app"
+echo "请将 WindowSnap.app 拖到应用程序文件夹，并添加到登录项以实现开机自启。"

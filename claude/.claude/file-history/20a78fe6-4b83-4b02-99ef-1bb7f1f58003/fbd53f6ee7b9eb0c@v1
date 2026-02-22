@@ -1,0 +1,81 @@
+import Foundation
+import AppKit
+import Combine
+
+final class SettingsViewModel: ObservableObject {
+    private let settingsManager = SettingsManager.shared
+    private let hotKeyManager = HotKeyManager.shared
+
+    @Published var widthPercentage: Int {
+        didSet { settingsManager.updateWidthPercentage(widthPercentage) }
+    }
+
+    @Published var heightPercentage: Int {
+        didSet { settingsManager.updateHeightPercentage(heightPercentage) }
+    }
+
+    @Published var hotKey: HotKey {
+        didSet {
+            settingsManager.updateHotKey(hotKey)
+            registerHotKey()
+        }
+    }
+
+    @Published var isRecordingHotKey = false
+    @Published var hotKeyConflictError: String?
+
+    var onClose: (() -> Void)?
+
+    init() {
+        widthPercentage = settingsManager.settings.widthPercentage
+        heightPercentage = settingsManager.settings.heightPercentage
+        hotKey = settingsManager.settings.hotKey
+    }
+
+    func registerHotKey() {
+        hotKeyConflictError = nil
+
+        if !hotKeyManager.registerHotKey(hotKey) {
+            hotKeyConflictError = "Hotkey registration failed. This combination may be in use by another app."
+        }
+    }
+
+    func startRecordingHotKey() {
+        isRecordingHotKey = true
+        hotKeyConflictError = nil
+    }
+
+    func cancelRecordingHotKey() {
+        isRecordingHotKey = false
+    }
+
+    func completeRecordingHotKey(with event: NSEvent) {
+        guard event.type == .keyDown else {
+            isRecordingHotKey = false
+            return
+        }
+
+        let modifierFlags = event.modifierFlags.intersection([.command, .shift, .control, .option])
+        let keyCode = event.keyCode
+
+        let newHotKey = HotKey(keyCode: keyCode, modifierFlags: modifierFlags)
+
+        let oldHotKey = hotKey
+        hotKey = newHotKey
+
+        if hotKeyManager.registerHotKey(newHotKey) {
+            isRecordingHotKey = false
+        } else {
+            hotKey = oldHotKey
+            hotKeyConflictError = "This hotkey is already in use by another application."
+            isRecordingHotKey = false
+        }
+    }
+
+    func resetToDefaults() {
+        widthPercentage = Settings.default.widthPercentage
+        heightPercentage = Settings.default.heightPercentage
+        hotKey = Settings.default.hotKey
+        registerHotKey()
+    }
+}

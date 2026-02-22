@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# WindowSnap Setup Script
+# This script generates and builds the Xcode project
+
+set -e
+
+echo "=== WindowSnap Setup ==="
+
+# Check for XcodeGen
+if ! command -v xcodegen &> /dev/null; then
+    echo "XcodeGen not found. Installing via Homebrew..."
+    if ! command -v brew &> /dev/null; then
+        echo "Error: Homebrew is not installed. Please install Homebrew first."
+        exit 1
+    fi
+    brew install xcodegen
+fi
+
+echo "XcodeGen version: $(xcodegen --version)"
+
+# Generate Xcode project
+echo "Generating Xcode project..."
+xcodegen generate
+
+echo "=== Setup Complete ==="
+echo "Open WindowSnap.xcodeproj to start development."

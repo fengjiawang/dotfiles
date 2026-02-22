@@ -1,0 +1,76 @@
+# WindowSnap Design Document
+
+**Created:** 2026-02-02
+
+## Overview
+
+WindowSnap is a macOS menu bar application that centers and resizes the foreground window to a configurable proportion of the screen using a global keyboard shortcut.
+
+## Tech Stack
+
+- **Frontend:** HTML/CSS/JS + Tauri WebView
+- **Backend:** Rust + Tauri
+- **Shortcuts:** `tauri-plugin-global-shortcut`
+- **Window Management:** macOS Accessibility API
+
+## Architecture
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   Menu Bar Icon │     │   Settings      │     │   Backend       │
+│   (Tauri)       │     │   Window        │     │   (Rust)        │
+└────────┬────────┘     └────────┬────────┘     └────────┬────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+                    ┌────────────┴────────────┐
+                    │   Tauri Application     │
+                    │   - Global shortcuts    │
+                    │   - Window management   │
+                    │   - Config storage      │
+                    └─────────────────────────┘
+```
+
+## Configuration
+
+```json
+{
+  "xRatio": 0.8,
+  "yRatio": 0.8,
+  "shortcut": "CommandOrControl+Shift+S"
+}
+```
+
+## Core Flow
+
+1. User presses global shortcut
+2. Backend captures event via tauri-plugin-global-shortcut
+3. Get foreground window using Accessibility API
+4. Get screen dimensions
+5. Calculate target size: `width = screenWidth * xRatio`, `height = screenHeight * yRatio`
+6. Calculate target position: `x = (screenWidth - width) / 2`, `y = (screenHeight - height) / 2`
+7. Resize and move window using AX API
+8. Return status
+
+## Error Handling
+
+| Scenario | Handling |
+|----------|----------|
+| No foreground window | Show notification "No active window" |
+| Resize failed | Show notification "Failed to resize window" |
+| No accessibility permission | Prompt user to grant permission |
+| Shortcut conflict | Prompt user to choose different shortcut |
+| Multiple displays | Use the screen where the window is located |
+
+## Menu Interaction
+
+Click menu bar icon → dropdown menu:
+- "Settings..." → Open settings window
+- "Quit" → Exit application
+
+## Settings Window
+
+- xRatio slider (0.1 - 1.0)
+- yRatio slider (0.1 - 1.0)
+- Shortcut input with Record button
+- Save / Cancel buttons

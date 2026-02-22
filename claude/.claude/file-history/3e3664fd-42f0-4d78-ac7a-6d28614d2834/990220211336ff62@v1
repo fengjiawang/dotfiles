@@ -1,0 +1,106 @@
+import Carbon
+import Foundation
+
+final class HotKeyManager {
+    private var hotKeyID: EventHotKeyID?
+    private var eventHandler: EventHandlerRef?
+    private let action: () -> Void
+
+    var isRegistered: Bool = false
+
+    init(action: @escaping () -> Void) {
+        self.action = action
+    }
+
+    deinit {
+        unregisterHotKey()
+    }
+
+    func registerHotKey(keyCode: UInt16, modifierFlags: UInt32) -> Bool {
+        // Unregister any existing hotkey first
+        unregisterHotKey()
+
+        var hotKeyID = EventHotKeyID(signature: OSType("WNSp"), id: 1)
+        var eventType = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: OSType(kEventHotKeyPressed))
+
+        let status = RegisterEventHotKey(
+            keyCode,
+            modifierFlags,
+            hotKeyID,
+            GetApplicationEventTarget(),
+            0,
+            &eventType
+        )
+
+        guard status == noErr else {
+            print("Failed to register hotkey: \(status)")
+            isRegistered = false
+            return false
+        }
+
+        self.hotKeyID = hotKeyID
+
+        // Install event handler
+        let handler: EventHandlerProc = { _, eventType, _ in
+            guard eventType.pointee.eventClass == kEventClassKeyboard,
+                  eventType.pointee.eventKind == kEventHotKeyPressed else {
+                return noErr
+            }
+
+            var hotKeyID = EventHotKeyID()
+            let status = GetEventParameter(
+                eventType,
+                EventParamName(kEventParamDirectObject),
+                EventParamType(typeEventHotKeyID),
+                nil,
+                MemoryLayout<EventHotKeyID>.size,
+                nil,
+                &hotKeyID
+            )
+
+            if status == noErr && hotKeyID.id == 1 {
+                DispatchQueue.main.async {
+                    self.action()
+                }
+            }
+
+            return noErr
+        }
+
+        let status = InstallEventHandler(
+            GetApplicationEventTarget(),
+            handler,
+            1,
+            &eventType,
+            nil,
+            &eventHandler
+        )
+
+        guard status == noErr else {
+            print("Failed to install event handler: \(status)")
+            isRegistered = false
+            return false
+        }
+
+        isRegistered = true
+        return true
+    }
+
+    func unregisterHotKey() {
+        if let hotKeyID = hotKeyID {
+            UnregisterEventHotKey(hotKeyID)
+        }
+
+        if let eventHandler = eventHandler {
+            RemoveEventHandler(eventHandler)
+        }
+
+        hotKeyID = nil
+        eventHandler = nil
+        isRegistered = false
+    }
+
+    func updateHotKey(keyCode: UInt16, modifierFlags: UInt32) -> Bool {
+        return registerHotKey(keyCode: keyCode, modifierFlags: modifierFlags)
+    }
+}

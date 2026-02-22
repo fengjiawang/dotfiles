@@ -1,0 +1,139 @@
+# WindowSnap Design Document
+
+## Overview
+
+WindowSnap is a macOS menu bar application that provides window centering and scaling functionality via global hotkeys.
+
+## Core Features
+
+1. **Window Centering & Scaling** - Center the active window on the current screen and scale it by configurable width/height percentages (10%-100%)
+2. **Global Hotkey** - Default: Option+Z to trigger window centering
+3. **Customizable Settings** - Hotkey, width/height scale percentages
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                      WindowSnap                         │
+├─────────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │
+│  │ MenuBarApp  │──│ Settings    │──│  WindowManager  │  │
+│  │ (Entry)     │  │ (User Config)│  │  (Window Ops)   │  │
+│  └─────────────┘  └─────────────┘  └─────────────────┘  │
+│         │                │                   │          │
+│         └────────────────┴───────────────────┘          │
+│                          │                              │
+│               ┌──────────┴──────────┐                   │
+│               │  HotKeyManager      │                   │
+│               │  (Global Hotkeys)   │                   │
+│               └─────────────────────┘                   │
+└─────────────────────────────────────────────────────────┘
+```
+
+## Components
+
+| Component | Responsibility |
+|-----------|---------------|
+| `MenuBarApp` | App entry point, lifecycle management |
+| `Settings` | Persist user preferences |
+| `WindowManager` | Window position calculation, AXAPI calls |
+| `HotKeyManager` | Register and listen for global hotkeys |
+
+## Data Models
+
+### Settings
+
+```swift
+struct Settings: Codable, Equatable {
+    var hotKey: HotKey
+    var widthPercentage: Int    // 10-100
+    var heightPercentage: Int   // 10-100
+
+    static let `default` = Settings(
+        hotKey: HotKey(keyCode: 6, modifierFlags: [.option]),
+        widthPercentage: 80,
+        heightPercentage: 80
+    )
+}
+```
+
+### HotKey
+
+```swift
+struct HotKey: Codable, Equatable {
+    let keyCode: UInt16
+    let modifierFlags: NSEvent.ModifierFlags
+
+    var displayString: String {
+        let keys = "Option"
+        let keyName = keyCodeToName(keyCode)
+        return "\(keys)+\(keyName)"
+    }
+}
+```
+
+## Behavior
+
+### Hotkey Flow
+
+1. User presses Option+Z
+2. HotKeyManager detects the hotkey
+3. Check for active window using CGWindowList
+4. If no active window: ignore (or optionally show notification)
+5. If active window exists:
+   - Check if window is in fullscreen mode
+   - If fullscreen: ignore
+   - Otherwise:
+     - Get current screen (where active window is located)
+     - Calculate new position and size based on percentages
+     - Call AXAPI to set position and size
+
+### Edge Cases
+
+| Scenario | Handling |
+|----------|----------|
+| No active window | Ignore hotkey |
+| Maximized window | Allow scaling |
+| Fullscreen window | Ignore |
+| No Accessibility permission | Prompt user to grant in System Settings |
+| Hotkey conflict | Show conflict warning, don't register |
+| AXAPI failure | Show error notification |
+
+## UI Design
+
+### Menu Bar Icon
+
+- Use system default SF Symbol
+- No percentage display on icon
+
+### Menu Bar Dropdown
+
+```
+┌─────────────────────────────────────┐
+│ 📌 WindowSnap                       │
+├─────────────────────────────────────┤
+│ 🔧 Settings...          ⌘,         │
+│ ─────────────────────              │
+│ 📐 Width:  ▌───────80% [____]     │
+│ 📐 Height: ▌───────80% [____]     │
+│ ─────────────────────              │
+│ ⌨️ HotKey: ⌥Z         [Change]    │
+│ ─────────────────────              │
+│ 🚪 Quit                           │
+└─────────────────────────────────────┘
+```
+
+### Settings Window
+
+- Two Slider + TextField combinations (width/height)
+- Range: 10%-100%, step: 1%
+- Hotkey recording button
+- Hotkey conflict detection
+- Save/Cancel buttons
+
+## Technical Dependencies
+
+- SwiftUI - UI framework
+- UserDefaults - Settings persistence
+- AXDictionary/AXUIElement - Window manipulation (Accessibility API)
+- CGEvent / NSEvent - Global hotkey listening

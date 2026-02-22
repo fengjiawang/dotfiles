@@ -1,0 +1,19 @@
+{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "sDSL_UuLaOaZgLGUwhyZx4UJcAW0JgVvgU1-V1IhUhw",
+    "ANTHROPIC_BASE_URL": "https://api.poe.com",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-haiku-4.5",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4.5",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4.5",
+    "ANTHROPIC_MODEL": "claude-sonnet-4.5",
+    "ANTHROPIC_REASONING_MODEL": "claude-sonnet-4.5"
+  },
+  "model": "haiku",
+  "enabledPlugins": {
+    "context7@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "swift-lsp@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true
+  }
+}

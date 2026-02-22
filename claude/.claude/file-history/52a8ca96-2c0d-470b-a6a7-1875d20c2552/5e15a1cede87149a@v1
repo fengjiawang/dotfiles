@@ -1,0 +1,89 @@
+// WindowSnap Settings Frontend
+
+let settings = {
+    xRatio: 0.8,
+    yRatio: 0.8,
+    shortcut: 'CommandOrControl+Shift+S'
+};
+
+// DOM Elements
+const xRatioSlider = document.getElementById('x-ratio');
+const yRatioSlider = document.getElementById('y-ratio');
+const xRatioValue = document.getElementById('x-ratio-value');
+const yRatioValue = document.getElementById('y-ratio-value');
+const shortcutInput = document.getElementById('shortcut');
+const recordBtn = document.getElementById('record-btn');
+const saveBtn = document.getElementById('save-btn');
+const cancelBtn = document.getElementById('cancel-btn');
+
+// Initialize
+async function init() {
+    try {
+        settings = await window.__TAURI__.invoke('get_settings');
+        xRatioSlider.value = settings.xRatio;
+        yRatioSlider.value = settings.yRatio;
+        xRatioValue.textContent = settings.xRatio.toFixed(2);
+        yRatioValue.textContent = settings.yRatio.toFixed(2);
+        shortcutInput.value = settings.shortcut;
+    } catch (error) {
+        console.error('Failed to load settings:', error);
+    }
+}
+
+// Slider events
+xRatioSlider.addEventListener('input', (e) => {
+    settings.xRatio = parseFloat(e.target.value);
+    xRatioValue.textContent = settings.xRatio.toFixed(2);
+});
+
+yRatioSlider.addEventListener('input', (e) => {
+    settings.yRatio = parseFloat(e.target.value);
+    yRatioValue.textContent = settings.yRatio.toFixed(2);
+});
+
+// Record shortcut
+recordBtn.addEventListener('click', async () => {
+    shortcutInput.value = 'Press any key combination...';
+    recordBtn.disabled = true;
+
+    try {
+        const shortcut = await window.__TAURI__.globalShortcut.register('Press a shortcut key combination', () => {
+            // This will be called when the user presses a key
+        });
+
+        // Actually, we need to use the tauri API to capture shortcut
+        // For now, let users type it manually
+        shortcutInput.value = settings.shortcut;
+    } catch (error) {
+        console.error('Failed to record shortcut:', error);
+    } finally {
+        recordBtn.disabled = false;
+    }
+});
+
+// Save settings
+saveBtn.addEventListener('click', async () => {
+    try {
+        await window.__TAURI__.invoke('save_settings', {
+            xRatio: settings.xRatio,
+            yRatio: settings.yRatio,
+            shortcut: shortcutInput.value
+        });
+
+        // Close the window
+        const { getCurrentWindow } = window.__TAURI__.window;
+        getCurrentWindow().close();
+    } catch (error) {
+        console.error('Failed to save settings:', error);
+        alert('Failed to save settings: ' + error);
+    }
+});
+
+// Cancel
+cancelBtn.addEventListener('click', () => {
+    const { getCurrentWindow } = window.__TAURI__.window;
+    getCurrentWindow().close();
+});
+
+// Initialize on load
+init();

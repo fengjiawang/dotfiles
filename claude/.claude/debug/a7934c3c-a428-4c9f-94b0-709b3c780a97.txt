@@ -1,0 +1,745 @@
+2026-02-02T15:01:41.913Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (19.0ms): security find-generic-password -a $USER -w -s "Claude Code"
+2026-02-02T15:01:41.926Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (12.5ms): security find-generic-password -a "jwfeng" -w -s "Claude Code-credentials"
+2026-02-02T15:01:41.939Z [DEBUG] Watching for changes in setting files /Users/jwfeng/.claude...
+2026-02-02T15:01:41.943Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2026-02-02T15:01:41.943Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2026-02-02T15:01:41.943Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2026-02-02T15:01:41.944Z [DEBUG] LSP server manager initialized successfully
+2026-02-02T15:01:41.944Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2026-02-02T15:01:41.945Z [DEBUG] Loading plugin context7 from source: "./external_plugins/context7"
+2026-02-02T15:01:41.957Z [DEBUG] Git remote URL: null
+2026-02-02T15:01:41.957Z [DEBUG] No git remote URL found
+2026-02-02T15:01:41.957Z [DEBUG] Not in a GitHub repository, skipping path mapping update
+2026-02-02T15:01:41.957Z [DEBUG] Using git SHA for context7@claude-plugins-official: 6d3752c000e2
+2026-02-02T15:01:41.958Z [DEBUG] Plugin context7@claude-plugins-official version 6d3752c000e2 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/context7/6d3752c000e2
+2026-02-02T15:01:41.958Z [DEBUG] Copied local plugin context7 to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/context7/6d3752c000e2
+2026-02-02T15:01:41.959Z [DEBUG] Loading plugin frontend-design from source: "./plugins/frontend-design"
+2026-02-02T15:01:41.963Z [DEBUG] Using git SHA for frontend-design@claude-plugins-official: 6d3752c000e2
+2026-02-02T15:01:41.963Z [DEBUG] Plugin frontend-design@claude-plugins-official version 6d3752c000e2 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/frontend-design/6d3752c000e2
+2026-02-02T15:01:41.963Z [DEBUG] Copied local plugin frontend-design to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/frontend-design/6d3752c000e2
+2026-02-02T15:01:41.964Z [DEBUG] Loading plugin rust-analyzer-lsp from source: "./plugins/rust-analyzer-lsp"
+2026-02-02T15:01:41.964Z [DEBUG] Using provided version for rust-analyzer-lsp@claude-plugins-official: 1.0.0
+2026-02-02T15:01:41.964Z [DEBUG] Plugin rust-analyzer-lsp@claude-plugins-official version 1.0.0 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/rust-analyzer-lsp/1.0.0
+2026-02-02T15:01:41.964Z [DEBUG] Copied local plugin rust-analyzer-lsp to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/rust-analyzer-lsp/1.0.0
+2026-02-02T15:01:41.964Z [DEBUG] Plugin rust-analyzer-lsp has no entry.skills defined
+2026-02-02T15:01:41.964Z [DEBUG] Loading plugin swift-lsp from source: "./plugins/swift-lsp"
+2026-02-02T15:01:41.964Z [DEBUG] Using provided version for swift-lsp@claude-plugins-official: 1.0.0
+2026-02-02T15:01:41.965Z [DEBUG] Plugin swift-lsp@claude-plugins-official version 1.0.0 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/swift-lsp/1.0.0
+2026-02-02T15:01:41.965Z [DEBUG] Copied local plugin swift-lsp to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/swift-lsp/1.0.0
+2026-02-02T15:01:41.965Z [DEBUG] Plugin swift-lsp has no entry.skills defined
+2026-02-02T15:01:41.965Z [DEBUG] Loading plugin superpowers from source: {"source":"url","url":"https://github.com/obra/superpowers.git"}
+2026-02-02T15:01:41.965Z [DEBUG] Using provided version for superpowers@superpowers-marketplace: 4.1.1
+2026-02-02T15:01:41.965Z [DEBUG] Using versioned cached plugin superpowers from /Users/jwfeng/.claude/plugins/cache/superpowers-marketplace/superpowers/4.1.1
+2026-02-02T15:01:41.966Z [DEBUG] Loaded hooks from standard location for plugin superpowers: /Users/jwfeng/.claude/plugins/cache/superpowers-marketplace/superpowers/4.1.1/hooks/hooks.json
+2026-02-02T15:01:41.966Z [DEBUG] Found 5 plugins (5 enabled, 0 disabled)
+2026-02-02T15:01:41.968Z [DEBUG] Stats cache is up to date
+2026-02-02T15:01:41.968Z [DEBUG] Plugin autoupdate: skipped (auto-updater disabled)
+2026-02-02T15:01:41.969Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/jwfeng/.claude/skills, project=[]
+2026-02-02T15:01:42.038Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (68.0ms): ps aux | grep -E "Visual Studio Code|Code Helper|Cursor Helper|Windsurf Helper|IntelliJ IDEA|PyCharm
+2026-02-02T15:01:42.038Z [DEBUG] Loaded 5 installed plugins from /Users/jwfeng/.claude/plugins/installed_plugins.json
+2026-02-02T15:01:42.045Z [DEBUG] Creating shell snapshot for zsh (/bin/zsh)
+2026-02-02T15:01:42.045Z [DEBUG] Looking for shell config file: /Users/jwfeng/.zshrc
+2026-02-02T15:01:42.045Z [DEBUG] Snapshots directory: /Users/jwfeng/.claude/shell-snapshots
+2026-02-02T15:01:42.046Z [DEBUG] Creating snapshot at: /Users/jwfeng/.claude/shell-snapshots/snapshot-zsh-1770044502045-yhnhko.sh
+2026-02-02T15:01:42.046Z [DEBUG] Shell binary exists: true
+2026-02-02T15:01:42.046Z [DEBUG] Execution timeout: 10000ms
+2026-02-02T15:01:42.047Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude/todos/a7934c3c-a428-4c9f-94b0-709b3c780a97-agent-a7934c3c-a428-4c9f-94b0-709b3c780a97.json.tmp.10321.1770044502047
+2026-02-02T15:01:42.047Z [DEBUG] Temp file written successfully, size: 2 bytes
+2026-02-02T15:01:42.047Z [DEBUG] Renaming /Users/jwfeng/.claude/todos/a7934c3c-a428-4c9f-94b0-709b3c780a97-agent-a7934c3c-a428-4c9f-94b0-709b3c780a97.json.tmp.10321.1770044502047 to /Users/jwfeng/.claude/todos/a7934c3c-a428-4c9f-94b0-709b3c780a97-agent-a7934c3c-a428-4c9f-94b0-709b3c780a97.json
+2026-02-02T15:01:42.047Z [DEBUG] File /Users/jwfeng/.claude/todos/a7934c3c-a428-4c9f-94b0-709b3c780a97-agent-a7934c3c-a428-4c9f-94b0-709b3c780a97.json written atomically
+2026-02-02T15:01:42.048Z [DEBUG] getPluginSkills: Processing 5 enabled plugins
+2026-02-02T15:01:42.048Z [DEBUG] Checking plugin context7: skillsPath=none, skillsPaths=0 paths
+2026-02-02T15:01:42.048Z [DEBUG] Checking plugin frontend-design: skillsPath=exists, skillsPaths=0 paths
+2026-02-02T15:01:42.048Z [DEBUG] Attempting to load skills from plugin frontend-design default skillsPath: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/frontend-design/6d3752c000e2/skills
+2026-02-02T15:01:42.049Z [DEBUG] Loading hooks from plugin: superpowers
+2026-02-02T15:01:42.049Z [DEBUG] Registered 1 hooks from 5 plugins
+2026-02-02T15:01:42.049Z [DEBUG] Loaded 1 skills from plugin frontend-design default directory
+2026-02-02T15:01:42.049Z [DEBUG] Checking plugin rust-analyzer-lsp: skillsPath=none, skillsPaths=0 paths
+2026-02-02T15:01:42.049Z [DEBUG] Checking plugin swift-lsp: skillsPath=none, skillsPaths=0 paths
+2026-02-02T15:01:42.049Z [DEBUG] Checking plugin superpowers: skillsPath=exists, skillsPaths=0 paths
+2026-02-02T15:01:42.049Z [DEBUG] Attempting to load skills from plugin superpowers default skillsPath: /Users/jwfeng/.claude/plugins/cache/superpowers-marketplace/superpowers/4.1.1/skills
+2026-02-02T15:01:42.052Z [DEBUG] Loaded 3 commands from plugin superpowers default directory
+2026-02-02T15:01:42.052Z [DEBUG] Total plugin commands loaded: 3
+2026-02-02T15:01:42.052Z [DEBUG] Loaded 14 skills from plugin superpowers default directory
+2026-02-02T15:01:42.052Z [DEBUG] Total plugin skills loaded: 15
+2026-02-02T15:01:42.052Z [DEBUG] Loaded 1 agents from plugin superpowers default directory
+2026-02-02T15:01:42.052Z [DEBUG] Total plugin agents loaded: 1
+2026-02-02T15:01:42.052Z [DEBUG] Loaded 0 unique skills (managed: 0, user: 0, project: 0, legacy commands: 0)
+2026-02-02T15:01:42.052Z [DEBUG] getSkills returning: 0 skill dir commands, 15 plugin skills
+2026-02-02T15:01:43.061Z [DEBUG] Ripgrep first use test: PASSED (mode=builtin, path=/Users/jwfeng/.local/share/claude/versions/2.0.74)
+2026-02-02T15:01:43.166Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude.json.tmp.10321.1770044503166
+2026-02-02T15:01:43.166Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T15:01:43.166Z [DEBUG] Temp file written successfully, size: 9875 bytes
+2026-02-02T15:01:43.166Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:01:43.166Z [DEBUG] Renaming /Users/jwfeng/.claude.json.tmp.10321.1770044503166 to /Users/jwfeng/.claude.json
+2026-02-02T15:01:43.166Z [DEBUG] File /Users/jwfeng/.claude.json written atomically
+2026-02-02T15:01:43.168Z [DEBUG] Metrics opt-out check failed: No API key available
+2026-02-02T15:01:43.169Z [DEBUG] Metrics check failed, defaulting to disabled
+2026-02-02T15:01:43.173Z [DEBUG] MCP server "plugin:context7:context7": Starting connection with timeout of 30000ms
+2026-02-02T15:01:43.175Z [DEBUG] All plugins already exist, skipping migration
+2026-02-02T15:01:43.177Z [DEBUG] Initialized versioned plugins system with 5 plugins
+2026-02-02T15:01:43.178Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude.json.tmp.10321.1770044503178
+2026-02-02T15:01:43.178Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T15:01:43.178Z [DEBUG] Temp file written successfully, size: 9875 bytes
+2026-02-02T15:01:43.178Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:01:43.178Z [DEBUG] Renaming /Users/jwfeng/.claude.json.tmp.10321.1770044503178 to /Users/jwfeng/.claude.json
+2026-02-02T15:01:43.179Z [DEBUG] File /Users/jwfeng/.claude.json written atomically
+2026-02-02T15:01:43.180Z [DEBUG] Getting matching hook commands for SessionStart with query: startup
+2026-02-02T15:01:43.180Z [DEBUG] Found 1 hook matchers in settings
+2026-02-02T15:01:43.180Z [DEBUG] Matched 1 unique hooks for query "startup" (1 before deduplication)
+2026-02-02T15:01:43.184Z [DEBUG] Getting matching hook commands for SubagentStart with query: Explore
+2026-02-02T15:01:43.184Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:01:43.184Z [DEBUG] Matched 0 unique hooks for query "Explore" (0 before deduplication)
+2026-02-02T15:01:43.186Z [DEBUG] Getting matching hook commands for SubagentStart with query: Plan
+2026-02-02T15:01:43.186Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:01:43.186Z [DEBUG] Matched 0 unique hooks for query "Plan" (0 before deduplication)
+2026-02-02T15:01:43.365Z [DEBUG] Shell snapshot created successfully (172724 bytes)
+2026-02-02T15:01:43.579Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude.json.tmp.10321.1770044503579
+2026-02-02T15:01:43.579Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T15:01:43.579Z [DEBUG] Temp file written successfully, size: 9799 bytes
+2026-02-02T15:01:43.579Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:01:43.579Z [DEBUG] Renaming /Users/jwfeng/.claude.json.tmp.10321.1770044503579 to /Users/jwfeng/.claude.json
+2026-02-02T15:01:43.579Z [DEBUG] File /Users/jwfeng/.claude.json written atomically
+2026-02-02T15:01:43.580Z [DEBUG] Official marketplace auto-install skipped: already_attempted
+2026-02-02T15:01:43.580Z [DEBUG] performStartupChecks called
+2026-02-02T15:01:43.580Z [DEBUG] Starting background plugin installations
+2026-02-02T15:01:43.580Z [DEBUG] performBackgroundPluginInstallations called
+2026-02-02T15:01:43.583Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude.json.tmp.10321.1770044503583
+2026-02-02T15:01:43.583Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T15:01:43.584Z [DEBUG] Temp file written successfully, size: 9875 bytes
+2026-02-02T15:01:43.584Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:01:43.584Z [DEBUG] Renaming /Users/jwfeng/.claude.json.tmp.10321.1770044503583 to /Users/jwfeng/.claude.json
+2026-02-02T15:01:43.584Z [DEBUG] File /Users/jwfeng/.claude.json written atomically
+2026-02-02T15:01:43.584Z [DEBUG] AutoUpdaterWrapper: Installation type: native
+2026-02-02T15:01:43.584Z [DEBUG] Found 5 enabled plugins
+2026-02-02T15:01:43.584Z [DEBUG] All plugins already exist, skipping migration
+2026-02-02T15:01:43.584Z [DEBUG] Found 5 installed plugins (V2 format)
+2026-02-02T15:01:43.584Z [DEBUG] Loaded plugins - Enabled: 5, Disabled: 0, Commands: 3, Agents: 1, Errors: 0
+2026-02-02T15:01:43.584Z [DEBUG] Found 0 missing plugins (not installed):
+2026-02-02T15:01:43.584Z [DEBUG] Setting installation status: 0 marketplaces, 0 installable plugins, 0 uninstallable plugins
+2026-02-02T15:01:43.588Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude.json.tmp.10321.1770044503588
+2026-02-02T15:01:43.588Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T15:01:43.588Z [DEBUG] Temp file written successfully, size: 10056 bytes
+2026-02-02T15:01:43.588Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:01:43.588Z [DEBUG] Renaming /Users/jwfeng/.claude.json.tmp.10321.1770044503588 to /Users/jwfeng/.claude.json
+2026-02-02T15:01:43.588Z [DEBUG] File /Users/jwfeng/.claude.json written atomically
+2026-02-02T15:01:44.153Z [ERROR] MCP server "plugin:context7:context7" Server stderr: WARNING: Using default CLIENT_IP_ENCRYPTION_KEY.
+2026-02-02T15:01:44.227Z [ERROR] MCP server "plugin:context7:context7" Server stderr: Context7 Documentation MCP Server v2.1.1 running on stdio
+2026-02-02T15:01:44.230Z [DEBUG] MCP server "plugin:context7:context7": Successfully connected to undefined server in 1058ms
+2026-02-02T15:01:44.230Z [DEBUG] MCP server "plugin:context7:context7": Connection established with capabilities: {"hasTools":true,"hasPrompts":false,"hasResources":false,"serverVersion":{"name":"Context7","version":"2.1.1"}}
+2026-02-02T15:01:45.153Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:01:46.144Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:01:46.931Z [DEBUG] Getting matching hook commands for SubagentStop with query: undefined
+2026-02-02T15:01:46.931Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:01:46.931Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-02T15:01:49.575Z [DEBUG] Getting matching hook commands for SubagentStop with query: undefined
+2026-02-02T15:01:49.575Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:01:49.575Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-02T15:02:07.896Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:02:07.896Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:02:07.896Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:02:07.896Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:02:07.910Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2026-02-02T15:02:07.910Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:07.910Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-02T15:02:07.910Z [DEBUG] FileHistory: Added snapshot for f2cb041b-86ad-472f-a45f-d311b6d6b4d6, tracking 0 files
+2026-02-02T15:02:07.918Z [DEBUG] Total plugin output styles loaded: 0
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "frontend-design:frontend-design" (userFacingName="frontend-design")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:using-git-worktrees" (userFacingName="using-git-worktrees")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:test-driven-development" (userFacingName="test-driven-development")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:systematic-debugging" (userFacingName="systematic-debugging")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:using-superpowers" (userFacingName="using-superpowers")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:dispatching-parallel-agents" (userFacingName="dispatching-parallel-agents")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:executing-plans" (userFacingName="executing-plans")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:finishing-a-development-branch" (userFacingName="finishing-a-development-branch")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:brainstorming" (userFacingName="brainstorming")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:writing-plans" (userFacingName="writing-plans")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:requesting-code-review" (userFacingName="requesting-code-review")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:receiving-code-review" (userFacingName="receiving-code-review")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:writing-skills" (userFacingName="writing-skills")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:verification-before-completion" (userFacingName="verification-before-completion")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:subagent-driven-development" (userFacingName="subagent-driven-development")
+2026-02-02T15:02:07.921Z [DEBUG] Skills and commands included in Skill tool: frontend-design, using-git-worktrees, test-driven-development, systematic-debugging, using-superpowers, dispatching-parallel-agents, executing-plans, finishing-a-development-branch, brainstorming, writing-plans, requesting-code-review, receiving-code-review, writing-skills, verification-before-completion, subagent-driven-development
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "frontend-design:frontend-design" (userFacingName="frontend-design")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:using-git-worktrees" (userFacingName="using-git-worktrees")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:test-driven-development" (userFacingName="test-driven-development")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:systematic-debugging" (userFacingName="systematic-debugging")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:using-superpowers" (userFacingName="using-superpowers")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:dispatching-parallel-agents" (userFacingName="dispatching-parallel-agents")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:executing-plans" (userFacingName="executing-plans")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:finishing-a-development-branch" (userFacingName="finishing-a-development-branch")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:brainstorming" (userFacingName="brainstorming")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:writing-plans" (userFacingName="writing-plans")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:requesting-code-review" (userFacingName="requesting-code-review")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:receiving-code-review" (userFacingName="receiving-code-review")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:writing-skills" (userFacingName="writing-skills")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:verification-before-completion" (userFacingName="verification-before-completion")
+2026-02-02T15:02:07.921Z [DEBUG] Skill prompt: showing "superpowers:subagent-driven-development" (userFacingName="subagent-driven-development")
+2026-02-02T15:02:09.805Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:02:10.245Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:02:12.138Z [DEBUG] executePreToolHooks called for tool: Glob
+2026-02-02T15:02:12.138Z [DEBUG] executePreToolHooks called for tool: Glob
+2026-02-02T15:02:12.138Z [DEBUG] executePreToolHooks called for tool: Glob
+2026-02-02T15:02:12.143Z [DEBUG] Getting matching hook commands for PreToolUse with query: Glob
+2026-02-02T15:02:12.143Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:12.143Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2026-02-02T15:02:12.143Z [DEBUG] Getting matching hook commands for PreToolUse with query: Glob
+2026-02-02T15:02:12.143Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:12.143Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2026-02-02T15:02:12.143Z [DEBUG] Getting matching hook commands for PreToolUse with query: Glob
+2026-02-02T15:02:12.143Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:12.143Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2026-02-02T15:02:14.036Z [DEBUG] Getting matching hook commands for PostToolUse with query: Glob
+2026-02-02T15:02:14.036Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:14.036Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2026-02-02T15:02:14.249Z [DEBUG] Getting matching hook commands for PostToolUse with query: Glob
+2026-02-02T15:02:14.249Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:14.249Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2026-02-02T15:02:14.766Z [DEBUG] Getting matching hook commands for PostToolUse with query: Glob
+2026-02-02T15:02:14.766Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:14.766Z [DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+2026-02-02T15:02:14.773Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:02:14.773Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:02:14.773Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:02:14.773Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:02:16.696Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:02:18.457Z [DEBUG] executePreToolHooks called for tool: Read
+2026-02-02T15:02:18.458Z [DEBUG] executePreToolHooks called for tool: Read
+2026-02-02T15:02:18.458Z [DEBUG] executePreToolHooks called for tool: Read
+2026-02-02T15:02:18.458Z [DEBUG] executePreToolHooks called for tool: Read
+2026-02-02T15:02:18.463Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-02-02T15:02:18.463Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:18.463Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:02:18.463Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-02-02T15:02:18.463Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:18.463Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:02:18.463Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-02-02T15:02:18.463Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:18.463Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:02:18.463Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-02-02T15:02:18.463Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:18.463Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:02:18.488Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-02-02T15:02:18.488Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:18.488Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:02:18.488Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-02-02T15:02:18.488Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:18.488Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:02:18.488Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-02-02T15:02:18.488Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:18.488Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:02:18.488Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-02-02T15:02:18.488Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:18.488Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:02:18.493Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:02:18.493Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:02:18.493Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:02:18.493Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:02:21.026Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:02:22.707Z [DEBUG] executePreToolHooks called for tool: Read
+2026-02-02T15:02:22.707Z [DEBUG] executePreToolHooks called for tool: Read
+2026-02-02T15:02:22.707Z [DEBUG] executePreToolHooks called for tool: Read
+2026-02-02T15:02:22.714Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-02-02T15:02:22.714Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:22.714Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:02:22.714Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-02-02T15:02:22.714Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:22.714Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:02:22.714Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-02-02T15:02:22.714Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:22.714Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:02:22.725Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-02-02T15:02:22.725Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:22.725Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:02:22.725Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-02-02T15:02:22.725Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:22.725Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:02:22.725Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-02-02T15:02:22.725Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:22.725Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:02:22.729Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:02:22.729Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:02:22.729Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:02:22.729Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:02:29.090Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:02:30.224Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-02T15:02:30.231Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-02T15:02:30.231Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:30.231Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:02:30.250Z [DEBUG] tree-sitter: loaded from embedded
+2026-02-02T15:02:31.647Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:02:32.466Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:02:42.592Z [DEBUG] Permission suggestions for Bash: [
+  {
+    "type": "addRules",
+    "rules": [
+      {
+        "toolName": "Bash",
+        "ruleContent": "./build.sh"
+      }
+    ],
+    "behavior": "allow",
+    "destination": "localSettings"
+  }
+]
+2026-02-02T15:02:42.603Z [DEBUG] executePermissionRequestHooks called for tool: Bash
+2026-02-02T15:02:42.608Z [DEBUG] Getting matching hook commands for PermissionRequest with query: Bash
+2026-02-02T15:02:42.608Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:42.608Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:02:46.288Z [DEBUG] Persisting permission update: addRules to source 'localSettings'
+2026-02-02T15:02:46.288Z [DEBUG] Persisting 1 allow rule(s) to localSettings
+2026-02-02T15:02:46.288Z [DEBUG] Writing to temp file: /Users/jwfeng/Downloads/WindowSnap/.claude/settings.local.json.tmp.10321.1770044566288
+2026-02-02T15:02:46.289Z [DEBUG] Temp file written successfully, size: 73 bytes
+2026-02-02T15:02:46.289Z [DEBUG] Renaming /Users/jwfeng/Downloads/WindowSnap/.claude/settings.local.json.tmp.10321.1770044566288 to /Users/jwfeng/Downloads/WindowSnap/.claude/settings.local.json
+2026-02-02T15:02:46.289Z [DEBUG] File /Users/jwfeng/Downloads/WindowSnap/.claude/settings.local.json written atomically
+2026-02-02T15:02:46.289Z [DEBUG] Applying permission update: Adding 1 allow rule(s) to destination 'localSettings': ["Bash(./build.sh)"]
+2026-02-02T15:02:46.291Z [DEBUG] No session environment scripts found
+2026-02-02T15:02:46.296Z [DEBUG] AutoUpdaterWrapper: Installation type: native
+2026-02-02T15:02:46.331Z [DEBUG] Getting matching hook commands for PostToolUseFailure with query: Bash
+2026-02-02T15:02:46.331Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:46.331Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:02:46.336Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:02:46.336Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:02:46.336Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:02:46.336Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:02:48.845Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:02:49.267Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-02T15:02:49.278Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-02T15:02:49.278Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:49.278Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:02:50.502Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:02:50.605Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:02:59.794Z [DEBUG] Permission suggestions for Bash: [
+  {
+    "type": "addRules",
+    "rules": [
+      {
+        "toolName": "Bash",
+        "ruleContent": "chmod:*"
+      }
+    ],
+    "behavior": "allow",
+    "destination": "localSettings"
+  }
+]
+2026-02-02T15:02:59.807Z [DEBUG] executePermissionRequestHooks called for tool: Bash
+2026-02-02T15:02:59.809Z [DEBUG] Getting matching hook commands for PermissionRequest with query: Bash
+2026-02-02T15:02:59.809Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:02:59.809Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:03:01.676Z [DEBUG] Persisting permission update: addRules to source 'localSettings'
+2026-02-02T15:03:01.676Z [DEBUG] Persisting 1 allow rule(s) to localSettings
+2026-02-02T15:03:01.678Z [DEBUG] Writing to temp file: /Users/jwfeng/Downloads/WindowSnap/.claude/settings.local.json.tmp.10321.1770044581678
+2026-02-02T15:03:01.678Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T15:03:01.679Z [DEBUG] Temp file written successfully, size: 96 bytes
+2026-02-02T15:03:01.679Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:03:01.679Z [DEBUG] Renaming /Users/jwfeng/Downloads/WindowSnap/.claude/settings.local.json.tmp.10321.1770044581678 to /Users/jwfeng/Downloads/WindowSnap/.claude/settings.local.json
+2026-02-02T15:03:01.679Z [DEBUG] File /Users/jwfeng/Downloads/WindowSnap/.claude/settings.local.json written atomically
+2026-02-02T15:03:01.683Z [DEBUG] Applying permission update: Adding 1 allow rule(s) to destination 'localSettings': ["Bash(chmod:*)"]
+2026-02-02T15:03:01.693Z [DEBUG] AutoUpdaterWrapper: Installation type: native
+2026-02-02T15:03:07.213Z [DEBUG] Getting matching hook commands for PostToolUseFailure with query: Bash
+2026-02-02T15:03:07.213Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:03:07.213Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:03:07.218Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:03:07.218Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:03:07.218Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:03:07.218Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:03:11.106Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:03:12.100Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-02T15:03:12.105Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-02T15:03:12.105Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:03:12.105Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:03:13.008Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:03:14.244Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:04:36.686Z [DEBUG] Permission suggestions for Bash: [
+  {
+    "type": "addRules",
+    "rules": [
+      {
+        "toolName": "Bash",
+        "ruleContent": "xcodebuild:*"
+      }
+    ],
+    "behavior": "allow",
+    "destination": "localSettings"
+  }
+]
+2026-02-02T15:04:36.696Z [DEBUG] executePermissionRequestHooks called for tool: Bash
+2026-02-02T15:04:36.701Z [DEBUG] Getting matching hook commands for PermissionRequest with query: Bash
+2026-02-02T15:04:36.701Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:04:36.701Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:04:39.340Z [DEBUG] Persisting permission update: addRules to source 'localSettings'
+2026-02-02T15:04:39.340Z [DEBUG] Persisting 1 allow rule(s) to localSettings
+2026-02-02T15:04:39.342Z [DEBUG] Writing to temp file: /Users/jwfeng/Downloads/WindowSnap/.claude/settings.local.json.tmp.10321.1770044679342
+2026-02-02T15:04:39.342Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T15:04:39.343Z [DEBUG] Temp file written successfully, size: 124 bytes
+2026-02-02T15:04:39.343Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:04:39.343Z [DEBUG] Renaming /Users/jwfeng/Downloads/WindowSnap/.claude/settings.local.json.tmp.10321.1770044679342 to /Users/jwfeng/Downloads/WindowSnap/.claude/settings.local.json
+2026-02-02T15:04:39.343Z [DEBUG] File /Users/jwfeng/Downloads/WindowSnap/.claude/settings.local.json written atomically
+2026-02-02T15:04:39.347Z [DEBUG] Applying permission update: Adding 1 allow rule(s) to destination 'localSettings': ["Bash(xcodebuild:*)"]
+2026-02-02T15:04:39.359Z [DEBUG] AutoUpdaterWrapper: Installation type: native
+2026-02-02T15:04:41.044Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-02T15:04:41.044Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:04:41.044Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:04:41.049Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:04:41.049Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:04:41.049Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:04:41.049Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:04:43.232Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:04:43.734Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:04:47.142Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2026-02-02T15:04:47.149Z [DEBUG] Getting matching hook commands for PreToolUse with query: TodoWrite
+2026-02-02T15:04:47.149Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:04:47.149Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2026-02-02T15:04:47.159Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude/todos/a7934c3c-a428-4c9f-94b0-709b3c780a97-agent-a7934c3c-a428-4c9f-94b0-709b3c780a97.json.tmp.10321.1770044687159
+2026-02-02T15:04:47.159Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T15:04:47.159Z [DEBUG] Temp file written successfully, size: 421 bytes
+2026-02-02T15:04:47.160Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:04:47.160Z [DEBUG] Renaming /Users/jwfeng/.claude/todos/a7934c3c-a428-4c9f-94b0-709b3c780a97-agent-a7934c3c-a428-4c9f-94b0-709b3c780a97.json.tmp.10321.1770044687159 to /Users/jwfeng/.claude/todos/a7934c3c-a428-4c9f-94b0-709b3c780a97-agent-a7934c3c-a428-4c9f-94b0-709b3c780a97.json
+2026-02-02T15:04:47.160Z [DEBUG] File /Users/jwfeng/.claude/todos/a7934c3c-a428-4c9f-94b0-709b3c780a97-agent-a7934c3c-a428-4c9f-94b0-709b3c780a97.json written atomically
+2026-02-02T15:04:47.164Z [DEBUG] Getting matching hook commands for PostToolUse with query: TodoWrite
+2026-02-02T15:04:47.164Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:04:47.164Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2026-02-02T15:04:47.168Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:04:47.168Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:04:47.168Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:04:47.168Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:04:52.100Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:04:54.658Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-02-02T15:04:54.664Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-02-02T15:04:54.664Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:04:54.664Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-02-02T15:04:54.671Z [DEBUG] Permission suggestions for Edit: [
+  {
+    "type": "setMode",
+    "mode": "acceptEdits",
+    "destination": "session"
+  }
+]
+2026-02-02T15:04:54.684Z [DEBUG] executePermissionRequestHooks called for tool: Edit
+2026-02-02T15:04:54.692Z [DEBUG] Getting matching hook commands for PermissionRequest with query: Edit
+2026-02-02T15:04:54.692Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:04:54.692Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-02-02T15:04:59.765Z [DEBUG] Applying permission update: Setting mode to 'acceptEdits'
+2026-02-02T15:04:59.768Z [DEBUG] Writing to temp file: /Users/jwfeng/Downloads/WindowSnap/WindowSnap/StatusBarController.swift.tmp.10321.1770044699768
+2026-02-02T15:04:59.768Z [DEBUG] Preserving file permissions: 100644
+2026-02-02T15:04:59.768Z [DEBUG] Temp file written successfully, size: 4953 bytes
+2026-02-02T15:04:59.768Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:04:59.768Z [DEBUG] Renaming /Users/jwfeng/Downloads/WindowSnap/WindowSnap/StatusBarController.swift.tmp.10321.1770044699768 to /Users/jwfeng/Downloads/WindowSnap/WindowSnap/StatusBarController.swift
+2026-02-02T15:04:59.768Z [DEBUG] File /Users/jwfeng/Downloads/WindowSnap/WindowSnap/StatusBarController.swift written atomically
+2026-02-02T15:04:59.771Z [DEBUG] FileHistory: Tracked file modification for /Users/jwfeng/Downloads/WindowSnap/WindowSnap/StatusBarController.swift
+2026-02-02T15:04:59.781Z [DEBUG] [lspRecommendation] Looking for LSP plugins for .swift
+2026-02-02T15:04:59.782Z [DEBUG] AutoUpdaterWrapper: Installation type: native
+2026-02-02T15:04:59.784Z [DEBUG] [lspRecommendation] Skipping swift-lsp@claude-plugins-official (already installed)
+2026-02-02T15:04:59.786Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-02-02T15:04:59.786Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:04:59.786Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-02-02T15:04:59.800Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-02-02T15:04:59.803Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-02-02T15:04:59.803Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:04:59.803Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-02-02T15:04:59.813Z [DEBUG] Writing to temp file: /Users/jwfeng/Downloads/WindowSnap/WindowSnap/StatusBarController.swift.tmp.10321.1770044699813
+2026-02-02T15:04:59.813Z [DEBUG] Preserving file permissions: 100644
+2026-02-02T15:04:59.813Z [DEBUG] Temp file written successfully, size: 4958 bytes
+2026-02-02T15:04:59.813Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:04:59.813Z [DEBUG] Renaming /Users/jwfeng/Downloads/WindowSnap/WindowSnap/StatusBarController.swift.tmp.10321.1770044699813 to /Users/jwfeng/Downloads/WindowSnap/WindowSnap/StatusBarController.swift
+2026-02-02T15:04:59.813Z [DEBUG] File /Users/jwfeng/Downloads/WindowSnap/WindowSnap/StatusBarController.swift written atomically
+2026-02-02T15:04:59.821Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-02-02T15:04:59.821Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:04:59.821Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-02-02T15:04:59.832Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-02-02T15:04:59.839Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-02-02T15:04:59.839Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:04:59.839Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-02-02T15:04:59.849Z [DEBUG] Writing to temp file: /Users/jwfeng/Downloads/WindowSnap/WindowSnap/Preferences.swift.tmp.10321.1770044699849
+2026-02-02T15:04:59.849Z [DEBUG] Preserving file permissions: 100644
+2026-02-02T15:04:59.850Z [DEBUG] Temp file written successfully, size: 3771 bytes
+2026-02-02T15:04:59.850Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:04:59.850Z [DEBUG] Renaming /Users/jwfeng/Downloads/WindowSnap/WindowSnap/Preferences.swift.tmp.10321.1770044699849 to /Users/jwfeng/Downloads/WindowSnap/WindowSnap/Preferences.swift
+2026-02-02T15:04:59.850Z [DEBUG] File /Users/jwfeng/Downloads/WindowSnap/WindowSnap/Preferences.swift written atomically
+2026-02-02T15:04:59.850Z [DEBUG] FileHistory: Tracked file modification for /Users/jwfeng/Downloads/WindowSnap/WindowSnap/Preferences.swift
+2026-02-02T15:04:59.854Z [DEBUG] [lspRecommendation] Looking for LSP plugins for .swift
+2026-02-02T15:04:59.860Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-02-02T15:04:59.860Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:04:59.860Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-02-02T15:04:59.860Z [DEBUG] [lspRecommendation] Skipping swift-lsp@claude-plugins-official (already installed)
+2026-02-02T15:04:59.871Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:04:59.871Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:04:59.871Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:04:59.871Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:05:02.018Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:05:04.128Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2026-02-02T15:05:04.133Z [DEBUG] Getting matching hook commands for PreToolUse with query: TodoWrite
+2026-02-02T15:05:04.133Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:05:04.133Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2026-02-02T15:05:04.142Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude/todos/a7934c3c-a428-4c9f-94b0-709b3c780a97-agent-a7934c3c-a428-4c9f-94b0-709b3c780a97.json.tmp.10321.1770044704142
+2026-02-02T15:05:04.142Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T15:05:04.142Z [DEBUG] Temp file written successfully, size: 537 bytes
+2026-02-02T15:05:04.142Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:05:04.142Z [DEBUG] Renaming /Users/jwfeng/.claude/todos/a7934c3c-a428-4c9f-94b0-709b3c780a97-agent-a7934c3c-a428-4c9f-94b0-709b3c780a97.json.tmp.10321.1770044704142 to /Users/jwfeng/.claude/todos/a7934c3c-a428-4c9f-94b0-709b3c780a97-agent-a7934c3c-a428-4c9f-94b0-709b3c780a97.json
+2026-02-02T15:05:04.142Z [DEBUG] File /Users/jwfeng/.claude/todos/a7934c3c-a428-4c9f-94b0-709b3c780a97-agent-a7934c3c-a428-4c9f-94b0-709b3c780a97.json written atomically
+2026-02-02T15:05:04.148Z [DEBUG] Getting matching hook commands for PostToolUse with query: TodoWrite
+2026-02-02T15:05:04.148Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:05:04.148Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2026-02-02T15:05:04.150Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-02T15:05:04.154Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-02T15:05:04.154Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:05:04.154Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:05:06.126Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-02T15:05:06.126Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:05:06.126Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:05:06.131Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:05:06.131Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:05:06.131Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:05:06.131Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:05:08.197Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:05:08.266Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:05:09.591Z [DEBUG] executePreToolHooks called for tool: TodoWrite
+2026-02-02T15:05:09.603Z [DEBUG] Getting matching hook commands for PreToolUse with query: TodoWrite
+2026-02-02T15:05:09.603Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:05:09.603Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2026-02-02T15:05:09.613Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude/todos/a7934c3c-a428-4c9f-94b0-709b3c780a97-agent-a7934c3c-a428-4c9f-94b0-709b3c780a97.json.tmp.10321.1770044709613
+2026-02-02T15:05:09.613Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T15:05:09.613Z [DEBUG] Temp file written successfully, size: 2 bytes
+2026-02-02T15:05:09.613Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:05:09.613Z [DEBUG] Renaming /Users/jwfeng/.claude/todos/a7934c3c-a428-4c9f-94b0-709b3c780a97-agent-a7934c3c-a428-4c9f-94b0-709b3c780a97.json.tmp.10321.1770044709613 to /Users/jwfeng/.claude/todos/a7934c3c-a428-4c9f-94b0-709b3c780a97-agent-a7934c3c-a428-4c9f-94b0-709b3c780a97.json
+2026-02-02T15:05:09.613Z [DEBUG] File /Users/jwfeng/.claude/todos/a7934c3c-a428-4c9f-94b0-709b3c780a97-agent-a7934c3c-a428-4c9f-94b0-709b3c780a97.json written atomically
+2026-02-02T15:05:09.616Z [DEBUG] Getting matching hook commands for PostToolUse with query: TodoWrite
+2026-02-02T15:05:09.616Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:05:09.616Z [DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+2026-02-02T15:05:09.619Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:05:09.619Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:05:09.619Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:05:09.619Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:05:11.874Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:05:13.922Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2026-02-02T15:05:13.922Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:05:13.922Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-02T15:05:13.929Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude.json.tmp.10321.1770044713929
+2026-02-02T15:05:13.929Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T15:05:13.929Z [DEBUG] Temp file written successfully, size: 10056 bytes
+2026-02-02T15:05:13.929Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:05:13.929Z [DEBUG] Renaming /Users/jwfeng/.claude.json.tmp.10321.1770044713929 to /Users/jwfeng/.claude.json
+2026-02-02T15:05:13.929Z [DEBUG] File /Users/jwfeng/.claude.json written atomically
+2026-02-02T15:05:13.930Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude.json.tmp.10321.1770044713930
+2026-02-02T15:05:13.930Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T15:05:13.930Z [DEBUG] Temp file written successfully, size: 10056 bytes
+2026-02-02T15:05:13.930Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:05:13.930Z [DEBUG] Renaming /Users/jwfeng/.claude.json.tmp.10321.1770044713930 to /Users/jwfeng/.claude.json
+2026-02-02T15:05:13.930Z [DEBUG] File /Users/jwfeng/.claude.json written atomically
+2026-02-02T15:06:30.081Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:06:30.081Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:06:30.081Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:06:30.081Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:06:30.090Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2026-02-02T15:06:30.090Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:06:30.090Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-02T15:06:30.092Z [DEBUG] FileHistory: Making snapshot for message ad7638f1-7c24-4535-a560-5027d3db0217
+2026-02-02T15:06:30.093Z [DEBUG] FileHistory: Added snapshot for ad7638f1-7c24-4535-a560-5027d3db0217, tracking 2 files
+2026-02-02T15:06:31.366Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:06:34.563Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:06:35.884Z [DEBUG] executePreToolHooks called for tool: Read
+2026-02-02T15:06:35.884Z [DEBUG] executePreToolHooks called for tool: Read
+2026-02-02T15:06:35.887Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-02-02T15:06:35.887Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:06:35.887Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:06:35.887Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-02-02T15:06:35.887Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:06:35.887Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:06:35.900Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-02-02T15:06:35.900Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:06:35.900Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:06:35.900Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-02-02T15:06:35.900Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:06:35.901Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:06:35.904Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:06:35.904Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:06:35.904Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:06:35.904Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:06:38.206Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:06:39.267Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-02T15:06:39.276Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-02T15:06:39.276Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:06:39.276Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:06:43.180Z [DEBUG] Metrics opt-out check failed: No API key available
+2026-02-02T15:06:43.181Z [DEBUG] Metrics check failed, defaulting to disabled
+2026-02-02T15:06:43.181Z [DEBUG] Metrics export disabled by organization setting
+2026-02-02T15:06:45.412Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-02T15:06:45.412Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:06:45.412Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:06:45.427Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:06:45.427Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:06:45.427Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:06:45.427Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:06:48.061Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:06:54.698Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:06:55.961Z [DEBUG] Language not supported while highlighting code, falling back to markdown:
+2026-02-02T15:06:55.983Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2026-02-02T15:06:55.983Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:06:55.983Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-02T15:06:55.992Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude.json.tmp.10321.1770044815992
+2026-02-02T15:06:55.992Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T15:06:55.993Z [DEBUG] Temp file written successfully, size: 10056 bytes
+2026-02-02T15:06:55.993Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:06:55.993Z [DEBUG] Renaming /Users/jwfeng/.claude.json.tmp.10321.1770044815992 to /Users/jwfeng/.claude.json
+2026-02-02T15:06:55.993Z [DEBUG] File /Users/jwfeng/.claude.json written atomically
+2026-02-02T15:06:55.994Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude.json.tmp.10321.1770044815994
+2026-02-02T15:06:55.994Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T15:06:55.994Z [DEBUG] Temp file written successfully, size: 10056 bytes
+2026-02-02T15:06:55.994Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:06:55.994Z [DEBUG] Renaming /Users/jwfeng/.claude.json.tmp.10321.1770044815994 to /Users/jwfeng/.claude.json
+2026-02-02T15:06:55.994Z [DEBUG] File /Users/jwfeng/.claude.json written atomically
+2026-02-02T15:07:56.002Z [DEBUG] Getting matching hook commands for Notification with query: idle_prompt
+2026-02-02T15:07:56.002Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:07:56.002Z [DEBUG] Matched 0 unique hooks for query "idle_prompt" (0 before deduplication)
+2026-02-02T15:11:43.187Z [DEBUG] Metrics opt-out check failed: No API key available
+2026-02-02T15:11:43.187Z [DEBUG] Metrics check failed, defaulting to disabled
+2026-02-02T15:11:43.187Z [DEBUG] Metrics export disabled by organization setting
+2026-02-02T15:11:56.478Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:11:56.478Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:11:56.478Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:11:56.478Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:11:56.493Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2026-02-02T15:11:56.493Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:11:56.493Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-02T15:11:56.493Z [DEBUG] FileHistory: Making snapshot for message fd90985e-6901-4cfa-96a0-4be07bf79106
+2026-02-02T15:11:56.494Z [DEBUG] FileHistory: Added snapshot for fd90985e-6901-4cfa-96a0-4be07bf79106, tracking 2 files
+2026-02-02T15:11:58.215Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:12:01.326Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:12:06.037Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-02T15:12:06.049Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-02T15:12:06.049Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:12:06.049Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:12:06.158Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-02T15:12:06.158Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:12:06.158Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:12:06.162Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:12:06.162Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:12:06.162Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:12:06.162Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:12:07.544Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:12:08.514Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:12:11.530Z [DEBUG] executePreToolHooks called for tool: Read
+2026-02-02T15:12:11.533Z [DEBUG] Getting matching hook commands for PreToolUse with query: Read
+2026-02-02T15:12:11.533Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:12:11.533Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:12:11.545Z [DEBUG] Getting matching hook commands for PostToolUse with query: Read
+2026-02-02T15:12:11.545Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:12:11.545Z [DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+2026-02-02T15:12:11.549Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:12:11.549Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:12:11.549Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:12:11.549Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:12:13.927Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:12:19.692Z [DEBUG] executePreToolHooks called for tool: Edit
+2026-02-02T15:12:19.697Z [DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+2026-02-02T15:12:19.697Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:12:19.697Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-02-02T15:12:19.706Z [DEBUG] Writing to temp file: /Users/jwfeng/Downloads/WindowSnap/WindowSnap/StatusBarController.swift.tmp.10321.1770045139706
+2026-02-02T15:12:19.706Z [DEBUG] Preserving file permissions: 100644
+2026-02-02T15:12:19.706Z [DEBUG] Temp file written successfully, size: 4453 bytes
+2026-02-02T15:12:19.706Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:12:19.706Z [DEBUG] Renaming /Users/jwfeng/Downloads/WindowSnap/WindowSnap/StatusBarController.swift.tmp.10321.1770045139706 to /Users/jwfeng/Downloads/WindowSnap/WindowSnap/StatusBarController.swift
+2026-02-02T15:12:19.706Z [DEBUG] File /Users/jwfeng/Downloads/WindowSnap/WindowSnap/StatusBarController.swift written atomically
+2026-02-02T15:12:19.711Z [DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+2026-02-02T15:12:19.711Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:12:19.711Z [DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+2026-02-02T15:12:19.732Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:12:19.732Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:12:19.732Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:12:19.732Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:12:22.100Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:12:23.004Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-02T15:12:23.016Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-02T15:12:23.016Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:12:23.016Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:12:24.277Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:12:24.432Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:12:24.477Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:12:32.461Z [DEBUG] Permission suggestions for Bash: [
+  {
+    "type": "addRules",
+    "rules": [
+      {
+        "toolName": "Bash",
+        "ruleContent": "pkill:*"
+      }
+    ],
+    "behavior": "allow",
+    "destination": "localSettings"
+  }
+]
+2026-02-02T15:12:32.470Z [DEBUG] executePermissionRequestHooks called for tool: Bash
+2026-02-02T15:12:32.473Z [DEBUG] Getting matching hook commands for PermissionRequest with query: Bash
+2026-02-02T15:12:32.473Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:12:32.473Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:12:38.476Z [DEBUG] Getting matching hook commands for Notification with query: permission_prompt
+2026-02-02T15:12:38.476Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:12:38.476Z [DEBUG] Matched 0 unique hooks for query "permission_prompt" (0 before deduplication)
+2026-02-02T15:13:03.123Z [DEBUG] Persisting permission update: addRules to source 'localSettings'
+2026-02-02T15:13:03.123Z [DEBUG] Persisting 1 allow rule(s) to localSettings
+2026-02-02T15:13:03.128Z [DEBUG] Writing to temp file: /Users/jwfeng/Downloads/WindowSnap/.claude/settings.local.json.tmp.10321.1770045183128
+2026-02-02T15:13:03.128Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T15:13:03.128Z [DEBUG] Temp file written successfully, size: 147 bytes
+2026-02-02T15:13:03.128Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:13:03.128Z [DEBUG] Renaming /Users/jwfeng/Downloads/WindowSnap/.claude/settings.local.json.tmp.10321.1770045183128 to /Users/jwfeng/Downloads/WindowSnap/.claude/settings.local.json
+2026-02-02T15:13:03.129Z [DEBUG] File /Users/jwfeng/Downloads/WindowSnap/.claude/settings.local.json written atomically
+2026-02-02T15:13:03.132Z [DEBUG] Applying permission update: Adding 1 allow rule(s) to destination 'localSettings': ["Bash(pkill:*)"]
+2026-02-02T15:13:03.143Z [DEBUG] AutoUpdaterWrapper: Installation type: native
+2026-02-02T15:13:05.998Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-02T15:13:05.998Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:13:05.998Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:13:06.002Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:13:06.002Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:13:06.002Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:13:06.002Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:13:07.242Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:13:09.602Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:13:10.271Z [DEBUG] executePreToolHooks called for tool: Bash
+2026-02-02T15:13:10.274Z [DEBUG] Getting matching hook commands for PreToolUse with query: Bash
+2026-02-02T15:13:10.274Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:13:10.274Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:13:10.286Z [DEBUG] Permission suggestions for Bash: [
+  {
+    "type": "setMode",
+    "mode": "acceptEdits",
+    "destination": "session"
+  }
+]
+2026-02-02T15:13:10.292Z [DEBUG] executePermissionRequestHooks called for tool: Bash
+2026-02-02T15:13:10.294Z [DEBUG] Getting matching hook commands for PermissionRequest with query: Bash
+2026-02-02T15:13:10.294Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:13:10.294Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:13:16.293Z [DEBUG] Getting matching hook commands for Notification with query: permission_prompt
+2026-02-02T15:13:16.293Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:13:16.293Z [DEBUG] Matched 0 unique hooks for query "permission_prompt" (0 before deduplication)
+2026-02-02T15:13:18.086Z [DEBUG] AutoUpdaterWrapper: Installation type: native
+2026-02-02T15:15:18.250Z [DEBUG] Getting matching hook commands for PostToolUse with query: Bash
+2026-02-02T15:15:18.250Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:15:18.250Z [DEBUG] Matched 0 unique hooks for query "Bash" (0 before deduplication)
+2026-02-02T15:15:18.259Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-02-02T15:15:18.259Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-02-02T15:15:18.259Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-02-02T15:15:18.259Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-02-02T15:15:19.884Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:15:21.643Z [DEBUG] Stream started - received first chunk
+2026-02-02T15:15:22.876Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2026-02-02T15:15:22.876Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:15:22.876Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-02-02T15:15:22.885Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude.json.tmp.10321.1770045322885
+2026-02-02T15:15:22.885Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T15:15:22.886Z [DEBUG] Temp file written successfully, size: 10056 bytes
+2026-02-02T15:15:22.886Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:15:22.886Z [DEBUG] Renaming /Users/jwfeng/.claude.json.tmp.10321.1770045322885 to /Users/jwfeng/.claude.json
+2026-02-02T15:15:22.886Z [DEBUG] File /Users/jwfeng/.claude.json written atomically
+2026-02-02T15:15:22.887Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude.json.tmp.10321.1770045322887
+2026-02-02T15:15:22.887Z [DEBUG] Preserving file permissions: 100600
+2026-02-02T15:15:22.887Z [DEBUG] Temp file written successfully, size: 10056 bytes
+2026-02-02T15:15:22.887Z [DEBUG] Applied original permissions to temp file
+2026-02-02T15:15:22.887Z [DEBUG] Renaming /Users/jwfeng/.claude.json.tmp.10321.1770045322887 to /Users/jwfeng/.claude.json
+2026-02-02T15:15:22.887Z [DEBUG] File /Users/jwfeng/.claude.json written atomically
+2026-02-02T15:16:43.184Z [DEBUG] Metrics opt-out check failed: No API key available
+2026-02-02T15:16:43.185Z [DEBUG] Metrics check failed, defaulting to disabled
+2026-02-02T15:16:43.185Z [DEBUG] Metrics export disabled by organization setting
+2026-02-02T15:18:00.601Z [DEBUG] Getting matching hook commands for SessionEnd with query: prompt_input_exit
+2026-02-02T15:18:00.601Z [DEBUG] Found 0 hook matchers in settings
+2026-02-02T15:18:00.601Z [DEBUG] Matched 0 unique hooks for query "prompt_input_exit" (0 before deduplication)

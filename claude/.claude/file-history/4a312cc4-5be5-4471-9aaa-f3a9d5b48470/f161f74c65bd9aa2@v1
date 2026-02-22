@@ -1,0 +1,172 @@
+import Foundation
+import Carbon
+
+class HotKeyManager {
+    static let shared = HotKeyManager()
+
+    private var hotKeyRef: EventHotKeyRef?
+    private var eventHandler: EventHandlerRef?
+
+    private init() {}
+
+    func startListening() {
+        updateHotKey()
+    }
+
+    func stopListening() {
+        if let ref = hotKeyRef {
+            UnregisterEventHotKey(ref)
+            hotKeyRef = nil
+        }
+        if let handler = eventHandler {
+            RemoveEventHandler(handler)
+            eventHandler = nil
+        }
+    }
+
+    func updateHotKey() {
+        // Unregister existing hotkey
+        stopListening()
+
+        let settings = SettingsManager.shared.settings
+
+        // Register new hotkey
+        var hotKeyID = EventHotKeyID()
+        hotKeyID.id = UInt32(settings.keyCode)
+        hotKeyID.signature = OSType("WNS1")
+
+        let modifiers = convertModifiers(settings.modifierFlags)
+
+        let status = RegisterEventHotKey(
+            UInt32(settings.keyCode),
+            modifiers,
+            hotKeyID,
+            GetEventDispatcherTarget(),
+            0,
+            &hotKeyRef
+        )
+
+        if status != noErr {
+            print("Failed to register hotkey: \(status)")
+        }
+
+        // Setup event handler
+        installEventHandler()
+    }
+
+    private func convertModifiers(_ flags: NSEvent.ModifierFlags) -> UInt32 {
+        var result: UInt32 = 0
+        if flags.contains(.command) { result |= cmdKey }
+        if flags.contains(.option) { result |= optionKey }
+        if flags.contains(.control) { result |= controlKey }
+        if flags.contains(.shift) { result |= shiftKey }
+        if flags.contains(.function) { result |= 0x1000000 } // fn key
+        return result
+    }
+
+    private func installEventHandler() {
+        var eventType = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: UInt32(kEventHotKeyPressed))
+
+        let status = InstallEventHandler(
+            GetEventDispatcherTarget(),
+            { (_, event, _) -> OSStatus in
+                guard let event = event else { return paramErr }
+
+                var hotKeyID = EventHotKeyID()
+                let status = GetEventParameter(event, EventParamName(kEventParamDirectObject), EventParamType(typeEventHotKeyID), nil, MemoryLayout<EventHotKeyID>.size, nil, &hotKeyID)
+
+                if status == noErr && hotKeyID.signature == OSType("WNS1") {
+                    DispatchQueue.main.async {
+                        WindowManager.shared.centerFrontmostWindow()
+                    }
+                }
+
+                return noErr
+            },
+            1,
+            &eventType,
+            nil,
+            &eventHandler
+        )
+
+        if status != noErr {
+            print("Failed to install event handler: \(status)")
+        }
+    }
+
+    static func keyCodeToString(_ keyCode: UInt16) -> String {
+        switch keyCode {
+        case 0: return "A"
+        case 1: return "S"
+        case 2: return "D"
+        case 3: return "F"
+        case 4: return "H"
+        case 5: return "G"
+        case 6: return "Z"
+        case 7: return "X"
+        case 8: return "C"
+        case 9: return "V"
+        case 11: return "B"
+        case 12: return "Q"
+        case 13: return "W"
+        case 14: return "E"
+        case 15: return "R"
+        case 16: return "Y"
+        case 17: return "T"
+        case 18: return "1"
+        case 19: return "2"
+        case 20: return "3"
+        case 21: return "4"
+        case 22: return "6"
+        case 23: return "5"
+        case 24: return "="
+        case 25: return "9"
+        case 26: return "7"
+        case 27: return "-"
+        case 28: return "8"
+        case 29: return "0"
+        case 30: return "]"
+        case 31: return "O"
+        case 32: return "U"
+        case 33: return "["
+        case 34: return "I"
+        case 35: return "L"
+        case 36: return "Return"
+        case 37: return "K"
+        case 38: return "&"
+        case 39: return "'"
+        case 40: return ";"
+        case 41: return "\\"
+        case 42: return ","
+        case 43: return "/"
+        case 44: return "N"
+        case 45: return "M"
+        case 46: return "."
+        case 47: return "Tab"
+        case 48: return "Space"
+        case 50: return "`"
+        case 53: return "Escape"
+        case 55: return "⌘"
+        case 56: return "Shift"
+        case 57: return "CapsLock"
+        case 58: return "Option"
+        case 59: return "Control"
+        case 60: return "Right Shift"
+        case 61: return "Right Option"
+        case 62: return "Right Control"
+        case 64: return "F1"
+        case 65: return "F2"
+        case 66: return "F3"
+        case 67: return "F4"
+        case 68: return "F5"
+        case 69: return "F6"
+        case 70: return "F7"
+        case 71: return "F8"
+        case 72: return "F9"
+        case 73: return "F10"
+        case 74: return "F11"
+        case 75: return "F12"
+        default: return "Key \(keyCode)"
+        }
+    }
+}

@@ -1,0 +1,240 @@
+import Foundation
+import Cocoa
+
+class SettingsViewController: NSViewController {
+
+    private var settings: AppSettings = SettingsManager.shared.settings
+
+    private lazy var stackView: NSStackView = {
+        let stack = NSStackView()
+        stack.orientation = .vertical
+        stack.spacing = 16
+        stack.alignment = .leading
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
+
+    private lazy var shortcutLabel: NSTextField = {
+        let label = NSTextField(labelWithString: "Shortcut:")
+        label.font = NSFont.systemFont(ofSize: 14, weight: .medium)
+        return label
+    }()
+
+    private lazy var shortcutButton: NSButton = {
+        let button = NSButton(title: "Option + Z", target: self, action: #selector(changeShortcut))
+        button.bezelStyle = .rounded
+        button.isBordered = true
+        return button
+    }()
+
+    private lazy var scaleXLabel: NSTextField = {
+        let label = NSTextField(labelWithString: "Width Ratio: 80%")
+        label.font = NSFont.systemFont(ofSize: 14)
+        return label
+    }()
+
+    private lazy var scaleXSlider: NSSlider = {
+        let slider = NSSlider()
+        slider.minValue = 10
+        slider.maxValue = 100
+        slider.doubleValue = 80
+        slider.target = self
+        slider.action = #selector(scaleXChanged(_:))
+        slider.translatesAutoresizingMaskIntoConstraints = false
+        return slider
+    }()
+
+    private lazy var scaleYLabel: NSTextField = {
+        let label = NSTextField(labelWithString: "Height Ratio: 80%")
+        label.font = NSFont.systemFont(ofSize: 14)
+        return label
+    }()
+
+    private lazy var scaleYSlider: NSSlider = {
+        let slider = NSSlider()
+        slider.minValue = 10
+        slider.maxValue = 100
+        slider.doubleValue = 80
+        slider.target = self
+        slider.action = #selector(scaleYChanged(_:))
+        slider.translatesAutoresizingMaskIntoConstraints = false
+        return slider
+    }()
+
+    private lazy var resetButton: NSButton = {
+        let button = NSButton(title: "Reset to Default", target: self, action: #selector(resetSettings))
+        button.bezelStyle = .rounded
+        return button
+    }()
+
+    private lazy var testButton: NSButton = {
+        let button = NSButton(title: "Test Center Window", target: self, action: #selector(testCenterWindow))
+        button.bezelStyle = .rounded
+        return button
+    }()
+
+    private lazy var permissionButton: NSButton = {
+        let button = NSButton(title: "Open Accessibility Settings", target: self, action: #selector(openAccessibilitySettings))
+        button.bezelStyle = .rounded
+        return button
+    }()
+
+    override func loadView() {
+        let view = NSView(frame: NSRect(x: 0, y: 0, width: 400, height: 300))
+        self.view = view
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupUI()
+        loadCurrentSettings()
+    }
+
+    private func setupUI() {
+        view.addSubview(stackView)
+
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            stackView.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -20)
+        ])
+
+        // Shortcut section
+        let shortcutRow = NSStackView(views: [shortcutLabel, shortcutButton])
+        shortcutRow.spacing = 10
+        shortcutRow.alignment = .centerY
+        stackView.addArrangedSubview(shortcutRow)
+
+        // X Scale section
+        let scaleXRow = NSStackView(views: [scaleXLabel, scaleXSlider])
+        scaleXRow.orientation = .horizontal
+        scaleXRow.spacing = 10
+        scaleXRow.alignment = .centerY
+        stackView.addArrangedSubview(scaleXRow)
+
+        // Y Scale section
+        let scaleYRow = NSStackView(views: [scaleYLabel, scaleYSlider])
+        scaleYRow.orientation = .horizontal
+        scaleYRow.spacing = 10
+        scaleYRow.alignment = .centerY
+        stackView.addArrangedSubview(scaleYRow)
+
+        // Buttons
+        let buttonRow = NSStackView(views: [testButton, resetButton])
+        buttonRow.orientation = .horizontal
+        buttonRow.spacing = 10
+        stackView.addArrangedSubview(buttonRow)
+
+        // Permission button (if needed)
+        if !isAccessibilityEnabled() {
+            stackView.addArrangedSubview(permissionButton)
+        }
+
+        // Info text
+        let infoText = NSTextField(wrappingLabelWithString: "Tip: Right-click the menu bar icon to open settings anytime.")
+        infoText.font = NSFont.systemFont(ofSize: 11)
+        infoText.textColor = .secondaryLabelColor
+        stackView.addArrangedSubview(infoText)
+    }
+
+    private func loadCurrentSettings() {
+        updateShortcutButton()
+        scaleXSlider.doubleValue = settings.scaleX * 100
+        scaleYSlider.doubleValue = settings.scaleY * 100
+        updateScaleLabels()
+    }
+
+    private func updateShortcutButton() {
+        let modifierText = formatModifiers(settings.modifierFlags)
+        let keyText = HotKeyManager.keyCodeToString(settings.keyCode)
+        shortcutButton.title = "\(modifierText) + \(keyText)"
+    }
+
+    private func formatModifiers(_ flags: UInt64) -> String {
+        var parts: [String] = []
+        if flags & 0x00010000 != 0 { parts.append("⌘") }
+        if flags & 0x00080000 != 0 { parts.append("Option") }
+        if flags & 0x00020000 != 0 { parts.append("⌃") }
+        if flags & 0x00040000 != 0 { parts.append("⇧") }
+        return parts.joined(separator: " ")
+    }
+
+    private func updateScaleLabels() {
+        scaleXLabel.stringValue = "Width Ratio: \(Int(scaleXSlider.doubleValue))%"
+        scaleYLabel.stringValue = "Height Ratio: \(Int(scaleYSlider.doubleValue))%"
+    }
+
+    @objc private func changeShortcut() {
+        let alert = NSAlert()
+        alert.messageText = "Press a key while holding the modifier keys"
+        alert.informativeText = "Press the key you want to use as the shortcut."
+        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: "OK")
+
+        // Monitor key events
+        NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event -> NSEvent? in
+            guard let self = self else { return event }
+
+            // Check if user pressed Escape or Return
+            if event.keyCode == 53 { // Escape
+                alert.window.close()
+                return nil
+            }
+
+            if event.keyCode == 36 || event.keyCode == 76 { // Return
+                // Finalize with current modifiers
+                self.settings.keyCode = event.keyCode
+                self.settings.modifierFlags = UInt64(event.modifierFlags.rawValue)
+                SettingsManager.shared.save(self.settings)
+                self.updateShortcutButton()
+                alert.window.close()
+                return nil
+            }
+
+            // Update preview
+            let modifierText = self.formatModifiers(UInt64(event.modifierFlags.rawValue))
+            let keyText = HotKeyManager.keyCodeToString(event.keyCode)
+
+            DispatchQueue.main.async {
+                alert.messageText = "Shortcut: \(modifierText) + \(keyText)"
+            }
+
+            return event
+        }
+
+        alert.runModal()
+    }
+
+    @objc private func scaleXChanged(_ slider: NSSlider) {
+        updateScaleLabels()
+        settings.scaleX = slider.doubleValue / 100.0
+        SettingsManager.shared.save(settings)
+    }
+
+    @objc private func scaleYChanged(_ slider: NSSlider) {
+        updateScaleLabels()
+        settings.scaleY = slider.doubleValue / 100.0
+        SettingsManager.shared.save(settings)
+    }
+
+    @objc private func resetSettings() {
+        settings = .default
+        SettingsManager.shared.save(settings)
+        loadCurrentSettings()
+    }
+
+    @objc private func testCenterWindow() {
+        WindowManager.shared.centerFrontmostWindow()
+    }
+
+    @objc private func openAccessibilitySettings() {
+        let url = URL(string: "x-apple.systempreferences:com.apple.security.privacy_accessibility")!
+        NSWorkspace.shared.open(url)
+    }
+
+    private func isAccessibilityEnabled() -> Bool {
+        let options: NSDictionary = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: false]
+        return AXIsProcessTrustedWithOptions(options)
+    }
+}

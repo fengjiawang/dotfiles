@@ -1,0 +1,61 @@
+import SwiftUI
+
+@main
+struct WindowSnapApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
+    var body: some Scene {
+        Settings {
+            EmptyView()
+        }
+    }
+}
+
+@MainActor
+class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        // Check permission status BEFORE setting as accessory
+        if !AXIsProcessTrusted() {
+            // Temporarily become regular app to show permission dialog properly
+            NSApp.setActivationPolicy(.regular)
+            NSApp.activate(ignoringOtherApps: true)
+
+            showAccessibilityPermissionAlert()
+        } else {
+            // If we already have permission, go straight to accessory mode
+            NSApp.setActivationPolicy(.accessory)
+        }
+
+        MenuBarManager.shared.setupMenuBar()
+        HotkeyManager.shared.registerHotkey()
+    }
+
+    private func showAccessibilityPermissionAlert() {
+        // Trigger the system prompt with kAXTrustedCheckOptionPrompt
+        // This should add the app to the accessibility list
+        let options: NSDictionary = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true]
+        let accessEnabled = AXIsProcessTrustedWithOptions(options)
+
+        if !accessEnabled {
+            // Show our custom alert with more information
+            let alert = NSAlert()
+            alert.messageText = "Accessibility Permission Required"
+            alert.informativeText = "WindowSnap needs accessibility access to control window positions.\n\n1. The system dialog should have appeared - if you see it, click 'Open System Settings'\n2. In System Settings, find 'WindowSnap' in the Accessibility list\n3. Toggle the switch to enable\n4. Restart WindowSnap"
+            alert.alertStyle = .warning
+            alert.addButton(withTitle: "Open System Settings")
+            alert.addButton(withTitle: "Quit")
+
+            let response = alert.runModal()
+            if response == .alertFirstButtonReturn {
+                // Open System Settings directly to Accessibility panel
+                if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
+                    NSWorkspace.shared.open(url)
+                }
+            }
+
+            // Always quit after showing permission dialog
+            // User needs to restart app after granting permission
+            NSApp.terminate(nil)
+        }
+    }
+}

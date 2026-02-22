@@ -1,0 +1,62 @@
+import XCTest
+@testable import WindowSnap
+
+class WindowManagerTests: XCTestCase {
+
+    func testGetFrontmostWindow_returnsValidWindowID() {
+        let manager = WindowManager.shared
+        let windowID = manager.getFrontmostWindow()
+        XCTAssertNotNil(windowID, "Should return a valid window ID")
+    }
+
+    func testGetFrontmostWindow_excludesOwnWindows() {
+        let manager = WindowManager.shared
+        let windowID = manager.getFrontmostWindow()
+        if let windowID = windowID {
+            let isOwnWindow = manager.isOwnWindow(windowID: windowID)
+            XCTAssertFalse(isOwnWindow, "Should not return WindowSnap's own window")
+        }
+    }
+
+    func testGetCurrentScreen_returnsScreenForWindow() {
+        let manager = WindowManager.shared
+        guard let windowID = manager.getFrontmostWindow() else {
+            return
+        }
+        let screen = manager.getCurrentScreen(for: windowID)
+        XCTAssertNotNil(screen, "Should return a valid screen")
+    }
+
+    func testGetWindowPID_returnsValidPID() {
+        let manager = WindowManager.shared
+        guard let windowID = manager.getFrontmostWindow() else {
+            return  // Skip if no window
+        }
+        let pid = manager.getWindowPID(for: windowID)
+        XCTAssertNotNil(pid, "Should return valid PID for target window")
+    }
+}
+
+final class WindowSnapTests: XCTestCase {
+
+    func testSettingsManager_loadDefault() {
+        let settings = SettingsManager.shared.settings
+        XCTAssertEqual(settings.scaleX, 0.8, accuracy: 0.01)
+        XCTAssertEqual(settings.scaleY, 0.8, accuracy: 0.01)
+    }
+
+    func testSettingsManager_saveReturnsTrue() {
+        let newSettings = AppSettings(keyCode: 0, modifierFlags: 0, scaleX: 0.5, scaleY: 0.5)
+        let result = SettingsManager.shared.save(newSettings)
+        XCTAssertTrue(result, "Save should succeed")
+
+        // Restore default
+        SettingsManager.shared.reset()
+    }
+
+    func testHotKeyManager_keyCodeToString() {
+        XCTAssertEqual(HotKeyManager.keyCodeToString(6), "Z")
+        XCTAssertEqual(HotKeyManager.keyCodeToString(36), "Return")
+        XCTAssertEqual(HotKeyManager.keyCodeToString(999), "Key 999")
+    }
+}

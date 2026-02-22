@@ -1,0 +1,128 @@
+import Foundation
+import AppKit
+import Carbon
+
+protocol HotKeyManagerDelegate: AnyObject {
+    func hotKeyManager(_ manager: HotKeyManager, didTriggerHotKey hotKey: HotKey)
+}
+
+final class HotKeyManager {
+    static let shared = HotKeyManager()
+
+    weak var delegate: HotKeyManagerDelegate?
+
+    private var eventTap: CGEventTap?
+    private var runLoopSource: CFRunLoopSource?
+    private var currentHotKey: HotKey?
+    private var isRunning = false
+
+    private let hotKeyID = CGEventTapLocation HID
+
+    private init() {}
+
+    func registerHotKey(_ hotKey: HotKey) -> Bool {
+        unregisterHotKey()
+
+        guard setupEventTap(with: hotKey) else {
+            return false
+        }
+
+        currentHotKey = hotKey
+        return true
+    }
+
+    func unregisterHotKey() {
+        stop()
+
+        if let tap = eventTap {
+            CGEventTapDisable(hotKeyID, tap)
+            CFRunLoopRemoveSource(CFRunLoopGetMain(), runLoopSource, .commonModes)
+            eventTap = nil
+        }
+
+        runLoopSource = nil
+        currentHotKey = nil
+    }
+
+    private func setupEventTap(with hotKey: HotKey) -> Bool {
+        let callback: CGEventTapCallBack = { [weak self] (proxy, type, event, refcon) in
+            guard let self = self else { return Unmanaged.passUnretained(event).toOpaque() }
+
+            if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
+                if let tap = self.eventTap {
+                    CGEventTapEnable(self.hotKeyID, tap)
+                }
+                return event
+            }
+
+            if type == .cgEventTapDisabledByUserInput {
+                if let tap = self.eventTap {
+                    CGEventTapEnable(self.hotKeyID, tap)
+                }
+            }
+
+            if type == .keyDown {
+                let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
+                let flags = event.flags
+
+                if self.matches(hotKey: hotKey, keyCode: UInt16(keyCode), flags: flags) {
+                    DispatchQueue.main.async {
+                        self.delegate?.hotKeyManager(self, didTriggerHotKey: hotKey)
+                    }
+                }
+            }
+
+            return event
+        }
+
+        guard let tap = CGEventTapCreate(
+            HID,
+            0,
+            .interceptKeyDown,
+            [.keyDown],
+            callback
+        ) else {
+            return false
+        }
+
+        eventTap = tap
+
+        runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
+        CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, .commonModes)
+
+        start()
+
+        return true
+    }
+
+    private func matches(hotKey: HotKey, keyCode: UInt16, flags: CGEventFlags) -> Bool {
+        guard keyCode == hotKey.keyCode else {
+            return false
+        }
+
+        let requiredFlags = hotKey.nsModifierFlags
+
+        if requiredFlags.contains(.command) != flags.contains(.command) { return false }
+        if requiredFlags.contains(.shift) != flags.contains(.shift) { return false }
+        if requiredFlags.contains(.control) != flags.contains(.control) { return false }
+        if requiredFlags.contains(.option) != flags.contains(.option) { return false }
+
+        return true
+    }
+
+    private func start() {
+        guard let tap = eventTap else { return }
+        CGEventTapEnable(hotKeyID, tap)
+        isRunning = true
+    }
+
+    func stop() {
+        guard let tap = eventTap else { return }
+        CGEventTapEnable(hotKeyID, tap)
+        isRunning = false
+    }
+
+    func checkHotKeyConflict(hotKey: HotKey) -> Bool {
+        return false
+    }
+}

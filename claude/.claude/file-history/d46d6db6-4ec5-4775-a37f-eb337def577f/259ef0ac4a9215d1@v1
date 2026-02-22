@@ -1,0 +1,58 @@
+import Cocoa
+import Carbon
+
+class HotkeyManager {
+    static let shared = HotkeyManager()
+
+    private var hotKeyRef: EventHotKeyRef?
+    private var eventHandler: EventHandlerRef?
+
+    private init() {}
+
+    @MainActor
+    func registerHotkey() {
+        unregisterHotkey()
+
+        let settings = SettingsManager.shared
+        let keyCode = settings.hotkeyKeyCode
+        let modifiers = settings.hotkeyModifiers
+
+        let signature: OSType = 0x57534E50 // 'WSNP' in hex
+        var hotKeyID = EventHotKeyID(signature: signature, id: 1)
+        var eventType = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: UInt32(kEventHotKeyPressed))
+
+        InstallEventHandler(GetApplicationEventTarget(), { (nextHandler, event, userData) -> OSStatus in
+            Task { @MainActor in
+                HotkeyManager.shared.hotkeyPressed()
+            }
+            return noErr
+        }, 1, &eventType, nil, &eventHandler)
+
+        let status = RegisterEventHotKey(UInt32(keyCode), modifiers, hotKeyID, GetApplicationEventTarget(), 0, &hotKeyRef)
+
+        if status != noErr {
+            print("Failed to register hotkey: \(status)")
+        }
+    }
+
+    func unregisterHotkey() {
+        if let hotKeyRef = hotKeyRef {
+            UnregisterEventHotKey(hotKeyRef)
+            self.hotKeyRef = nil
+        }
+
+        if let eventHandler = eventHandler {
+            RemoveEventHandler(eventHandler)
+            self.eventHandler = nil
+        }
+    }
+
+    @MainActor
+    private func hotkeyPressed() {
+        WindowSnapEngine.shared.snapFrontmostWindow()
+    }
+
+    deinit {
+        unregisterHotkey()
+    }
+}

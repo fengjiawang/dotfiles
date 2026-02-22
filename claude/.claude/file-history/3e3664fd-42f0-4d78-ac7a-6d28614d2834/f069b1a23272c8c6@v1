@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -e
+
+echo "=== WindowSnap Setup ==="
+echo ""
+
+# Check if XcodeGen is installed
+if ! command -v xcodegen &> /dev/null; then
+    echo "XcodeGen not found. Installing via Homebrew..."
+    if ! command -v brew &> /dev/null; then
+        echo "Error: Homebrew is not installed. Please install Homebrew first."
+        exit 1
+    fi
+    brew install xcodegen
+fi
+
+echo "1. Generating Xcode project..."
+xcodegen generate
+
+echo ""
+echo "2. Building project..."
+xcodebuild -project WindowSnap.xcodeproj \
+    -scheme WindowSnap \
+    -configuration Debug \
+    -destination "platform=macOS" \
+    build
+
+echo ""
+echo "=== Build completed successfully! ==="
+echo ""
+echo "To run the app:"
+echo "  open build/Debug/WindowSnap.app"
+echo ""
+echo "Note: You'll need to grant Accessibility permissions in:"
+echo "  System Settings > Privacy & Security > Accessibility"

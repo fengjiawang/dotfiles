@@ -1,0 +1,16 @@
+{
+  "showInTray": true,
+  "minimizeToTrayOnClose": true,
+  "enableClaudePluginIntegration": true,
+  "skipClaudeOnboarding": false,
+  "launchOnStartup": false,
+  "language": "zh",
+  "visibleApps": {
+    "claude": true,
+    "codex": true,
+    "gemini": false,
+    "opencode": false
+  },
+  "currentProviderClaude": "0c41a13b-4e49-4069-ba82-ff7b28842a65",
+  "skillSyncMethod": "symlink"
+}

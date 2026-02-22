@@ -1,0 +1,125 @@
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
+use tauri::{
+    image::Image,
+    menu::Menu,
+    tray::TrayIconBuilder,
+    Manager,
+};
+use std::sync::Mutex;
+
+#[derive(Default)]
+struct AppState {
+    x_ratio: f64,
+    y_ratio: f64,
+    shortcut: String,
+}
+
+static APP_STATE: Mutex<AppState> = Mutex::new(AppState {
+    x_ratio: 0.8,
+    y_ratio: 0.8,
+    shortcut: "CommandOrControl+Shift+S".to_string(),
+});
+
+#[tauri::command]
+fn get_settings() -> serde_json::Value {
+    let state = APP_STATE.lock().unwrap();
+    serde_json::json!({
+        "xRatio": state.x_ratio,
+        "yRatio": state.y_ratio,
+        "shortcut": state.shortcut
+    })
+}
+
+#[tauri::command]
+fn save_settings(x_ratio: f64, y_ratio: f64, shortcut: String) -> Result<(), String> {
+    let mut state = APP_STATE.lock().map_err(|e| e.to_string())?;
+    state.x_ratio = x_ratio;
+    state.y_ratio = y_ratio;
+    state.shortcut = shortcut;
+    Ok(())
+}
+
+#[tauri::command]
+fn snap_window() -> Result<(), String> {
+    use Accessibility::AXUIElementCopyAttributeValue;
+    use Accessibility::AXUIElementCreateSystemWide;
+    use CoreFoundation::CFStringCreateWithCString;
+    use CoreFoundation::kCFStringEncodingUTF8;
+
+    // This is a placeholder - actual implementation will use the Accessibility API
+    // to get the focused window and resize/move it
+    Ok(())
+}
+
+fn main() {
+    tauri::Builder::default()
+        .plugin(tauri_plugin_shell::init())
+        .invoke_handler(tauri::generate_handler![get_settings, save_settings, snap_window])
+        .setup(|app| {
+            let handle = app.handle();
+
+            // Create menu for tray icon
+            let settings_i = tauri::image::Image::from_bytes(include_bytes!("../icons/32x32.png"))?;
+            let quit_i = tauri::image::Image::from_bytes(include_bytes!("../icons/32x32.png"))?;
+
+            let settings_menu = tauri::menu::MenuItemBuilder::with_id("settings", "Settings...")
+                .image(settings_i)
+                .build(handle)?;
+            let quit_menu = tauri::menu::MenuItemBuilder::with_id("quit", "Quit")
+                .image(quit_i)
+                .accelerator("Cmd+Q")
+                .build(handle)?;
+
+            let menu = tauri::menu::MenuBuilder::new(handle)
+                .items(&[&settings_menu, &quit_menu])
+                .build()?;
+
+            let _tray = TrayIconBuilder::new()
+                .icon(Image::from_bytes(include_bytes!("../icons/32x32.png"))?)
+                .menu(&menu)
+                .tooltip("WindowSnap")
+                .on_menu_event(move |app, event| {
+                    match event.id.as_ref() {
+                        "settings" => {
+                            if let Some(window) = app.get_webview_window("settings") {
+                                window.show().ok();
+                                window.set_focus().ok();
+                            } else {
+                                tauri::WebviewWindowBuilder::new(
+                                    app,
+                                    "settings",
+                                    tauri::WebviewUrl::App("index.html".into()),
+                                )
+                                .title("WindowSnap Settings")
+                                .inner_size(400.0, 300.0)
+                                .resizable(false)
+                                .always_on_top(true)
+                                .center()
+                                .build()?;
+                            }
+                        }
+                        "quit" => {
+                            app.exit(0);
+                        }
+                        _ => {}
+                    }
+                    Ok::<(), tauri::Error>(())
+                })
+                .on_tray_icon_event(|tray, event| {
+                    if let tauri::tray::TrayIconEvent::Click { button: tauri::tray::MouseButton::Left, .. } = event {
+                        if let Some(app) = tray.app_handle() {
+                            if let Some(window) = app.get_webview_window("settings") {
+                                window.show().ok();
+                                window.set_focus().ok();
+                            }
+                        }
+                    }
+                })
+                .build(app)?;
+
+            Ok(())
+        })
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
+}

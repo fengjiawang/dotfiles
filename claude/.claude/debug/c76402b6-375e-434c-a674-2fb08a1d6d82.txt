@@ -1,0 +1,63 @@
+2026-02-02T03:52:31.408Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (21.3ms): security find-generic-password -a $USER -w -s "Claude Code"
+2026-02-02T03:52:31.424Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (15.2ms): security find-generic-password -a "jwfeng" -w -s "Claude Code-credentials"
+2026-02-02T03:52:31.438Z [DEBUG] Watching for changes in setting files /Users/jwfeng/.claude...
+2026-02-02T03:52:31.441Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2026-02-02T03:52:31.441Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2026-02-02T03:52:31.441Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2026-02-02T03:52:31.442Z [DEBUG] LSP server manager initialized successfully
+2026-02-02T03:52:31.442Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2026-02-02T03:52:31.444Z [DEBUG] Loading plugin context7 from source: "./external_plugins/context7"
+2026-02-02T03:52:31.456Z [DEBUG] Git remote URL: null
+2026-02-02T03:52:31.456Z [DEBUG] No git remote URL found
+2026-02-02T03:52:31.456Z [DEBUG] Not in a GitHub repository, skipping path mapping update
+2026-02-02T03:52:31.456Z [DEBUG] Using git SHA for context7@claude-plugins-official: 6d3752c000e2
+2026-02-02T03:52:31.457Z [DEBUG] Plugin context7@claude-plugins-official version 6d3752c000e2 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/context7/6d3752c000e2
+2026-02-02T03:52:31.457Z [DEBUG] Copied local plugin context7 to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/context7/6d3752c000e2
+2026-02-02T03:52:31.458Z [DEBUG] Loading plugin frontend-design from source: "./plugins/frontend-design"
+2026-02-02T03:52:31.479Z [DEBUG] Using git SHA for frontend-design@claude-plugins-official: 6d3752c000e2
+2026-02-02T03:52:31.479Z [DEBUG] Plugin frontend-design@claude-plugins-official version 6d3752c000e2 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/frontend-design/6d3752c000e2
+2026-02-02T03:52:31.479Z [DEBUG] Copied local plugin frontend-design to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/frontend-design/6d3752c000e2
+2026-02-02T03:52:31.480Z [DEBUG] Loading plugin rust-analyzer-lsp from source: "./plugins/rust-analyzer-lsp"
+2026-02-02T03:52:31.480Z [DEBUG] Using provided version for rust-analyzer-lsp@claude-plugins-official: 1.0.0
+2026-02-02T03:52:31.480Z [DEBUG] Plugin rust-analyzer-lsp@claude-plugins-official version 1.0.0 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/rust-analyzer-lsp/1.0.0
+2026-02-02T03:52:31.480Z [DEBUG] Copied local plugin rust-analyzer-lsp to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/rust-analyzer-lsp/1.0.0
+2026-02-02T03:52:31.480Z [DEBUG] Plugin rust-analyzer-lsp has no entry.skills defined
+2026-02-02T03:52:31.481Z [DEBUG] Loading plugin swift-lsp from source: "./plugins/swift-lsp"
+2026-02-02T03:52:31.481Z [DEBUG] Using provided version for swift-lsp@claude-plugins-official: 1.0.0
+2026-02-02T03:52:31.481Z [DEBUG] Plugin swift-lsp@claude-plugins-official version 1.0.0 already cached at /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/swift-lsp/1.0.0
+2026-02-02T03:52:31.481Z [DEBUG] Copied local plugin swift-lsp to versioned cache: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/swift-lsp/1.0.0
+2026-02-02T03:52:31.481Z [DEBUG] Plugin swift-lsp has no entry.skills defined
+2026-02-02T03:52:31.481Z [DEBUG] Found 4 plugins (4 enabled, 0 disabled)
+2026-02-02T03:52:31.482Z [DEBUG] Stats cache stale (2026-01-31), processing 2026-02-01 to 2026-02-01 in background
+2026-02-02T03:52:31.483Z [DEBUG] Plugin autoupdate: skipped (auto-updater disabled)
+2026-02-02T03:52:31.484Z [DEBUG] Loading skills from: managed=/Library/Application Support/ClaudeCode/.claude/skills, user=/Users/jwfeng/.claude/skills, project=[]
+2026-02-02T03:52:31.549Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (64.2ms): ps aux | grep -E "Visual Studio Code|Code Helper|Cursor Helper|Windsurf Helper|IntelliJ IDEA|PyCharm
+2026-02-02T03:52:31.549Z [DEBUG] Loaded 4 installed plugins from /Users/jwfeng/.claude/plugins/installed_plugins.json
+2026-02-02T03:52:31.557Z [DEBUG] Creating shell snapshot for zsh (/bin/zsh)
+2026-02-02T03:52:31.557Z [DEBUG] Looking for shell config file: /Users/jwfeng/.zshrc
+2026-02-02T03:52:31.557Z [DEBUG] Snapshots directory: /Users/jwfeng/.claude/shell-snapshots
+2026-02-02T03:52:31.557Z [DEBUG] Creating snapshot at: /Users/jwfeng/.claude/shell-snapshots/snapshot-zsh-1770004351557-5xzlm4.sh
+2026-02-02T03:52:31.557Z [DEBUG] Shell binary exists: true
+2026-02-02T03:52:31.557Z [DEBUG] Execution timeout: 10000ms
+2026-02-02T03:52:31.558Z [DEBUG] Writing to temp file: /Users/jwfeng/.claude/todos/c76402b6-375e-434c-a674-2fb08a1d6d82-agent-c76402b6-375e-434c-a674-2fb08a1d6d82.json.tmp.24596.1770004351558
+2026-02-02T03:52:31.558Z [DEBUG] Temp file written successfully, size: 2 bytes
+2026-02-02T03:52:31.558Z [DEBUG] Renaming /Users/jwfeng/.claude/todos/c76402b6-375e-434c-a674-2fb08a1d6d82-agent-c76402b6-375e-434c-a674-2fb08a1d6d82.json.tmp.24596.1770004351558 to /Users/jwfeng/.claude/todos/c76402b6-375e-434c-a674-2fb08a1d6d82-agent-c76402b6-375e-434c-a674-2fb08a1d6d82.json
+2026-02-02T03:52:31.558Z [DEBUG] File /Users/jwfeng/.claude/todos/c76402b6-375e-434c-a674-2fb08a1d6d82-agent-c76402b6-375e-434c-a674-2fb08a1d6d82.json written atomically
+2026-02-02T03:52:31.572Z [DEBUG] getPluginSkills: Processing 4 enabled plugins
+2026-02-02T03:52:31.572Z [DEBUG] Checking plugin context7: skillsPath=none, skillsPaths=0 paths
+2026-02-02T03:52:31.572Z [DEBUG] Checking plugin frontend-design: skillsPath=exists, skillsPaths=0 paths
+2026-02-02T03:52:31.572Z [DEBUG] Attempting to load skills from plugin frontend-design default skillsPath: /Users/jwfeng/.claude/plugins/cache/claude-plugins-official/frontend-design/6d3752c000e2/skills
+2026-02-02T03:52:31.573Z [DEBUG] Total plugin commands loaded: 0
+2026-02-02T03:52:31.573Z [DEBUG] Registered 0 hooks from 4 plugins
+2026-02-02T03:52:31.573Z [DEBUG] Loaded 1 skills from plugin frontend-design default directory
+2026-02-02T03:52:31.573Z [DEBUG] Checking plugin rust-analyzer-lsp: skillsPath=none, skillsPaths=0 paths
+2026-02-02T03:52:31.573Z [DEBUG] Checking plugin swift-lsp: skillsPath=none, skillsPaths=0 paths
+2026-02-02T03:52:31.573Z [DEBUG] Total plugin skills loaded: 1
+2026-02-02T03:52:31.573Z [DEBUG] Stats cache saved successfully (lastComputedDate: 2026-02-01)
+2026-02-02T03:52:31.573Z [DEBUG] Stats cache lastComputedDate updated (no new data)
+2026-02-02T03:52:31.573Z [DEBUG] Total plugin agents loaded: 0
+2026-02-02T03:52:31.573Z [DEBUG] Loaded 0 unique skills (managed: 0, user: 0, project: 0, legacy commands: 0)
+2026-02-02T03:52:31.573Z [DEBUG] getSkills returning: 0 skill dir commands, 1 plugin skills
+2026-02-02T03:52:32.578Z [DEBUG] Ripgrep first use test: PASSED (mode=builtin, path=/Users/jwfeng/.local/share/claude/versions/2.0.74)
+2026-02-02T03:52:32.773Z [DEBUG] Shell snapshot created successfully (172599 bytes)
+2026-02-02T03:52:36.505Z [DEBUG] Skipping SessionEnd:other hook execution - workspace trust not accepted
