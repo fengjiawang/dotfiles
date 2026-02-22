@@ -11,8 +11,25 @@
         }
       },
       "scrolling" : {
+        "acceleration" : {
+          "vertical" : 1
+        },
+        "distance" : {
+          "vertical" : 3
+        },
+        "modifiers" : {
+          "vertical" : {
+            "option" : {
+              "scale" : 10,
+              "type" : "changeSpeed"
+            }
+          }
+        },
         "reverse" : {
           "vertical" : true
+        },
+        "speed" : {
+          "vertical" : 0
         }
       }
     }
