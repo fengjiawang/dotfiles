@@ -8,61 +8,67 @@ allowed-tools:
 
 # Web Fetch Skill
 
-Fetch web content. **Prefer the built-in WebFetch tool** — it uses Electron's **built-in BrowserWindow** to render pages, so it can handle JavaScript-rendered content (SPAs, dynamic pages, Twitter/X, etc.) with high success rate. This is NOT a simple HTTP request — it actually opens the page in a real browser window, waits for JavaScript to execute, and extracts the rendered content. Fall back to curl only if WebFetch is unavailable.
+Fetch web content using the best available method, in priority order:
 
-## Fetch a Web Page (HTML → Text)
+## 1. WebFetch Tool (Primary — always try this first)
 
-```bash
-# Get page content, strip HTML tags, first 500 lines
-curl -sL "URL" | sed 's/<[^>]*>//g' | sed '/^$/d' | head -500
+Use the **built-in WebFetch tool** for all web page fetching. It renders pages in a real Electron BrowserWindow with full JavaScript execution, handles SPAs, dynamic content, anti-bot protections, and returns clean markdown. This is NOT a simple HTTP request.
 
-# Or use lynx for better text extraction (if installed)
-lynx -dump -nolist "URL" | head -500
-
-# Or use w3m
-w3m -dump "URL" | head -500
+```
+WebFetch(url="https://example.com/article", prompt="Extract the main content")
 ```
 
-## Fetch JSON API
+- Handles JavaScript-rendered pages (React, Vue, etc.)
+- Shares session cookies (can access logged-in content)
+- Auto-extracts article content via Readability
+- Returns clean markdown, ready to use
+
+**Always start with WebFetch.** Only move to the next option if WebFetch fails or is insufficient.
+
+## 2. Browser Skill (Fallback for interactive pages)
+
+If WebFetch fails (e.g., page requires login interaction, CAPTCHA, or multi-step navigation), use the `alma browser` skill:
 
 ```bash
+# Open URL in a real Chrome browser tab
+alma browser open "https://example.com"
+
+# Read the page content as markdown
+alma browser read <tabId>
+
+# For pages that need interaction first
+alma browser click <tabId> "button.load-more"
+alma browser read <tabId>
+```
+
+Use the browser skill when you need:
+- To interact with the page (click, scroll, fill forms) before reading
+- Access to the user's authenticated Chrome sessions
+- To handle CAPTCHAs or complex anti-bot pages
+
+## 3. curl (Last resort)
+
+Only use curl when both WebFetch and browser skill are unavailable or for simple API/JSON endpoints:
+
+```bash
+# JSON API (curl is fine for APIs)
 curl -s "https://api.example.com/data" | jq '.'
-```
 
-## Fetch with Headers
-
-```bash
-# With custom headers
+# API with auth headers
 curl -s -H "Authorization: Bearer TOKEN" -H "Accept: application/json" "URL"
 
-# With user agent
-curl -sL -A "Mozilla/5.0" "URL"
-```
-
-## Download Files
-
-```bash
-# Download to specific path
+# Download a file
 curl -sL -o /tmp/file.pdf "URL"
 
-# Download with original filename
-curl -sLOJ "URL"
-```
-
-## Check URL Status
-
-```bash
-# Just get HTTP status code
+# Check HTTP status
 curl -sL -o /dev/null -w "%{http_code}" "URL"
-
-# Get headers only
-curl -sI "URL"
 ```
+
+**Do NOT use curl for regular web pages** — it cannot execute JavaScript and gets blocked by most modern sites. Use WebFetch instead.
 
 ## Tips
 
-- Use `-sL` for silent mode + follow redirects
-- Pipe to `head -N` to limit output and avoid context overflow
-- For large pages, extract just what you need with `grep` or `sed`
-- Use `jq` for JSON responses
-- Some sites block curl — add a browser User-Agent with `-A`
+- **WebFetch first, always.** It handles 90%+ of web fetching needs.
+- For JSON APIs, curl is acceptable since no JS rendering is needed.
+- Pipe curl output to `head -N` to limit output size.
+- Use `jq` for JSON responses.
