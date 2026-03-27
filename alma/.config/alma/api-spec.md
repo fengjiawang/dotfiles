@@ -312,6 +312,7 @@ interface AppSettings {
     modelUsageHistory: Record<string, number>;  // modelId -> timestamp
     defaultToolSelection: 'auto' | 'all' | 'none';
     defaultSkillSelection: 'auto' | 'all' | 'none';
+    coderAgentProviderId?: string;  // '__auto__' | '__claude_code__' | '__builtin__' | ACP provider ID
     soundEffects: {
       enabled: boolean;
       volume: number;  // 0-1
@@ -323,6 +324,25 @@ interface AppSettings {
       keepRecentMessages: number;  // 2-20
       summaryModel?: string;    // Format: "providerId:modelId"
     };
+  };
+
+  agents: {
+    enabled: boolean;
+    allowSubagentDelegation: boolean;
+    profiles: Array<{
+      id: string;
+      name: string;
+      category: 'design' | 'product' | 'engineering' | 'research' | 'operations' | 'custom';
+      executionMode: 'general-purpose' | 'statusline-setup' | 'Explore' | 'Plan' | 'alma-guide' | 'alma-operator' | 'coder';
+      enabled: boolean;
+      builtIn: boolean;
+      color: string;
+      summary: string;
+      focus: string[];
+      delegatesTo: string[];
+      prompt: string;
+      model?: string;  // Format: "providerId:modelId"
+    }>;
   };
 
   ui: {
@@ -365,6 +385,7 @@ interface AppSettings {
     sessionTimeout: number;  // minutes
     enableLogging: boolean;
     logLevel: 'error' | 'warn' | 'info' | 'debug';
+    autoApproveToolRequests: boolean;  // Auto-approve all tool permission requests
   };
 
   advanced: {
@@ -507,4 +528,4 @@ interface StoredProviderModel {
 
 ---
 
-*Generated at: 2026-02-26T10:27:22.615Z*
+*Generated at: 2026-03-27T05:16:05.976Z*
