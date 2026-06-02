@@ -1,0 +1,56 @@
+lev[0]: 0.99250002413 -> pres: 1005.6506494497226 hPa
+lev[46]: 3.8000004999999996e-05 -> pres: 0.03850350506625 hPa
+
+=== lev array order ===
+lev[0:5]: [0.99250002 0.9774999  0.96249978 0.94749995 0.93250006]
+lev[42:47]: [2.86368050e-03 1.13378455e-03 4.14064050e-04 1.38674505e-04
+ 3.80000050e-05]
+
+=== GC CO profile at specific location (day=25, mid-US) ===
+  lev[ 0] P= 1005.65hPa alt≈  0.1km  CO=611.20
+  lev[ 1] P=  990.45hPa alt≈  0.2km  CO=295.06
+  lev[ 2] P=  975.25hPa alt≈  0.3km  CO=239.14
+  lev[ 3] P=  960.05hPa alt≈  0.4km  CO=220.35
+  lev[ 4] P=  944.86hPa alt≈  0.5km  CO=212.07
+  lev[ 5] P=  929.66hPa alt≈  0.6km  CO=205.43
+  lev[ 6] P=  914.46hPa alt≈  0.8km  CO=193.94
+  lev[ 7] P=  899.26hPa alt≈  0.9km  CO=180.52
+  lev[ 8] P=  884.06hPa alt≈  1.0km  CO=164.45
+  lev[ 9] P=  868.86hPa alt≈  1.1km  CO=147.50
+  lev[10] P=  853.66hPa alt≈  1.3km  CO=130.64
+  lev[11] P=  838.46hPa alt≈  1.4km  CO=116.30
+  lev[12] P=  820.73hPa alt≈  1.6km  CO=108.62
+  lev[13] P=  797.93hPa alt≈  1.8km  CO=103.22
+  lev[14] P=  772.60hPa alt≈  2.0km  CO=102.97
+  lev[15] P=  747.27hPa alt≈  2.3km  CO=102.96
+  lev[16] P=  721.94hPa alt≈  2.5km  CO=102.98
+  lev[17] P=  696.61hPa alt≈  2.8km  CO=103.02
+  lev[18] P=  664.95hPa alt≈  3.1km  CO=103.07
+  lev[19] P=  626.95hPa alt≈  3.6km  CO=103.11
+  lev[20] P=  588.95hPa alt≈  4.0km  CO=103.13
+  lev[21] P=  550.95hPa alt≈  4.5km  CO=103.15
+  lev[22] P=  512.96hPa alt≈  5.0km  CO=103.16
+  lev[23] P=  474.96hPa alt≈  5.6km  CO=103.14
+  lev[24] P=  436.96hPa alt≈  6.2km  CO=103.13
+  lev[25] P=  398.97hPa alt≈  6.9km  CO=103.11
+  lev[26] P=  360.97hPa alt≈  7.6km  CO=103.08
+  lev[27] P=  316.94hPa alt≈  8.6km  CO=103.04
+  lev[28] P=  270.01hPa alt≈  9.8km  CO=103.02
+  lev[29] P=  229.51hPa alt≈ 11.0km  CO=103.07
+  lev[30] P=  195.09hPa alt≈ 12.2km  CO=103.08
+  lev[31] P=  165.83hPa alt≈ 13.4km  CO=103.09
+  lev[32] P=  140.96hPa alt≈ 14.6km  CO=103.10
+  lev[33] P=  119.82hPa alt≈ 15.8km  CO=103.09
+  lev[34] P=  101.85hPa alt≈ 17.0km  CO=103.09
+  lev[35] P=   86.57hPa alt≈ 18.2km  CO=103.06
+  lev[36] P=   68.34hPa alt≈ 20.0km  CO=102.71
+  lev[37] P=   48.92hPa alt≈ 22.4km  CO=99.73
+  lev[38] P=   34.73hPa alt≈ 25.0km  CO=99.48
+  lev[39] P=   24.40hPa alt≈ 27.6km  CO=99.78
+  lev[40] P=   14.73hPa alt≈ 31.3km  CO=99.13
+  lev[41] P=    6.77hPa alt≈ 37.1km  CO=96.74
+  lev[42] P=    2.90hPa alt≈ 43.3km  CO=90.04
+  lev[43] P=    1.15hPa alt≈ 50.2km  CO=101.19
+  lev[44] P=    0.42hPa alt≈ 57.6km  CO=100.48
+  lev[45] P=    0.14hPa alt≈ 65.7km  CO=100.91
+  lev[46] P=    0.04hPa alt≈ 75.3km  CO=100.87

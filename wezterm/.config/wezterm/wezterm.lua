@@ -205,7 +205,7 @@ config.visual_bell = {
 	target = "CursorColor",
 }
 config.audible_bell = "Disabled"
-config.window_background_opacity = 1
+config.window_background_opacity = 0.8
 config.macos_window_background_blur = 0
 config.win32_system_backdrop = 'Acrylic'
 config.text_background_opacity = 1.0

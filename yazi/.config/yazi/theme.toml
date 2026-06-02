@@ -1,3 +1,10 @@
 [flavors]
 dark = "kanagawa"
 light = "kanagawa"
+
+# ===== Kaku Yazi Flavor (managed) =====
+[flavor]
+dark = "kaku-light"
+light = "kaku-light"
+# ===== End Kaku Yazi Flavor (managed) =====
+

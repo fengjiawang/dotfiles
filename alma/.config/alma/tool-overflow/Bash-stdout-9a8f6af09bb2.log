@@ -1,0 +1,43 @@
+EXIT=0
+/opt/homebrew/Caskroom/miniconda/base/lib/python3.13/site-packages/numpy/_core/fromnumeric.py:840: UserWarning: Warning: 'partition' will ignore the 'mask' of the MaskedArray.
+  a.partition(kth, axis=axis, kind=kind, order=order)
+/opt/homebrew/Caskroom/miniconda/base/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:4779: UserWarning: Warning: 'partition' will ignore the 'mask' of the MaskedArray.
+  arr.partition(
+Loading GEOS-Chem …
+
+───────────────────────────────────────────────────────
+  Campaign : ATom-2
+  Valid pts in GC domain: 4,125
+  Unique GC grid cells sampled : 179
+    bin 0–1km : ATom n= 177 med=118.3  |  GC cells=1432 med=111.2
+    bin 1–2km : ATom n= 176 med=117.7  |  GC cells=1074 med=103.0
+    bin 2–3km : ATom n= 119 med=114.9  |  GC cells= 716 med=102.8
+    bin 3–4km : ATom n= 113 med=104.9  |  GC cells= 358 med=102.8
+    bin 4–5km : ATom n= 111 med=121.8  |  GC cells= 358 med=102.8
+    bin 5–6km : ATom n= 101 med=94.0  |  GC cells= 358 med=102.8
+    bin 6–7km : ATom n= 160 med=93.9  |  GC cells= 358 med=102.9
+    bin 7–8km : ATom n= 160 med=93.3  |  GC cells= 179 med=103.0
+    bin 8–9km : ATom n= 212 med=86.9  |  GC cells= 179 med=103.0
+    bin 9–10km : ATom n= 487 med=81.3  |  GC cells= 179 med=103.1
+    bin 10–11km : ATom n=1074 med=79.3  |  GC cells= 179 med=103.2
+    bin 11–12km : ATom n= 805 med=73.6  |  GC cells=   0 med=nan
+
+───────────────────────────────────────────────────────
+  Campaign : ATom-3
+  Valid pts in GC domain: 4,067
+  Unique GC grid cells sampled : 147
+    bin 0–1km : ATom n= 399 med=111.6  |  GC cells=1176 med=116.1
+    bin 1–2km : ATom n= 197 med=96.9  |  GC cells= 882 med=103.4
+    bin 2–3km : ATom n= 132 med=89.7  |  GC cells= 588 med=102.5
+    bin 3–4km : ATom n= 131 med=82.2  |  GC cells= 294 med=100.5
+    bin 4–5km : ATom n= 128 med=76.4  |  GC cells= 294 med=101.1
+    bin 5–6km : ATom n= 118 med=71.8  |  GC cells= 294 med=101.2
+    bin 6–7km : ATom n= 114 med=77.4  |  GC cells= 294 med=101.2
+    bin 7–8km : ATom n= 154 med=74.3  |  GC cells= 147 med=102.0
+    bin 8–9km : ATom n= 204 med=74.5  |  GC cells= 147 med=102.3
+    bin 9–10km : ATom n= 289 med=79.0  |  GC cells= 147 med=102.7
+    bin 10–11km : ATom n=1271 med=74.5  |  GC cells= 147 med=102.9
+    bin 11–12km : ATom n= 188 med=81.6  |  GC cells=   0 med=nan
+
+Rendering figure …
+Saved → CO_vertical_profile_ATom_vs_GEOSChem_v2.png

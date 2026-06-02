@@ -111,7 +111,7 @@ Create a new provider.
 }
 ```
 
-**Provider Types:** openai, anthropic, google, aihubmix, openrouter, deepseek, copilot, azure, moonshot, custom, acp, claude-subscription, zai-coding-plan
+**Provider Types:** openai, anthropic, google, aihubmix, openrouter, deepseek, copilot, azure, moonshot, volcengine, custom, acp, claude-subscription, zai-coding-plan, kimi-coding-plan
 
 **Response:** Created `Provider` object (HTTP 201)
 
@@ -321,7 +321,7 @@ interface AppSettings {
     autoCompact: {
       enabled: boolean;
       threshold: number;        // 60-95 (percentage)
-      keepRecentMessages: number;  // 2-20
+      keepRecentMessages: number;  // 2-20 (conversational turns, not individual messages)
       summaryModel?: string;    // Format: "providerId:modelId"
     };
   };
@@ -461,8 +461,8 @@ interface Provider {
   id: string;
   name: string;
   type: 'openai' | 'anthropic' | 'google' | 'aihubmix' | 'openrouter' |
-        'deepseek' | 'copilot' | 'azure' | 'moonshot' | 'custom' | 'acp' |
-        'claude-subscription' | 'zai-coding-plan';
+        'deepseek' | 'copilot' | 'azure' | 'moonshot' | 'volcengine' | 'custom' | 'acp' |
+        'claude-subscription' | 'zai-coding-plan' | 'kimi-coding-plan';
   models: StoredProviderModel[];           // Enabled models
   availableModels: StoredProviderModel[];  // All available models
   apiKey: string;                          // Encrypted, do not expose
@@ -528,4 +528,4 @@ interface StoredProviderModel {
 
 ---
 
-*Generated at: 2026-03-27T05:16:05.976Z*
+*Generated at: 2026-05-31T12:02:38.333Z*
